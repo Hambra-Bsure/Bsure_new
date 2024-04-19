@@ -3,7 +3,8 @@
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/GetCategoryResponse.dart';
 import 'package:flutter/material.dart';
 
-import 'Assets/GetAssets.dart';
+import 'Assets/get_asset_screens/category.dart';
+import 'Settings_screen/Profile_page.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -72,9 +73,9 @@ class _HomepageState extends State<Homepage> {
               ),
               tooltip: 'account settings',
               onPressed: () {
-                // Navigator.of(context).push(
-                //   MaterialPageRoute(builder: (context) => const ProfilePage()),
-                // );
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
               },
             ), //IconButton
           ],
@@ -130,7 +131,7 @@ class _HomepageState extends State<Homepage> {
                                     context,
                                     'Assets',
                                     'assets/images/img_2.png',
-                                    //const AssetList()),
+                                    const CategoriesScreen()),
                                 buildGridItem(
                                     context,
                                     'Nominee',
@@ -146,8 +147,8 @@ class _HomepageState extends State<Homepage> {
                                     //const AssetScreen()),
                                 buildGridItem(context, 'Digitalwill',
                                     Icons.design_services,
-                                    GetCategoryresponse() as Widget),
-                                ))))],
+                                    CategoriesScreen() as Widget),
+                                )))],
                             ),
                           ),
                         ],

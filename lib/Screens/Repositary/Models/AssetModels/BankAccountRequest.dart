@@ -1,4 +1,5 @@
-import '../../../Assets/BankAccount.dart';
+
+import '../../../Assets/post_asset_addition/BankAccount.dart';
 
 class BankAccountRequest {
   final String assetType;

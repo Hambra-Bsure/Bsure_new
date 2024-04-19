@@ -13,7 +13,7 @@ class _NodeClient implements NodeClient {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://api.bsure.live';
+    baseUrl ??= 'https://wgflssl8-8080.inc1.devtunnels.ms';
   }
 
   final Dio _dio;
@@ -335,8 +335,7 @@ class _NodeClient implements NodeClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(req.toJson());
+    final _data = req;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<PostOfficeAccountResponse>(Options(
       method: 'POST',
