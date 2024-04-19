@@ -60,7 +60,7 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
               ),
               buildDateField(
                 controller: _maturityDateController,
-                labelText: 'Maturity Date (Optional issue)',
+                labelText: 'Maturity Date (Optional)',
                 mandatory: false,
               ),
               buildTextField(
