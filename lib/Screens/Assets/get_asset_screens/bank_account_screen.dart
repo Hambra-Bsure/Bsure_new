@@ -24,7 +24,7 @@ class BankAccountsScreen extends StatefulWidget {
 }
 
 class _BankAccountsScreenState extends State<BankAccountsScreen> {
-  List<BankAccount> bankAccounts = [];
+  List<BankAccount> bankAccounts = <BankAccount>[];
   bool isLoading = false;
 
   // Define a variable to hold the category name
@@ -93,7 +93,7 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
             const Text('Bank Account', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : bankAccounts.isNotEmpty
               ? ListView.builder(
                   itemCount: bankAccounts.length,
@@ -176,9 +176,14 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
                                           ),
                                           onPressed: () async {
                                             Navigator.of(context).pop();
-                                            deleteAssetStatus(index, context);
+                                            deleteAssetStatus(index);
+                                            List<BankAccount> newBankAccounts =
+                                                <BankAccount>[];
+                                            newBankAccounts
+                                                .addAll(bankAccounts);
+                                            newBankAccounts.removeAt(index);
                                             setState(() {
-                                              bankAccounts!.removeAt(index);
+                                              bankAccounts = newBankAccounts;
                                             });
                                           },
                                         ),
@@ -249,7 +254,7 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
+  Future<void> deleteAssetStatus(int index) async {
     final bankAccount = bankAccounts[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -268,30 +273,11 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          bankAccounts.removeAt(index);
-          getData();
-        });
+        DisplayUtils.showToast("Asset successfully deleted.");
 
-        // Call getData() outside setState() to ensure immediate UI update
-
-        DisplayUtils.showToast("Bank account successfully deleted.");
-      } else {
-        DisplayUtils.showToast(
-            "Failed to delete bank account. ${response.data}");
       }
     } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
+      //DisplayUtils.showToast("API failure");
     }
   }
 }

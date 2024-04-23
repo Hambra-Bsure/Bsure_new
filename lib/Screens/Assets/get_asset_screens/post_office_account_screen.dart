@@ -41,10 +41,12 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
     final category = 'PostOfficeAccount'; // Add this line
     print('Category: $category'); // Print category for debugging
 
-    final url =
-        Uri.parse('http://43.205.12.154:8080/v2/asset/category/PostOfficeAccount');
-    final response =
-        await http.get(url, headers: {"Authorization": token.toString(),"ngrok-skip-browser-warning": "69420",});
+    final url = Uri.parse(
+        'http://43.205.12.154:8080/v2/asset/category/PostOfficeAccount');
+    final response = await http.get(url, headers: {
+      "Authorization": token.toString(),
+      "ngrok-skip-browser-warning": "69420",
+    });
 
     if (response.statusCode == 200) {
       final data =
@@ -81,7 +83,7 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
             style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : PostofficeAccounts.isNotEmpty == true
               ? ListView.builder(
                   itemCount: PostofficeAccounts.length,
@@ -99,10 +101,12 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   onPressed: () async {
-                                    final updatedPostOfficeAccount = await Navigator.push(
+                                    final updatedPostOfficeAccount =
+                                        await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => PostOfficeAccountEdit(
+                                        builder: (context) =>
+                                            PostOfficeAccountEdit(
                                           postOffice: postoffice,
                                           assetType: category,
                                         ),
@@ -110,14 +114,17 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                                     );
                                     if (updatedPostOfficeAccount != null) {
                                       setState(() {
-                                        PostofficeAccounts[index] = updatedPostOfficeAccount;
+                                        PostofficeAccounts[index] =
+                                            updatedPostOfficeAccount;
                                       });
                                     }
                                   },
                                 ),
                               ],
                             ),
-                            Text('branchName: ${postoffice.branchName}',),
+                            Text(
+                              'branchName: ${postoffice.branchName}',
+                            ),
                             const SizedBox(height: 8.0),
                             Text('accountNumber: ${postoffice.accountNumber}'),
                             const SizedBox(height: 8.0),
@@ -132,11 +139,9 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (BuildContext context) {
+                                  builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
+                                      title: const Text("Delete Asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -144,13 +149,11 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
+                                              color: Color(0xff429bb8),
                                             ),
                                           ),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
@@ -161,14 +164,14 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<PostOfficeAccount> newpostofficeaccounts =
+                                            <PostOfficeAccount>[];
+                                            newpostofficeaccounts.addAll(PostofficeAccounts);
+                                            newpostofficeaccounts.removeAt(index);
                                             setState(() {
-                                              PostofficeAccounts!
-                                                  .removeAt(
-                                                  index);
+                                              PostofficeAccounts = newpostofficeaccounts;
                                             });
                                           },
                                         ),
@@ -179,22 +182,17 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
+                                backgroundColor: const Color(0xff429bb8),
                               ),
                               child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
+                                  Icon(Icons.delete, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                      style: TextStyle(color: Colors.white)),
                                 ],
                               ),
                             ),
@@ -217,7 +215,7 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  PostOfficeAccountAdd(
+              builder: (context) => PostOfficeAccountAdd(
                 assetType: category,
               ),
             ),
@@ -245,7 +243,7 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
+  Future<void> deleteAssetStatus(int index) async {
     final PostofficeAccount = PostofficeAccounts[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -264,29 +262,8 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          PostofficeAccounts.removeAt(index);
-          getData();
-        });
-
-        // Call getData() outside setState() to ensure immediate UI update
-
         DisplayUtils.showToast("PostofficeAccounts successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete PostofficeAccounts. ${response.data}");
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }

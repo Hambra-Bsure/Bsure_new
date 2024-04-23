@@ -104,6 +104,11 @@ class _NpsAddState extends State<NpsAdd> {
   }
 
   void _submitForm() async {
+    if (!_validateForm()) {
+      return;
+    }
+
+
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -141,4 +146,16 @@ class _NpsAddState extends State<NpsAdd> {
       print('Failed to submit data: $e');
     }
   }
+
+    bool _validateForm() {
+      if (_pranNumberController.value.text.isEmpty) { // Check if AMC name is empty
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Pran Number is required')),
+        );
+        return false;
+      }
+      return true;
+    }
+
 }

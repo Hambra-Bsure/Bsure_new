@@ -10,6 +10,7 @@ import '../../Utils/DisplayUtils.dart';
 
 class LoanGivenScreen extends StatefulWidget {
   final String assetType;
+
   const LoanGivenScreen({super.key, required this.assetType});
 
   @override
@@ -36,9 +37,12 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.get("token");
 
-    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/LoanGiven');
-    final response =
-        await http.get(url, headers: {"Authorization": token.toString(),"ngrok-skip-browser-warning": "69420",});
+    final url =
+        Uri.parse('http://43.205.12.154:8080/v2/asset/category/LoanGiven');
+    final response = await http.get(url, headers: {
+      "Authorization": token.toString(),
+      "ngrok-skip-browser-warning": "69420",
+    });
 
     if (response.statusCode == 200) {
       final data = LoanGivenResponse.fromJson(jsonDecode(response.body));
@@ -73,7 +77,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
         title: const Text('Loan Given', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : loanGivens.isNotEmpty
               ? ListView.builder(
                   itemCount: loanGivens.length,
@@ -92,7 +96,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                                   icon: const Icon(Icons.edit),
                                   onPressed: () async {
                                     final updatedloangiven =
-                                    await Navigator.push(
+                                        await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => LoanGivenEdit(
@@ -110,13 +114,15 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                                 ),
                               ],
                             ),
-                            Text('borrowerName: ${loangiven.borrowerName}',),
+                            Text(
+                              'borrowerName: ${loangiven.borrowerName}',
+                            ),
                             const SizedBox(height: 8.0),
                             Text('loanAmount: ${loangiven.loanAmount}'),
                             const SizedBox(height: 8.0),
                             Text('loanGivenDate: ${loangiven.loanGivenDate}'),
                             const SizedBox(height: 8.0),
-                            Text('interestRate: ${loangiven.interestRate?.toStringAsFixed(2) ?? 'N/A'}'), // Display two decimal places
+                            Text('interestRate: ${loangiven.interestRate}'),
                             const SizedBox(height: 8.0),
                             Text('comments: ${loangiven.comments}'),
                             const SizedBox(height: 8.0),
@@ -126,11 +132,9 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (BuildContext context) {
+                                  builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
+                                      title: const Text("Delete Asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -138,13 +142,11 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
+                                              color: Color(0xff429bb8),
                                             ),
                                           ),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
@@ -155,14 +157,14 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<LoanGiven> newloangiven =
+                                                <LoanGiven>[];
+                                            newloangiven.addAll(loanGivens);
+                                            newloangiven.removeAt(index);
                                             setState(() {
-                                              loanGivens!
-                                                  .removeAt(
-                                                  index);
+                                              loanGivens = newloangiven;
                                             });
                                           },
                                         ),
@@ -173,22 +175,17 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
+                                backgroundColor: const Color(0xff429bb8),
                               ),
                               child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
+                                  Icon(Icons.delete, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                      style: TextStyle(color: Colors.white)),
                                 ],
                               ),
                             ),
@@ -211,7 +208,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  LoanGivenAdd(
+              builder: (context) => LoanGivenAdd(
                 assetType: category,
               ),
             ),
@@ -239,8 +236,8 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
-    final mutualFund = loanGivens[index];
+  Future<void> deleteAssetStatus(int index) async {
+    final loanGiven = loanGivens[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -254,33 +251,12 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${mutualFund.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${loanGiven.assetId}',
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          loanGivens.removeAt(index);
-          getData();
-        });
-
-        // Call getData() outside setState() to ensure immediate UI update
-
         DisplayUtils.showToast(" loan given successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete loan given. ${response.data}");
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }

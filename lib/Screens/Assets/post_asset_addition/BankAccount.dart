@@ -9,6 +9,12 @@ import '../../Repositary/Models/AssetModels/BankAccountRequest.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../get_asset_screens/bank_account_screen.dart';
 
+enum AccountType {
+  Saving,
+  Current,
+  Salary,
+}
+
 class BankAccountAdd extends StatefulWidget {
   final String assetType;
 
@@ -17,12 +23,6 @@ class BankAccountAdd extends StatefulWidget {
 
   @override
   _BankAccountAddState createState() => _BankAccountAddState();
-}
-
-enum AccountType {
-  Saving,
-  Current,
-  Salary,
 }
 
 String accountTypeToString(AccountType type) {
@@ -39,7 +39,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
 
-  AccountType _selectedAccountType = AccountType.Saving;
+   AccountType? _selectedAccountType;
 
   File? file;
   String? fileName;
@@ -122,7 +122,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     // Add spacing between TextFormField and ElevatedButton
                     Expanded(
                       // Wrap ElevatedButton with Expanded
@@ -241,24 +241,32 @@ class _BankAccountAddState extends State<BankAccountAdd> {
           value: _selectedAccountType,
           onChanged: (value) {
             setState(() {
-              _selectedAccountType = value!;
+              _selectedAccountType = value;
             });
           },
-          items: AccountType.values.map((type) {
-            return DropdownMenuItem<AccountType>(
-              value: type,
-              child: Text(accountTypeToString(type)),
-            );
-          }).toList(),
+          items: [
+            // Add a null value as the default option
+            const DropdownMenuItem<AccountType>(
+              value: null,
+              child: Text('Select Type'),
+            ),
+            // Add other account types
+            ...AccountType.values.map((type) {
+              return DropdownMenuItem<AccountType>(
+                value: type,
+                child: Text(accountTypeToString(type)),
+              );
+            }).toList(),
+          ],
           decoration: const InputDecoration(
-            border: OutlineInputBorder(), // Adding border to dropdown field
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
     );
   }
+
 
   Future<void> uploadFile() async {
     final result = await FilePicker.platform
@@ -295,6 +303,10 @@ class _BankAccountAddState extends State<BankAccountAdd> {
 
 
   Future<void> _submitForm() async {
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token"); // Retrieve token from SharedPreferences
 
@@ -327,13 +339,20 @@ class _BankAccountAddState extends State<BankAccountAdd> {
         fileUrl = ''; // or fileUrl = null;
       }
 
+    AccountType accountType;
+    if (_selectedAccountType != null) {
+      accountType = _selectedAccountType!;
+    } else {
+      accountType = AccountType.Saving; // Provide a default value when _selectedAccountType is null
+    }
+
       final req = BankAccountRequest(
         assetType: widget.assetType,
         bankName: _bankNameController.value.text,
         accountNumber: _accountNumberController.value.text,
         ifscCode: _ifscCodeController.value.text,
         branchName: _branchNameController.value.text,
-        accountType: _selectedAccountType,
+        accountType: accountType,
         comments: _commentsController.value.text,
         attachment: fileUrl,
       );
@@ -362,7 +381,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   bool _validateForm() {
     if (_bankNameController.value.text.isEmpty ||
         _branchNameController.value.text.isEmpty ||
-        _selectedAccountType == AccountType.Saving) {
+        _selectedAccountType == null) {
       if (_bankNameController.value.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Bank Name is required')),

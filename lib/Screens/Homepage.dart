@@ -4,6 +4,8 @@ import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/GetCategoryRe
 import 'package:flutter/material.dart';
 
 import 'Assets/get_asset_screens/category.dart';
+import 'Nominee_screens/Add_nominee.dart';
+import 'Nominee_screens/Get_all_nominees.dart';
 import 'Settings_screen/Profile_page.dart';
 
 class Homepage extends StatefulWidget {
@@ -136,7 +138,7 @@ class _HomepageState extends State<Homepage> {
                                     context,
                                     'Nominee',
                                     'assets/images/img_7.png',
-                                   // const NomineeScreen()),
+                                    GetNomineeScreen()),
                                 buildGridItem(
                                     context,
                                     'Nudge',
@@ -147,8 +149,8 @@ class _HomepageState extends State<Homepage> {
                                     //const AssetScreen()),
                                 buildGridItem(context, 'Digitalwill',
                                     Icons.design_services,
-                                    CategoriesScreen() as Widget),
-                                )))],
+                                    const CategoriesScreen() as Widget),
+                                ))],
                             ),
                           ),
                         ],

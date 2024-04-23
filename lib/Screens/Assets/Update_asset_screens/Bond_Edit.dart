@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/bond.dart';
+import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/bond_screen.dart';
 
 class BondEdit extends StatefulWidget {
@@ -90,12 +91,13 @@ class _BondEditState extends State<BondEdit> {
                 },
               ),
               TextFormField(
-                initialValue: maturityDate,
+                controller: TextEditingController(
+                  text: maturityDate,
+                ),
+                // Format date as text
                 decoration: const InputDecoration(labelText: 'Maturity Date'),
-                onChanged: (value) {
-                  setState(() {
-                    maturityDate = value;
-                  });
+                onTap: () {
+                  _selectDate(context);
                 },
               ),
               TextFormField(
@@ -136,6 +138,8 @@ class _BondEditState extends State<BondEdit> {
                   final response = await updateBond(updatedbond);
                   print(response);
 
+                  DisplayUtils.showToast('Asset Updated Successfully');
+
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
                     context,
@@ -154,6 +158,24 @@ class _BondEditState extends State<BondEdit> {
       ),
     );
   }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime initialDateTime = DateTime.parse(maturityDate);
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDateTime, // Pass DateTime object
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != initialDateTime) {
+      setState(() {
+        maturityDate = picked.toIso8601String(); // Convert DateTime to String
+      });
+    }
+  }
+
 
   Future<Bond?> updateBond(Bond bond) async {
     final prefs = await SharedPreferences.getInstance();

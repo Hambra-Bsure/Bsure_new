@@ -153,34 +153,47 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
           ],
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          readOnly: true,
-          onTap: () async {
-            final DateTime? pickedDate = await showDatePicker(
-              context: context,
-              initialDate: _selectedDate ?? DateTime.now(),
-              firstDate: DateTime(2000),
-              lastDate: DateTime(2101),
-            );
-            if (pickedDate != null && pickedDate != _selectedDate) {
-              setState(() {
-                _selectedDate = pickedDate;
-                controller.text = pickedDate.toString().split(' ')[0];
-              });
-            }
+        InkWell(
+          onTap: () {
+            _selectDate(context);
           },
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            contentPadding:
+          child: IgnorePointer(
+            child: TextFormField(
+              controller: controller,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding:
                 EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+              ),
+            ),
           ),
         ),
       ],
     );
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+        _loanGivenDateController.text = picked.toIso8601String();
+      });
+    }
+  }
+
+
+
   void _submitForm() async {
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
@@ -196,20 +209,24 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
       assetType: widget.assetType,
       borrowerName: _borrowerNameController.text,
       loanAmount: int.tryParse(_loanAmountController.text),
-      loanGivenDate: _loanGivenDateController.text,
-      interestRate: int.tryParse(_interestRateController.text),
+      loanGivenDate:
+      _loanGivenDateController.text == ""
+          ? null
+          :_loanGivenDateController
+          .text,
+      interestRate: _interestRateController.text.isNotEmpty
+          ? int.tryParse(_interestRateController.text)
+          : null,
       comments: _commentsController.text,
       attachment: _attachmentController.text,
     );
 
     try {
-      final response = await client.CreateLoanGiven(token, request);
+      final response = await client.CreateLoanGiven(token!, request);
       print(response);
 
       // Close the current screen
       Navigator.pop(context);
-
-      // Navigate to the LoanGivenScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -221,4 +238,22 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
       // Handle errors
     }
   }
+
+  bool _validateForm() {
+    if (_borrowerNameController.value.text.isEmpty ||
+        _loanAmountController.value.text.isEmpty) { // Added closing parenthesis here
+      if (_borrowerNameController.value.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Borrower Name is required')),
+        );
+      } else if (_loanAmountController.value.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Loan Amount is required')),
+        );
+      }
+      return false;
+    }
+    return true;
+  }
+
 }

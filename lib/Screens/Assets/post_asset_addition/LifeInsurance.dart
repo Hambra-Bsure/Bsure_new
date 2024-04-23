@@ -61,7 +61,7 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
               buildDateField(
                 controller: _maturityDateController,
                 labelText: 'Maturity Date (Optional)',
-                mandatory: false,
+                //mandatory: false,
               ),
               buildTextField(
                 controller: _commentsController,
@@ -200,9 +200,13 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
   }
 
   void _submitForm() async {
+
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
-    var token =
-        prefs.getString("token"); // Retrieve token from SharedPreferences
+    var token = prefs.getString("token"); // Retrieve token from SharedPreferences
 
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
@@ -217,14 +221,23 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
     print("Maturity Date: $maturityDate");
     print("Maturity Date: ${maturityDate.runtimeType}");
 
+    // _maturityDateController.text == ""
+    //     ? null
+    //     : _maturityDateController
+    //     .text,
+
     final request = LifeInsuranceRequest(
       assetType: widget.assetType,
       insuranceCompanyName: _insuranceCompanyNameController.text,
       policyName: _policyNameController.text,
       policyNumber: _policyNumberController.text,
-      coverageAmount: int.tryParse(_coverageAmountController.text),
-      maturityDate:
-          maturityDate ?? '', // Use the maturityDate or provide a default value
+      coverageAmount: _coverageAmountController.text.isNotEmpty
+          ? int.tryParse(_coverageAmountController.text)
+          : null,
+      maturityDate: _maturityDateController.text == ""
+          ? null
+          : _maturityDateController
+          .text,
       comments: _commentsController.text,
       attachment: _attachmentController.text,
     );
@@ -245,5 +258,16 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
       // Handle errors
       print(e.toString());
     }
+  }
+
+  bool _validateForm() {
+    if (_insuranceCompanyNameController.value.text.isEmpty) { // Check if AMC name is empty
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('InsuranceCompanyName is required')),
+      );
+      return false;
+    }
+    return true;
   }
 }

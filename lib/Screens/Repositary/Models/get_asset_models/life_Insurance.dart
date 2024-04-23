@@ -22,8 +22,8 @@ class LifeInsurance with _$LifeInsurance {
     required String insuranceCompanyName,
     required String policyName,
     required String policyNumber,
-    required int coverageAmount, // Assuming coverageAmount is an integer
-    required String maturityDate,
+    required int? coverageAmount, // Assuming coverageAmount is an integer
+    required String? maturityDate,
     required String comments,
     required String attachment,
     required int assetId,

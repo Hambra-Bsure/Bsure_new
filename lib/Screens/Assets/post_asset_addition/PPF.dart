@@ -112,6 +112,10 @@ class _PpfAddState extends State<PpfAdd> {
   }
 
   void _submitForm() async {
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -150,4 +154,22 @@ class _PpfAddState extends State<PpfAdd> {
       print('Failed to submit data: $e');
     }
   }
+
+  bool _validateForm() {
+    if (_ppfAccountNumberController.text.isEmpty || _institutionNameController.text.isEmpty) {
+      if (_ppfAccountNumberController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('PPF Account Number is required')),
+        );
+      }
+      if (_institutionNameController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Institution Name is required')),
+        );
+      }
+      return false;
+    }
+    return true;
+  }
+
 }

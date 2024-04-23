@@ -10,6 +10,7 @@ import '../Update_asset_screens/Vehicle_Edit.dart';
 
 class VehicleScreen extends StatefulWidget {
   final String assetType;
+
   const VehicleScreen({Key? key, required this.assetType}) : super(key: key);
 
   @override
@@ -37,9 +38,12 @@ class _VehicleScreenState extends State<VehicleScreen> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.get("token");
 
-    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Vehicle');
-    final response =
-        await http.get(url, headers: {"Authorization": token.toString(),"ngrok-skip-browser-warning": "69420",});
+    final url =
+        Uri.parse('http://43.205.12.154:8080/v2/asset/category/Vehicle');
+    final response = await http.get(url, headers: {
+      "Authorization": token.toString(),
+      "ngrok-skip-browser-warning": "69420",
+    });
 
     if (response.statusCode == 200) {
       final data = VehicleResponse.fromJson(jsonDecode(response.body));
@@ -74,7 +78,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
         title: const Text('Vehicle', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : vehicles.isNotEmpty == true
               ? ListView.builder(
                   itemCount: vehicles.length,
@@ -84,120 +88,112 @@ class _VehicleScreenState extends State<VehicleScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () async {
-                                    final updatedvehicle =
-                                    await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => VehicleEdit(
-                                          vehicle: vehicle,
-                                          assetType: category,
-                                        ),
-                                      ),
-                                    );
-                                    if (updatedvehicle != null) {
-                                      setState(() {
-                                        vehicles[index] = updatedvehicle;
-                                      });
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                            Text('vehicleType: ${vehicle.vehicleType}',),
-                            const SizedBox(height: 8.0),
-                            Text('brandName: ${vehicle.brandName}'),
-                            const SizedBox(height: 8.0),
-                            Text('modelName: ${vehicle.modelName}'),
-                            const SizedBox(height: 8.0),
-                            Text(
-                                'registrationNumber: ${vehicle.registrationNumber}'),
-                            const SizedBox(height: 8.0),
-                            Text('chassisNumber: ${vehicle.chassisNumber}'),
-                            const SizedBox(height: 8.0),
-                            Text('comments: ${vehicle.comments}'),
-                            const SizedBox(height: 8.0),
-                            Text('attachment: ${vehicle.attachment}'),
-                            const SizedBox(height: 8.0),
-                            ElevatedButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder:
-                                      (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
-                                      content: const Text(
-                                          "Are you sure you want to delete this Asset?"),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: const Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: const Text(
-                                            "Confirm",
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
-                                            setState(() {
-                                              vehicles!
-                                                  .removeAt(
-                                                  index);
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
-                                ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
-                              ),
-                              child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
-                                  SizedBox(width: 5),
-                                  Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () async {
+                                      final updatedvehicle =
+                                          await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => VehicleEdit(
+                                            vehicle: vehicle,
+                                            assetType: category,
+                                          ),
+                                        ),
+                                      );
+                                      if (updatedvehicle != null) {
+                                        setState(() {
+                                          vehicles[index] = updatedvehicle;
+                                        });
+                                      }
+                                    },
+                                  ),
                                 ],
                               ),
-                            ),
-                          ]
-                        ),
+                              Text(
+                                'vehicleType: ${vehicle.vehicleType}',
+                              ),
+                              const SizedBox(height: 8.0),
+                              Text('brandName: ${vehicle.brandName}'),
+                              const SizedBox(height: 8.0),
+                              Text('modelName: ${vehicle.modelName}'),
+                              const SizedBox(height: 8.0),
+                              Text(
+                                  'registrationNumber: ${vehicle.registrationNumber}'),
+                              const SizedBox(height: 8.0),
+                              Text('chassisNumber: ${vehicle.chassisNumber}'),
+                              const SizedBox(height: 8.0),
+                              Text('comments: ${vehicle.comments}'),
+                              const SizedBox(height: 8.0),
+                              Text('attachment: ${vehicle.attachment}'),
+                              const SizedBox(height: 8.0),
+                              ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Delete Asset?"),
+                                        content: const Text(
+                                            "Are you sure you want to delete this Asset?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text(
+                                              "Cancel",
+                                              style: TextStyle(
+                                                color: Color(0xff429bb8),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text(
+                                              "Confirm",
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              Navigator.of(context).pop();
+                                              deleteAssetStatus(index);
+                                              List<Vehicle> newvehicle =
+                                                  <Vehicle>[];
+                                              newvehicle.addAll(vehicles);
+                                              newvehicle.removeAt(index);
+                                              setState(() {
+                                                vehicles = newvehicle;
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  backgroundColor: const Color(0xff429bb8),
+                                ),
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.delete, color: Colors.white),
+                                    SizedBox(width: 5),
+                                    Text("Delete",
+                                        style: TextStyle(color: Colors.white)),
+                                  ],
+                                ),
+                              ),
+                            ]),
                       ),
                     );
                   },
@@ -215,7 +211,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  VehicleAdd(
+              builder: (context) => VehicleAdd(
                 assetType: category,
               ),
             ),
@@ -243,8 +239,8 @@ class _VehicleScreenState extends State<VehicleScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
-    final mutualFund = vehicles[index];
+  Future<void> deleteAssetStatus(int index) async {
+    final vehicle = vehicles[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -258,33 +254,12 @@ class _VehicleScreenState extends State<VehicleScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${mutualFund.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${vehicle.assetId}',
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          vehicles.removeAt(index);
-          getData();
-        });
-
-        // Call getData() outside setState() to ensure immediate UI update
-
-        DisplayUtils.showToast(" non life insurance successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete non life insurance. ${response.data}");
+        DisplayUtils.showToast(" Vehicle details successfully deleted.");
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }

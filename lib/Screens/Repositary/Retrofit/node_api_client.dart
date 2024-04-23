@@ -33,6 +33,8 @@ import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/StockBrokerRe
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/VehicleRequest.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/VehicleResponse.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/GetAssetResponse.dart';
+import 'package:Bsure_devapp/Screens/Repositary/Models/Nominee_models/Add_Nominee_req.dart';
+import 'package:Bsure_devapp/Screens/Repositary/Models/Nominee_models/Add_Nominee_res.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import '../Models/AssetModels/BondResponse.dart';
@@ -47,8 +49,8 @@ import '../Models/OtpVerifyResponse.dart';
 part 'node_api_client.g.dart';
 
 //@RestApi(baseUrl: 'https://api.bsure.live')
-@RestApi(baseUrl: 'https://wgflssl8-8080.inc1.devtunnels.ms')
-//@RestApi(baseUrl: 'http://43.205.12.154:8080')
+//@RestApi(baseUrl: 'https://wgflssl8-8080.inc1.devtunnels.ms')
+@RestApi(baseUrl: 'http://43.205.12.154:8080')
 
 abstract class NodeClient {
   factory NodeClient(Dio dio) = _NodeClient;
@@ -152,4 +154,12 @@ abstract class NodeClient {
   @POST("/v2/asset")
   Future<EsopResponse> CreateEsop(
       @Header('Authorization') String token, @Body() EsopRequest req);
+
+
+  // Nominees
+
+  @POST("/v2/nominee")
+  Future<AddNomineeResponse> AddNominee(
+      @Header('Authorization') String token, @Body() AddNomineeRequest req);
+
 }

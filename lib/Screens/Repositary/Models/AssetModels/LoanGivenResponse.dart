@@ -55,7 +55,7 @@ class LoanGiven {
   int? id;
   String? borrowerName;
   int? loanAmount;
-  Null? loanGivenDate;
+  String? loanGivenDate;
   int? interestRate;
   String? comments;
   String? attachment;

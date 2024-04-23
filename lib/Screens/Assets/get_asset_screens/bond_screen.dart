@@ -4,13 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../Repositary/Models/get_asset_models/bond.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../Update_asset_screens/Bond_Edit.dart';
 
 class BondScreen extends StatefulWidget {
   final String assetType;
+
   const BondScreen({Key? key, required this.assetType}) : super(key: key);
 
   @override
@@ -39,8 +39,10 @@ class _BondScreenState extends State<BondScreen> {
     var token = prefs.get("token");
 
     final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Bond');
-    final response =
-        await http.get(url, headers: {"Authorization": token.toString(),"ngrok-skip-browser-warning": "69420",});
+    final response = await http.get(url, headers: {
+      "Authorization": token.toString(),
+      "ngrok-skip-browser-warning": "69420",
+    });
 
     if (response.statusCode == 200) {
       final data = BondResponse.fromJson(jsonDecode(response.body));
@@ -75,7 +77,7 @@ class _BondScreenState extends State<BondScreen> {
         title: const Text('Bond', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : bond.isNotEmpty == true
               ? ListView.builder(
                   itemCount: bond.length,
@@ -93,12 +95,11 @@ class _BondScreenState extends State<BondScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   onPressed: () async {
-                                    final updatedbond =
-                                    await Navigator.push(
+                                    final updatedbond = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => BondEdit(
-                                          bond : bonds,
+                                          bond: bonds,
                                           assetType: category,
                                         ),
                                       ),
@@ -112,8 +113,7 @@ class _BondScreenState extends State<BondScreen> {
                                 ),
                               ],
                             ),
-                            Text(
-                              'bondName: ${bonds.bondName}'),
+                            Text('bondName: ${bonds.bondName}'),
                             const SizedBox(height: 8.0),
                             Text('bondNumber: ${bonds.bondNumber}'),
                             const SizedBox(height: 8.0),
@@ -132,11 +132,9 @@ class _BondScreenState extends State<BondScreen> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (BuildContext context) {
+                                  builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
+                                      title: const Text("Delete Asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -144,13 +142,11 @@ class _BondScreenState extends State<BondScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
+                                              color: Color(0xff429bb8),
                                             ),
                                           ),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
@@ -161,14 +157,13 @@ class _BondScreenState extends State<BondScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<Bond> newbond = <Bond>[];
+                                            newbond.addAll(bond);
+                                            newbond.removeAt(index);
                                             setState(() {
-                                              bond!
-                                                  .removeAt(
-                                                  index);
+                                              bond = newbond;
                                             });
                                           },
                                         ),
@@ -179,22 +174,17 @@ class _BondScreenState extends State<BondScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
+                                backgroundColor: const Color(0xff429bb8),
                               ),
                               child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
+                                  Icon(Icons.delete, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                      style: TextStyle(color: Colors.white)),
                                 ],
                               ),
                             ),
@@ -217,7 +207,7 @@ class _BondScreenState extends State<BondScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  BondAdd(
+              builder: (context) => BondAdd(
                 assetType: category,
               ),
             ),
@@ -244,8 +234,9 @@ class _BondScreenState extends State<BondScreen> {
       ),
     );
   }
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
-    final mutualFund = bond[index];
+
+  Future<void> deleteAssetStatus(int index) async {
+    final Bond = bond[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -259,33 +250,12 @@ class _BondScreenState extends State<BondScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${mutualFund.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${Bond.assetId}',
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          bond.removeAt(index);
-          getData();
-        });
-
-        // Call getData() outside setState() to ensure immediate UI update
-
         DisplayUtils.showToast(" bond successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete bond. ${response.data}");
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }

@@ -5,10 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Repositary/Models/get_asset_models/bank_account.dart';
 import '../../Repositary/Models/get_asset_models/crypto_exchange.dart';
-import '../../Repositary/Retrofit/node_api_client.dart';
-import '../get_asset_screens/bank_account_screen.dart';
+import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/crypto_exchange_screen.dart';
 
 class CryptoExchangeEdit extends StatefulWidget {
@@ -112,6 +110,8 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
 
                 // Call API to update bank account details
                 final response = await updatecryptoexchange(updatedcryptoexchange);
+                DisplayUtils.showToast('Asset Updated Successfully');
+
                 Navigator.pop(context);
                 Navigator.pushReplacement<void, void>(
                   context,
@@ -124,12 +124,6 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
                 if (response != null) {
 
                 } else {
-                  // Handle error
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to update bank account'),
-                    ),
-                  );
                 }
               },
               child: const Text('Update'),

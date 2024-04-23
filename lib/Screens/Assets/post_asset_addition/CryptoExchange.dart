@@ -119,6 +119,11 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
   }
 
   void _submitForm() async {
+
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -160,4 +165,22 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
       print('Failed to submit data: $e');
     }
   }
+
+  bool _validateForm() {
+    if (_exchangeNameController.text.isEmpty || _accountNumberController.text.isEmpty) {
+      if (_exchangeNameController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Exchange Name is required')),
+        );
+      }
+      if (_accountNumberController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Account Number is required')),
+        );
+      }
+      return false;
+    }
+    return true;
+  }
+
 }

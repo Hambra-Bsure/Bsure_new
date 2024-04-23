@@ -13,7 +13,7 @@ class _NodeClient implements NodeClient {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://wgflssl8-8080.inc1.devtunnels.ms';
+    baseUrl ??= 'http://43.205.12.154:8080';
   }
 
   final Dio _dio;
@@ -335,7 +335,8 @@ class _NodeClient implements NodeClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
-    final _data = req;
+    final _data = <String, dynamic>{};
+    _data.addAll(req.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<PostOfficeAccountResponse>(Options(
       method: 'POST',
@@ -706,6 +707,38 @@ class _NodeClient implements NodeClient {
               baseUrl,
             ))));
     final value = EsopResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<AddNomineeResponse> AddNominee(
+    String token,
+    AddNomineeRequest req,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(req.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<AddNomineeResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/v2/nominee',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = AddNomineeResponse.fromJson(_result.data!);
     return value;
   }
 

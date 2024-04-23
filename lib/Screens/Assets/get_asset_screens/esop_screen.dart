@@ -11,6 +11,7 @@ import '../Update_asset_screens/Esop_Edit.dart';
 
 class EsopScreen extends StatefulWidget {
   final String assetType;
+
   const EsopScreen({Key? key, required this.assetType}) : super(key: key);
 
   @override
@@ -39,8 +40,10 @@ class _EsopScreenState extends State<EsopScreen> {
     var token = prefs.get("token");
 
     final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Esop');
-    final response =
-        await http.get(url, headers: {"Authorization": token.toString(),"ngrok-skip-browser-warning": "69420",});
+    final response = await http.get(url, headers: {
+      "Authorization": token.toString(),
+      "ngrok-skip-browser-warning": "69420",
+    });
 
     if (response.statusCode == 200) {
       final data = EsopResponse.fromJson(jsonDecode(response.body));
@@ -75,7 +78,7 @@ class _EsopScreenState extends State<EsopScreen> {
         title: const Text('Esop', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : esop.isNotEmpty == true
               ? ListView.builder(
                   itemCount: esop.length,
@@ -93,12 +96,11 @@ class _EsopScreenState extends State<EsopScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   onPressed: () async {
-                                    final updatedesop =
-                                    await Navigator.push(
+                                    final updatedesop = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => EsopEdit(
-                                          esop : esops,
+                                          esop: esops,
                                           assetType: category,
                                         ),
                                       ),
@@ -112,10 +114,10 @@ class _EsopScreenState extends State<EsopScreen> {
                                 ),
                               ],
                             ),
-                            Text(
-                              'companyName: ${esops.companyName}'),
+                            Text('companyName: ${esops.companyName}'),
                             const SizedBox(height: 8.0),
-                            Text('Number of Stocks: ${esops.numberOfStocks ?? 'N/A'}'),
+                            Text(
+                                'Number of Stocks: ${esops.numberOfStocks ?? 'N/A'}'),
                             const SizedBox(height: 8.0),
                             Text('optionPrice: ${esops.optionPrice}'),
                             const SizedBox(height: 8.0),
@@ -135,11 +137,9 @@ class _EsopScreenState extends State<EsopScreen> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (BuildContext context) {
+                                  builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
+                                      title: const Text("Delete Asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -147,13 +147,11 @@ class _EsopScreenState extends State<EsopScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
+                                              color: Color(0xff429bb8),
                                             ),
                                           ),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
@@ -164,14 +162,13 @@ class _EsopScreenState extends State<EsopScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<Esop> newesop = <Esop>[];
+                                            newesop.addAll(esop);
+                                            newesop.removeAt(index);
                                             setState(() {
-                                              esop!
-                                                  .removeAt(
-                                                  index);
+                                              esop = newesop;
                                             });
                                           },
                                         ),
@@ -182,22 +179,17 @@ class _EsopScreenState extends State<EsopScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
+                                backgroundColor: const Color(0xff429bb8),
                               ),
                               child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
+                                  Icon(Icons.delete, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                      style: TextStyle(color: Colors.white)),
                                 ],
                               ),
                             ),
@@ -220,7 +212,7 @@ class _EsopScreenState extends State<EsopScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  EsopAdd(
+              builder: (context) => EsopAdd(
                 assetType: category,
               ),
             ),
@@ -248,8 +240,8 @@ class _EsopScreenState extends State<EsopScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
-    final mutualFund = esop[index];
+  Future<void> deleteAssetStatus(int index) async {
+    final Esop = esop[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -263,33 +255,12 @@ class _EsopScreenState extends State<EsopScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${mutualFund.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${Esop.assetId}',
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          esop.removeAt(index);
-          getData();
-        });
-
-        // Call getData() outside setState() to ensure immediate UI update
-
-        DisplayUtils.showToast(" non life insurance successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete non life insurance. ${response.data}");
+        DisplayUtils.showToast(" esop successfully deleted.");
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }

@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/bank_account.dart';
 import '../../Repositary/Models/get_asset_models/mutual_fund.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
+import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/bank_account_screen.dart';
 
 class MutualFundEdit extends StatefulWidget {
@@ -123,6 +124,8 @@ class _MutualFundEditState extends State<MutualFundEdit> {
 
                 // Call API to update bank account details
                 final response = await updateMutualFund(updatedFund);
+                DisplayUtils.showToast('Asset Updated Successfully');
+
                 Navigator.pop(context, updatedFund);
                 Navigator.pushReplacement<void, void>(
                   context,
@@ -135,12 +138,6 @@ class _MutualFundEditState extends State<MutualFundEdit> {
                 if (response != null) {
 
                 } else {
-                  // Handle error
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to update bank account'),
-                    ),
-                  );
                 }
               },
               child: const Text('Update'),

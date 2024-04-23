@@ -187,13 +187,18 @@ class _BondAddState extends State<BondAdd> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _maturityDateController.text = "${picked.toLocal()}".split(' ')[0];
+        _maturityDateController.text = picked.toIso8601String();
       });
     }
   }
 
+
   // Inside your _submitForm method
   Future<void> _submitForm() async {
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -214,7 +219,10 @@ class _BondAddState extends State<BondAdd> {
       bondNumber: _bondNumberController.text,
       authorityWhoIssuedTheBond: _authorityController.text,
       typeOfBond: _typeOfBondController.text,
-      maturityDate: _maturityDateController.text,
+      maturityDate: _maturityDateController.text == ""
+          ? null
+          : _maturityDateController
+          .text,
       comments: _commentsController.text,
       attachment: _attachmentController.text,
     );
@@ -234,5 +242,37 @@ class _BondAddState extends State<BondAdd> {
     } catch (e) {
       print('Failed to submit data: $e');
     }
+  }
+
+  bool _validateForm() {
+    if (_bondNameController.text.isEmpty ||
+        _bondNumberController.text.isEmpty ||
+        _authorityController.text.isEmpty ||
+        _typeOfBondController.text.isEmpty ||
+        _maturityDateController.text.isEmpty) {
+      if (_bondNameController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Bond Name is required')),
+        );
+      } else if (_bondNumberController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Bond Number is required')),
+        );
+      } else if (_authorityController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Authority Who Issued The Bond is required')),
+        );
+      } else if (_typeOfBondController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Type of Bond is required')),
+        );
+      } else if (_maturityDateController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Maturity Date is required')),
+        );
+      }
+      return false;
+    }
+    return true;
   }
 }

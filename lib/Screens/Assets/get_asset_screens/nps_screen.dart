@@ -38,8 +38,10 @@ class _NpsScreenState extends State<NpsScreen> {
     var token = prefs.get("token");
 
     final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Nps');
-    final response =
-        await http.get(url, headers: {"Authorization": token.toString(),"ngrok-skip-browser-warning": "69420",});
+    final response = await http.get(url, headers: {
+      "Authorization": token.toString(),
+      "ngrok-skip-browser-warning": "69420",
+    });
 
     if (response.statusCode == 200) {
       final data = NPSResponse.fromJson(jsonDecode(response.body));
@@ -74,7 +76,7 @@ class _NpsScreenState extends State<NpsScreen> {
         title: const Text('Nps', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : nps.isNotEmpty == true
               ? ListView.builder(
                   itemCount: nps.length,
@@ -96,7 +98,8 @@ class _NpsScreenState extends State<NpsScreen> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => NpsEdit(
-                                          nps: Nps, // Pass the CryptoExchange object
+                                          nps:
+                                              Nps, // Pass the CryptoExchange object
                                           assetType: category,
                                         ),
                                       ),
@@ -120,11 +123,9 @@ class _NpsScreenState extends State<NpsScreen> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (BuildContext context) {
+                                  builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
+                                      title: const Text("Delete Asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -132,13 +133,11 @@ class _NpsScreenState extends State<NpsScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
+                                              color: Color(0xff429bb8),
                                             ),
                                           ),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
@@ -149,14 +148,14 @@ class _NpsScreenState extends State<NpsScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<NPS> newnps =
+                                            <NPS>[];
+                                            newnps.addAll(nps);
+                                            newnps.removeAt(index);
                                             setState(() {
-                                              nps!
-                                                  .removeAt(
-                                                  index);
+                                              nps = newnps;
                                             });
                                           },
                                         ),
@@ -167,22 +166,17 @@ class _NpsScreenState extends State<NpsScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
+                                backgroundColor: const Color(0xff429bb8),
                               ),
                               child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
+                                  Icon(Icons.delete, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                      style: TextStyle(color: Colors.white)),
                                 ],
                               ),
                             ),
@@ -233,7 +227,7 @@ class _NpsScreenState extends State<NpsScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
+  Future<void> deleteAssetStatus(int index) async {
     final Nps = nps[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -252,29 +246,8 @@ class _NpsScreenState extends State<NpsScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          nps.removeAt(index);
-          getData();
-        });
-
-        // Call getData() outside setState() to ensure immediate UI update
-
         DisplayUtils.showToast("Nps  successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete Nps. ${response.data}");
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }

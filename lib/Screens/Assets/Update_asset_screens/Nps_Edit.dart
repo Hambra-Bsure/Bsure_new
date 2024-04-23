@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/GetAssetResponse.dart';
 import '../../Repositary/Models/get_asset_models/Nps.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
+import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/bank_account_screen.dart';
 
 class NpsEdit extends StatefulWidget {
@@ -89,6 +90,8 @@ class _NPSEditState extends State<NpsEdit> {
 
                 // Call API to update bank account details
                 final response = await updateNps(updatednps);
+                DisplayUtils.showToast('Asset Updated Successfully');
+
                 Navigator.pop(context);
                 Navigator.pushReplacement<void, void>(
                   context,
@@ -100,12 +103,6 @@ class _NPSEditState extends State<NpsEdit> {
                 );
                 if (response != null) {
                 } else {
-                  // Handle error
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to update bank account'),
-                    ),
-                  );
                 }
               },
               child: const Text('Update'),

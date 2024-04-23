@@ -55,7 +55,7 @@ class _VehicleAddState extends State<VehicleAdd> {
                   child: Text(type.toString().split('.').last),
                 );
               }).toList(),
-              labelText: 'Vehicle Type',
+              labelText: ' Select Vehicle Type',
               mandatory: true,
             ),
             buildTextField(
@@ -178,17 +178,22 @@ class _VehicleAddState extends State<VehicleAdd> {
           value: value,
           onChanged: onChanged,
           items: items,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
+            labelText: labelText, // Update to include labelText as label
             border: OutlineInputBorder(),
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
     );
   }
 
+
   void _submitForm() async {
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -231,4 +236,26 @@ class _VehicleAddState extends State<VehicleAdd> {
       // Handle errors
     }
   }
+
+  bool _validateForm() {
+    if (_selectedVehicleType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vehicle Type is required')),
+      );
+      return false;
+    } else if (_brandNameController.value.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Brand Name is required')),
+      );
+      return false;
+    } else if (_registrationNumberController.value.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration Number is required')),
+      );
+      return false;
+    }
+    return true;
+  }
+
+
 }

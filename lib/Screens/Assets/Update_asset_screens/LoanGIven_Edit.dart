@@ -3,8 +3,10 @@ import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/real_estate_screen
 import 'package:Bsure_devapp/Screens/Repositary/Models/get_asset_models/loan_given.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/real_estate.dart';
+import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/bank_account_screen.dart';
 import '../get_asset_screens/loan_given_screen.dart';
 
@@ -45,7 +47,7 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit Real Estate',
+        title: const Text('Edit Loan Given',
             style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
@@ -73,12 +75,13 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
                 },
               ),
               TextFormField(
-                initialValue: loanGivenDate,
-                decoration: const InputDecoration(labelText: 'Loan Given Date'),
-                onChanged: (value) {
-                  setState(() {
-                    loanGivenDate = value;
-                  });
+                controller: TextEditingController(
+                  text: loanGivenDate,
+                ),
+                // Format date as text
+                decoration: const InputDecoration(labelText: 'Maturity Date'),
+                onTap: () {
+                  _selectDate(context);
                 },
               ),
               TextFormField(
@@ -127,6 +130,7 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
                   // Call API to update real estate details
                   final response = await updateLoan(updatedloan);
                   print(response);
+                  DisplayUtils.showToast('Asset Updated Successfully');
 
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
@@ -146,6 +150,25 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
       ),
     );
   }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime initialDateTime = DateTime.parse(loanGivenDate);
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDateTime, // Pass DateTime object
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != initialDateTime) {
+      setState(() {
+        loanGivenDate = picked.toIso8601String(); // Convert DateTime to String
+      });
+    }
+  }
+
+
 
   Future<LoanGiven?> updateLoan(LoanGiven loanGiven) async {
     final prefs = await SharedPreferences.getInstance();

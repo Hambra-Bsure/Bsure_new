@@ -53,41 +53,41 @@ class Asset {
 
 class PostOfficeAccount {
   int? id;
-  String? branchName;
+  String branchName;
   String? accountNumber;
-  String? accountType;
+  String accountType;
   String? comments;
   String? attachment;
   int? assetId;
 
-  PostOfficeAccount(
-      {this.id,
-        this.branchName,
-        this.accountNumber,
-        this.accountType,
-        this.comments,
-        this.attachment,
-        this.assetId});
+  PostOfficeAccount({
+    this.id,
+    required this.branchName,
+    required this.accountNumber,
+    required this.accountType,
+    this.comments,
+    this.attachment,
+    this.assetId,
+  });
 
-  PostOfficeAccount.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    branchName = json['branchName'];
-    accountNumber = json['accountNumber'];
-    accountType = json['accountType'];
-    comments = json['comments'];
-    attachment = json['attachment'];
-    assetId = json['assetId'];
-  }
+  PostOfficeAccount.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        branchName = json['branchName'],
+        accountNumber = json['accountNumber'],
+        accountType = json['accountType'],
+        comments = json['comments'],
+        attachment = json['attachment'],
+        assetId = json['assetId'];
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['branchName'] = this.branchName;
-    data['accountNumber'] = this.accountNumber;
-    data['accountType'] = this.accountType;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
-    return data;
+    return {
+      'id': id,
+      'branchName': branchName,
+      'accountNumber': accountNumber,
+      'accountType': accountType,
+      'comments': comments,
+      'attachment': attachment,
+      'assetId': assetId,
+    };
   }
 }

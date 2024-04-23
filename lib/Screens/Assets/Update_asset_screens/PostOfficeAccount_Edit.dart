@@ -8,13 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Repositary/Models/get_asset_models/post_office_account.dart';
+import '../../Utils/DisplayUtils.dart';
 
 class PostOfficeAccountEdit extends StatefulWidget {
   final PostOfficeAccount postOffice;
   final String assetType;
 
-  const PostOfficeAccountEdit({super.key, required this.postOffice, required this.assetType});
-
+  const PostOfficeAccountEdit(
+      {super.key, required this.postOffice, required this.assetType});
 
   @override
   _PostOfficeAccountEditState createState() => _PostOfficeAccountEditState();
@@ -43,7 +44,8 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit Post Office Account', style: TextStyle(color: Colors.white)),
+        title: const Text('Edit Post Office Account',
+            style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -75,7 +77,11 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
                   accountType = value!;
                 });
               },
-              items: <String>{'Saving', 'Current', 'Salary'} // Convert to a set to remove duplicates
+              items: <String>{
+                'Saving',
+                'Current',
+                'Salary'
+              } // Convert to a set to remove duplicates
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -118,23 +124,20 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
 
                 // Call API to update non-life insurance details
                 final response = await updatePostOfficeAccount(updatedPostOfficeAccount);
+                print(response);
+                DisplayUtils.showToast('Asset Updated Successfully');
+
+                Navigator.pop(context);
+                Navigator.pushReplacement<void, void>(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => PostofficeAccountScreen(
+                      assetType: widget.assetType,
+                    ),
+                  ),
+                );
                 if (response != null) {
-                  Navigator.pop(context);
-                  Navigator.pushReplacement<void, void>(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => PostofficeAccountScreen(
-                        assetType: widget.assetType,
-                      ),
-                    ),
-                  );
                 } else {
-                  // Handle error
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to update Non-life insurance'),
-                    ),
-                  );
                 }
               },
               child: const Text('Update'),
@@ -145,7 +148,8 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
     );
   }
 
-  Future<PostOfficeAccount?> updatePostOfficeAccount(PostOfficeAccount postOfficeAccount) async {
+  Future<PostOfficeAccount?> updatePostOfficeAccount(
+      PostOfficeAccount postOfficeAccount) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -160,7 +164,8 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
     try {
       final response = await dio.put(
         'http://43.205.12.154:8080/v2/asset/${postOfficeAccount.assetId}',
-        data: postOfficeAccount.toJson(), // Convert account object to JSON and send as request body
+        data: postOfficeAccount
+            .toJson(), // Convert account object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {

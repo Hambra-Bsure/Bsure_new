@@ -9,16 +9,14 @@ import '../get_asset_screens/non_life_insurance_screen.dart';
 class NonLifeInsuranceAdd extends StatefulWidget {
   final String assetType;
 
-  const NonLifeInsuranceAdd({Key? key, required this.assetType})
-      : super(key: key);
+  const NonLifeInsuranceAdd({Key? key, required this.assetType}) : super(key: key);
 
   @override
   _NonLifeInsuranceAddState createState() => _NonLifeInsuranceAddState();
 }
 
 class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
-  final TextEditingController _insuranceCompanyNameController =
-      TextEditingController();
+  final TextEditingController _insuranceCompanyNameController = TextEditingController();
   final TextEditingController _policyNameController = TextEditingController();
   final TextEditingController _policyNumberController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
@@ -38,8 +36,7 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Non-Life Insurance',
-            style: TextStyle(color: Colors.white)),
+        title: const Text('Non-Life Insurance', style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -53,51 +50,7 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
                 mandatory: true,
               ),
               const SizedBox(height: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: const TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Type of Insurance ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '*',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: _selectedDropdownValue,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedDropdownValue = value;
-                      });
-                    },
-                    items: _insuranceTypes.map((type) {
-                      return DropdownMenuItem<String>(
-                        value: type,
-                        child: Text(type),
-                      );
-                    }).toList(),
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 12.0, horizontal: 16.0),
-                    ),
-                  ),
-                ],
-              ),
+              buildDropdownField(),
               const SizedBox(height: 16),
               buildTextField(
                 controller: _policyNameController,
@@ -121,8 +74,7 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed:
-                      _selectedDropdownValue != null ? _submitForm : null,
+                  onPressed: _submitForm,
                   child: const Text('Submit'),
                 ),
               ),
@@ -167,8 +119,60 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
           controller: controller,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildDropdownField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            children: [
+              const TextSpan(
+                text: 'Type of Insurance ',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const TextSpan(
+                text: '*',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _selectedDropdownValue,
+          onChanged: (value) {
+            setState(() {
+              _selectedDropdownValue = value!;
+            });
+          },
+          items: [
+            const DropdownMenuItem<String>(
+              value: null,
+              child: Text('Select Type'),
+            ),
+            ..._insuranceTypes.map((type) {
+              return DropdownMenuItem<String>(
+                value: type,
+                child: Text(type),
+              );
+            }),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -176,13 +180,14 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
   }
 
   void _submitForm() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token =
-        prefs.getString("token"); // Retrieve token from SharedPreferences
+    if (!_validateForm()) {
+      return;
+    }
 
-    // Check if token is null or empty
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("token");
+
     if (token == null || token.isEmpty) {
-      // Handle the case where token is not available
       print('Token is not available');
       return;
     }
@@ -191,8 +196,7 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
     final client = NodeClient(dio);
 
     try {
-      final response = await client.CreateNonLifeInsurance(
-        token,
+      final response = await client.CreateNonLifeInsurance(token,
         NonLifeInsuranceRequest(
           assetType: widget.assetType,
           insuranceCompanyName: _insuranceCompanyNameController.text,
@@ -204,7 +208,6 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
         ),
       );
 
-      // Handle response
       print(response.toJson());
 
       Navigator.pop(context);
@@ -215,20 +218,36 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
         ),
       );
 
-      // Clear text fields
       _insuranceCompanyNameController.clear();
       _policyNameController.clear();
       _policyNumberController.clear();
       _commentsController.clear();
       _attachmentController.clear();
 
-      // Reset dropdown value
       setState(() {
         _selectedDropdownValue = null;
       });
     } catch (e) {
-      // Handle error
       print(e.toString());
     }
   }
+
+  bool _validateForm() {
+    if (_insuranceCompanyNameController.text.isEmpty ||
+        _selectedDropdownValue == null) {
+      if (_insuranceCompanyNameController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Insurance Company Name is required')),
+        );
+      }
+      if (_selectedDropdownValue == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Type of Insurance is required')),
+        );
+      }
+      return false;
+    }
+    return true;
+  }
+
 }

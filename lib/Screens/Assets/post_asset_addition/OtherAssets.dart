@@ -105,6 +105,10 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
   }
 
   void _submitForm() async {
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -142,5 +146,16 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
       print('Failed to submit data: $e');
       // Handle errors
     }
+  }
+
+  bool _validateForm() {
+    if (_assetNameController.value.text.isEmpty) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Asset Name is required')),
+      );
+      return false;
+    }
+    return true;
   }
 }

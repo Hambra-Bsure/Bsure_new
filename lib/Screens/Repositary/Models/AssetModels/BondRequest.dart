@@ -4,19 +4,20 @@ class BondRequest {
   String? bondNumber;
   String? authorityWhoIssuedTheBond;
   String? typeOfBond;
-  String? maturityDate;
+  String? maturityDate; // Make maturityDate nullable
   String? comments;
   String? attachment;
 
-  BondRequest(
-      {this.assetType,
-        this.bondName,
-        this.bondNumber,
-        this.authorityWhoIssuedTheBond,
-        this.typeOfBond,
-        this.maturityDate,
-        this.comments,
-        this.attachment});
+  BondRequest({
+    this.assetType,
+    this.bondName,
+    this.bondNumber,
+    this.authorityWhoIssuedTheBond,
+    this.typeOfBond,
+    this.maturityDate = '', // Provide a default value for maturityDate
+    this.comments,
+    this.attachment,
+  });
 
   BondRequest.fromJson(Map<String, dynamic> json) {
     assetType = json['assetType'];
@@ -24,21 +25,21 @@ class BondRequest {
     bondNumber = json['bondNumber'];
     authorityWhoIssuedTheBond = json['authorityWhoIssuedTheBond'];
     typeOfBond = json['typeOfBond'];
-    maturityDate = json['maturityDate'];
+    maturityDate = json['maturityDate'] ?? ''; // Update maturityDate assignment
     comments = json['comments'];
     attachment = json['attachment'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetType'] = this.assetType;
-    data['bondName'] = this.bondName;
-    data['bondNumber'] = this.bondNumber;
-    data['authorityWhoIssuedTheBond'] = this.authorityWhoIssuedTheBond;
-    data['typeOfBond'] = this.typeOfBond;
-    data['maturityDate'] = this.maturityDate;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
+    final Map<String, dynamic> data = {};
+    data['assetType'] = assetType;
+    data['bondName'] = bondName;
+    data['bondNumber'] = bondNumber;
+    data['authorityWhoIssuedTheBond'] = authorityWhoIssuedTheBond;
+    data['typeOfBond'] = typeOfBond;
+    data['maturityDate'] = this.maturityDate; // Update maturityDate assignment
+    data['comments'] = comments;
+    data['attachment'] = attachment;
     return data;
   }
 }

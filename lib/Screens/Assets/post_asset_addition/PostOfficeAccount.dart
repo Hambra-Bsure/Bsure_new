@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/post_office_account_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/post_office_account.dart';
 import '../../Repositary/Models/AssetModels/PostOfficeAccountRequest.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
+
+enum AccountType {
+  Saving,
+  Current,
+  Salary,
+}
+
 
 class PostOfficeAccountAdd extends StatefulWidget {
   final String assetType;
@@ -17,12 +26,8 @@ class PostOfficeAccountAdd extends StatefulWidget {
   _PostOfficeAccountAddState createState() => _PostOfficeAccountAddState();
 }
 
-
-
-enum AccountTypePost {
-  Saving,
-  Current,
-  Salary,
+String accountTypeToString(AccountType type) {
+  return type.toString().split('.').last;
 }
 
 class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
@@ -33,13 +38,10 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
 
-  AccountTypePost? _selectedAccount;
+  //AccountType? _selectedAccount;
 
-  AccountTypePost _selectedAccountType = AccountTypePost.Saving;
+  AccountType? _selectedAccountType;
 
-  String accountTypeToString(AccountTypePost type) {
-    return type.toString().split('.').last;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,23 +113,30 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
           ],
         ),
         const SizedBox(height: 8),
-        DropdownButtonFormField<AccountTypePost>(
+        DropdownButtonFormField<AccountType>(
           value: _selectedAccountType,
           onChanged: (value) {
             setState(() {
-              _selectedAccountType = value!;
+              _selectedAccountType = value;
             });
           },
-          items: AccountTypePost.values.map((type) {
-            return DropdownMenuItem<AccountTypePost>(
-              value: type,
-              child: Text(accountTypeToString(type)),
-            );
-          }).toList(),
+          items: [
+            // Add a null value as the default option
+            const DropdownMenuItem<AccountType>(
+              value: null,
+              child: Text('Select Type'),
+            ),
+            // Add other account types
+            ...AccountType.values.map((type) {
+              return DropdownMenuItem<AccountType>(
+                value: type,
+                child: Text(accountTypeToString(type)),
+              );
+            }).toList(),
+          ],
           decoration: const InputDecoration(
-            border: OutlineInputBorder(), // Adding border to dropdown field
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -175,6 +184,11 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
   }
 
   void _submitForm() async {
+
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
@@ -186,15 +200,24 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
     final dio = Dio();
     final client = NodeClient(dio);
 
+    String accountTypeString; // Change type to String
+
+    if (_selectedAccountType != null) {
+      accountTypeString = accountTypeToString(_selectedAccountType!); // Convert AccountType to String
+    } else {
+      accountTypeString = accountTypeToString(AccountType.Saving); // Provide a default value
+    }
+
     final request = PostOfficeAccountRequest(
       assetType: widget.assetType,
       branchName: _branchNameController.text,
       accountNumber: _accountNumberController.text,
-      accountType: _selectedAccountType.toString(),
-      // Convert enum to string
+      accountType: accountTypeString, // Pass the converted string
       comments: _commentsController.text,
       attachment: _attachmentController.text,
     );
+
+    print(jsonEncode(request));
 
     try {
       final response = await client.CreatePostOfficeAccount(token, request);
@@ -209,9 +232,25 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
         ),
       );
 
-      Navigator.pop(context); // Close the current screen
     } catch (e) {
       // Handle errors
     }
+  }
+
+  bool _validateForm() {
+    if (_branchNameController.value.text.isEmpty ||
+        _selectedAccountType == null) {
+      if (_branchNameController.value.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Branch Name is required')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Account Type is required')),
+        );
+      }
+      return false;
+    }
+    return true;
   }
 }

@@ -201,6 +201,10 @@ class _EsopAddState extends State<EsopAdd> {
   }
 
   void _submitForm() async {
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -221,7 +225,8 @@ class _EsopAddState extends State<EsopAdd> {
       companyName: _companyNameController.text,
       numberOfStocks: int.tryParse(_numberOfStocksController.text),
       optionPrice: int.tryParse(_optionPriceController.text),
-      expiryDate: _expiryDateController.text,
+      expiryDate:
+          _expiryDateController.text == "" ? null : _expiryDateController.text,
       totalSharesAvailableForIssue: int.tryParse(_totalSharesController.text),
       issuePricePerShare: int.tryParse(_issuePriceController.text),
       comments: _commentsController.text,
@@ -232,7 +237,6 @@ class _EsopAddState extends State<EsopAdd> {
       final response = await client.CreateEsop(token, esopRequest);
       // Handle the response as needed
       if (response.success == true) {
-
         Navigator.pop(context);
         Navigator.pushReplacement(
           context,
@@ -240,23 +244,28 @@ class _EsopAddState extends State<EsopAdd> {
             builder: (context) => EsopScreen(assetType: widget.assetType),
           ),
         );
-
       } else {
         // Show error message or handle the error
       }
     } catch (e) {
       // Handle errors
     }
+  }
 
-    // After submitting the form, you might want to clear the form fields
-    _assetTypeController.clear();
-    _companyNameController.clear();
-    _numberOfStocksController.clear();
-    _optionPriceController.clear();
-    _expiryDateController.clear();
-    _totalSharesController.clear();
-    _issuePriceController.clear();
-    _commentsController.clear();
-    _attachmentController.clear();
+  bool _validateForm() {
+    if (_companyNameController.text.isEmpty ||
+        _numberOfStocksController.text.isEmpty) {
+      if (_companyNameController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Company Name is required')),
+        );
+      } else if (_numberOfStocksController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Number of Stocks is required')),
+        );
+      }
+      return false;
+    }
+    return true;
   }
 }

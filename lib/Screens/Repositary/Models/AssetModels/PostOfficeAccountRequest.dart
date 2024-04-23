@@ -1,10 +1,10 @@
 class PostOfficeAccountRequest {
-  final String assetType;
-  final String branchName;
-  final String? accountNumber;
-  final String accountType;
-  final String? comments;
-  final String? attachment;
+  late String assetType;
+  late String branchName;
+  String? accountNumber;
+  late String accountType;
+  String? comments;
+  String? attachment;
 
   PostOfficeAccountRequest({
     required this.assetType,
@@ -15,14 +15,24 @@ class PostOfficeAccountRequest {
     this.attachment,
   });
 
-  factory PostOfficeAccountRequest.fromJson(Map<String, dynamic> json) {
-    return PostOfficeAccountRequest(
-      assetType: json['assetType'],
-      branchName: json['branchName'],
-      accountNumber: json['accountNumber'],
-      accountType: json['accountType'],
-      comments: json['comments'],
-      attachment: json['attachment'],
-    );
+  PostOfficeAccountRequest.fromJson(Map<String, dynamic> json) {
+    assetType = json['assetType'];
+    branchName = json['branchName'];
+    accountNumber = json['accountNumber'];
+    accountType = json['accountType'];
+    comments = json['comments'];
+    attachment = json['attachment'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['assetType'] = assetType;
+    data['branchName'] = branchName;
+    data['accountNumber'] = accountNumber;
+    data['accountType'] = accountType;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+
+    return data;
   }
 }

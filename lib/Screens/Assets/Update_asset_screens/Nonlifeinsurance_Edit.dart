@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Utils/DisplayUtils.dart';
 
 class NonLifeInsuranceEdit extends StatefulWidget {
   final NonLifeInsurance nonlifeinsurance;
@@ -64,14 +65,26 @@ class _NonLifeInsuranceEditState extends State<NonLifeInsuranceEdit> {
                 });
               },
             ),
-            TextFormField(
-              initialValue: typeOfInsurance,
-              decoration: const InputDecoration(labelText: 'Type Of Insurance'),
+            DropdownButtonFormField<String>(
+              value: typeOfInsurance,
               onChanged: (value) {
                 setState(() {
-                  typeOfInsurance = value;
+                  typeOfInsurance = value!;
                 });
               },
+              items: <String>{
+                'Health Insurance',
+                'Property Insurance',
+                'Motor Insurance',
+                'Other'
+              } // Convert to a set to remove duplicates
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              decoration: const InputDecoration(labelText: 'Account Type'),
             ),
             TextFormField(
               initialValue: policyName,
@@ -127,6 +140,7 @@ class _NonLifeInsuranceEditState extends State<NonLifeInsuranceEdit> {
                 // Call API to update bank account details
                 final response =
                     await updateNonlifeInsurance(updatednonlifeinsurance);
+                DisplayUtils.showToast('Asset Updated Successfully');
                 Navigator.pop(context);
                 Navigator.pushReplacement<void, void>(
                   context,
@@ -137,14 +151,7 @@ class _NonLifeInsuranceEditState extends State<NonLifeInsuranceEdit> {
                   ),
                 );
                 if (response != null) {
-                } else {
-                  // Handle error
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to update Non life insurance'),
-                    ),
-                  );
-                }
+                } else {}
               },
               child: const Text('Update'),
             ),

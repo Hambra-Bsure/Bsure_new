@@ -10,6 +10,7 @@ import '../post_asset_addition/OtherAssets.dart';
 
 class OtherScreen extends StatefulWidget {
   final String assetType;
+
   const OtherScreen({Key? key, required this.assetType}) : super(key: key);
 
   @override
@@ -20,7 +21,7 @@ class _OtherScreenState extends State<OtherScreen> {
   List<Other> others = [];
   bool isLoading = false;
 
-  final String category = 'Others';
+  final String category = 'Other';
 
   @override
   void initState() {
@@ -37,8 +38,10 @@ class _OtherScreenState extends State<OtherScreen> {
     var token = prefs.get("token");
 
     final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Other');
-    final response =
-        await http.get(url, headers: {"Authorization": token.toString(),"ngrok-skip-browser-warning": "69420",});
+    final response = await http.get(url, headers: {
+      "Authorization": token.toString(),
+      "ngrok-skip-browser-warning": "69420",
+    });
 
     if (response.statusCode == 200) {
       final data = OtherResponse.fromJson(jsonDecode(response.body));
@@ -74,7 +77,7 @@ class _OtherScreenState extends State<OtherScreen> {
             style: TextStyle(color: Colors.white)), // Corrected title
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : others.isNotEmpty
               ? ListView.builder(
                   itemCount: others.length,
@@ -96,7 +99,7 @@ class _OtherScreenState extends State<OtherScreen> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => OtherEdit(
-                                          others: Others,  // Convert PPf to PPF
+                                          others: Others, // Convert PPf to PPF
                                           assetType: category,
                                         ),
                                       ),
@@ -110,7 +113,9 @@ class _OtherScreenState extends State<OtherScreen> {
                                 ),
                               ],
                             ),
-                            Text('assetName: ${Others.assetName}',),
+                            Text(
+                              'assetName: ${Others.assetName}',
+                            ),
                             const SizedBox(height: 8.0),
                             Text('comments: ${Others.comments}'),
                             const SizedBox(height: 8.0),
@@ -120,11 +125,9 @@ class _OtherScreenState extends State<OtherScreen> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (BuildContext context) {
+                                  builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
+                                      title: const Text("Delete Asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -132,13 +135,11 @@ class _OtherScreenState extends State<OtherScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
+                                              color: Color(0xff429bb8),
                                             ),
                                           ),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
@@ -149,14 +150,13 @@ class _OtherScreenState extends State<OtherScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<Other> newother = <Other>[];
+                                            newother.addAll(others);
+                                            newother.removeAt(index);
                                             setState(() {
-                                              others!
-                                                  .removeAt(
-                                                  index);
+                                              others = newother;
                                             });
                                           },
                                         ),
@@ -167,22 +167,17 @@ class _OtherScreenState extends State<OtherScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
+                                backgroundColor: const Color(0xff429bb8),
                               ),
                               child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
+                                  Icon(Icons.delete, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                      style: TextStyle(color: Colors.white)),
                                 ],
                               ),
                             ),
@@ -205,7 +200,7 @@ class _OtherScreenState extends State<OtherScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  OtherAssetAdd(
+              builder: (context) => OtherAssetAdd(
                 assetType: category,
               ),
             ),
@@ -233,7 +228,7 @@ class _OtherScreenState extends State<OtherScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
+  Future<void> deleteAssetStatus(int index) async {
     final mutualFund = others[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -252,29 +247,8 @@ class _OtherScreenState extends State<OtherScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          others.removeAt(index);
-          getData();
-        });
-
-        // Call getData() outside setState() to ensure immediate UI update
-
         DisplayUtils.showToast(" others successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete others. ${response.data}");
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }

@@ -5,8 +5,10 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/Vehicle.dart';
 import '../../Repositary/Models/get_asset_models/real_estate.dart';
+import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/bank_account_screen.dart';
 import '../get_asset_screens/vehicle_screen.dart';
+import '../post_asset_addition/VehicleScreen.dart';
 
 class VehicleEdit extends StatefulWidget {
   final Vehicle vehicle;
@@ -47,7 +49,7 @@ class _VehicleEditState extends State<VehicleEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit Real Estate',
+        title: const Text('Edit Vehicle',
             style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
@@ -56,13 +58,23 @@ class _VehicleEditState extends State<VehicleEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                initialValue: vehicleType,
-                decoration: const InputDecoration(labelText: 'Vehicle Type'),
-                onChanged: (value) {
-                  setState(() {
-                    vehicleType = value;
-                  });
+              DropdownButtonFormField<String>(
+                value: vehicleType,
+                decoration: const InputDecoration(
+                  labelText: 'Vehicle Type', // Set the label text
+                ),
+                items: <String>['Bike', 'Car'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  if (value != null) {
+                    setState(() {
+                      vehicleType = value;
+                    });
+                  }
                 },
               ),
               TextFormField(
@@ -140,6 +152,7 @@ class _VehicleEditState extends State<VehicleEdit> {
                   // Call API to update real estate details
                   final response = await updateVehicle(updatedVehicle);
                   print(response);
+                  DisplayUtils.showToast('Asset Updated Successfully');
 
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(

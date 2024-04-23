@@ -222,9 +222,9 @@ mixin _$LifeInsurance {
   String get insuranceCompanyName => throw _privateConstructorUsedError;
   String get policyName => throw _privateConstructorUsedError;
   String get policyNumber => throw _privateConstructorUsedError;
-  int get coverageAmount =>
+  int? get coverageAmount =>
       throw _privateConstructorUsedError; // Assuming coverageAmount is an integer
-  String get maturityDate => throw _privateConstructorUsedError;
+  String? get maturityDate => throw _privateConstructorUsedError;
   String get comments => throw _privateConstructorUsedError;
   String get attachment => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
@@ -246,8 +246,8 @@ abstract class $LifeInsuranceCopyWith<$Res> {
       String insuranceCompanyName,
       String policyName,
       String policyNumber,
-      int coverageAmount,
-      String maturityDate,
+      int? coverageAmount,
+      String? maturityDate,
       String comments,
       String attachment,
       int assetId});
@@ -270,8 +270,8 @@ class _$LifeInsuranceCopyWithImpl<$Res, $Val extends LifeInsurance>
     Object? insuranceCompanyName = null,
     Object? policyName = null,
     Object? policyNumber = null,
-    Object? coverageAmount = null,
-    Object? maturityDate = null,
+    Object? coverageAmount = freezed,
+    Object? maturityDate = freezed,
     Object? comments = null,
     Object? attachment = null,
     Object? assetId = null,
@@ -293,14 +293,14 @@ class _$LifeInsuranceCopyWithImpl<$Res, $Val extends LifeInsurance>
           ? _value.policyNumber
           : policyNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      coverageAmount: null == coverageAmount
+      coverageAmount: freezed == coverageAmount
           ? _value.coverageAmount
           : coverageAmount // ignore: cast_nullable_to_non_nullable
-              as int,
-      maturityDate: null == maturityDate
+              as int?,
+      maturityDate: freezed == maturityDate
           ? _value.maturityDate
           : maturityDate // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       comments: null == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
@@ -330,8 +330,8 @@ abstract class _$$LifeInsuranceImplCopyWith<$Res>
       String insuranceCompanyName,
       String policyName,
       String policyNumber,
-      int coverageAmount,
-      String maturityDate,
+      int? coverageAmount,
+      String? maturityDate,
       String comments,
       String attachment,
       int assetId});
@@ -352,8 +352,8 @@ class __$$LifeInsuranceImplCopyWithImpl<$Res>
     Object? insuranceCompanyName = null,
     Object? policyName = null,
     Object? policyNumber = null,
-    Object? coverageAmount = null,
-    Object? maturityDate = null,
+    Object? coverageAmount = freezed,
+    Object? maturityDate = freezed,
     Object? comments = null,
     Object? attachment = null,
     Object? assetId = null,
@@ -375,14 +375,14 @@ class __$$LifeInsuranceImplCopyWithImpl<$Res>
           ? _value.policyNumber
           : policyNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      coverageAmount: null == coverageAmount
+      coverageAmount: freezed == coverageAmount
           ? _value.coverageAmount
           : coverageAmount // ignore: cast_nullable_to_non_nullable
-              as int,
-      maturityDate: null == maturityDate
+              as int?,
+      maturityDate: freezed == maturityDate
           ? _value.maturityDate
           : maturityDate // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       comments: null == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
@@ -427,10 +427,10 @@ class _$LifeInsuranceImpl
   @override
   final String policyNumber;
   @override
-  final int coverageAmount;
+  final int? coverageAmount;
 // Assuming coverageAmount is an integer
   @override
-  final String maturityDate;
+  final String? maturityDate;
   @override
   final String comments;
   @override
@@ -517,8 +517,8 @@ abstract class _LifeInsurance implements LifeInsurance {
       required final String insuranceCompanyName,
       required final String policyName,
       required final String policyNumber,
-      required final int coverageAmount,
-      required final String maturityDate,
+      required final int? coverageAmount,
+      required final String? maturityDate,
       required final String comments,
       required final String attachment,
       required final int assetId}) = _$LifeInsuranceImpl;
@@ -535,9 +535,9 @@ abstract class _LifeInsurance implements LifeInsurance {
   @override
   String get policyNumber;
   @override
-  int get coverageAmount;
+  int? get coverageAmount;
   @override // Assuming coverageAmount is an integer
-  String get maturityDate;
+  String? get maturityDate;
   @override
   String get comments;
   @override

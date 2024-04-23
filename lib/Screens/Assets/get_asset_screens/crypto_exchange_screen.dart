@@ -78,7 +78,7 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
             style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : cryptoExchanges.isNotEmpty == true
               ? ListView.builder(
                   itemCount: cryptoExchanges.length,
@@ -96,18 +96,22 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   onPressed: () async {
-                                    final updatedCryptoExchange = await Navigator.push(
+                                    final updatedCryptoExchange =
+                                        await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => CryptoExchangeEdit(
-                                          cryptoexchange: Cryptoexchange, // Pass the CryptoExchange object
+                                        builder: (context) =>
+                                            CryptoExchangeEdit(
+                                          cryptoexchange: Cryptoexchange,
+                                          // Pass the CryptoExchange object
                                           assetType: category,
                                         ),
                                       ),
                                     );
                                     if (updatedCryptoExchange != null) {
                                       setState(() {
-                                        cryptoExchanges[index] = updatedCryptoExchange;
+                                        cryptoExchanges[index] =
+                                            updatedCryptoExchange;
                                       });
                                     }
                                   },
@@ -115,8 +119,7 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
                               ],
                             ),
                             Text(
-                              'exchangeName: ${Cryptoexchange.exchangeName}',
-                            ),
+                                'exchangeName: ${Cryptoexchange.exchangeName}'),
                             const SizedBox(height: 8.0),
                             Text(
                                 'accountNumber: ${Cryptoexchange.accountNumber}'),
@@ -124,7 +127,7 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
                             Text(
                                 'walletAddress: ${Cryptoexchange.walletAddress}'),
                             const SizedBox(height: 8.0),
-                            Text('comments: $Cryptoexchange.comments}'),
+                            Text('comments: ${Cryptoexchange.comments}'),
                             const SizedBox(height: 8.0),
                             Text('attachment: ${Cryptoexchange.attachment}'),
                             const SizedBox(height: 8.0),
@@ -132,11 +135,9 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (BuildContext context) {
+                                  builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
+                                      title: const Text("Delete Asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -144,13 +145,11 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
+                                              color: Color(0xff429bb8),
                                             ),
                                           ),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
@@ -161,14 +160,14 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<CryptoExchange> newcryptoexchange =
+                                            <CryptoExchange>[];
+                                            newcryptoexchange.addAll(cryptoExchanges);
+                                            newcryptoexchange.removeAt(index);
                                             setState(() {
-                                              cryptoExchanges!
-                                                  .removeAt(
-                                                  index);
+                                              cryptoExchanges = newcryptoexchange;
                                             });
                                           },
                                         ),
@@ -179,22 +178,17 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
+                                backgroundColor: const Color(0xff429bb8),
                               ),
                               child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
+                                  Icon(Icons.delete, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                      style: TextStyle(color: Colors.white)),
                                 ],
                               ),
                             ),
@@ -245,7 +239,7 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
+  Future<void> deleteAssetStatus(int index) async {
     final CryptoExchange = cryptoExchanges[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -273,20 +267,7 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
         // Call getData() outside setState() to ensure immediate UI update
 
         DisplayUtils.showToast("cryptoExchange successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete cryptoExchange. ${response.data}");
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }

@@ -114,6 +114,11 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
   }
 
   void _submitForm() async {
+
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -159,4 +164,22 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
     _commentsController.clear();
     _attachmentController.clear();
   }
+
+  bool _validateForm() {
+    if (_brokerNameController.value.text.isEmpty ||
+        _dematAccountNumberController.value.text.isEmpty) {
+      if (_brokerNameController.value.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Broker Name is required')),
+        );
+      } else if (_dematAccountNumberController.value.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Demat Account Number is required')),
+        );
+      }
+      return false;
+    }
+    return true;
+  }
+
 }

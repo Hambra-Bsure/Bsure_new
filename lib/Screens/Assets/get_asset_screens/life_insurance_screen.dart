@@ -40,8 +40,10 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
 
     final url =
         Uri.parse('http://43.205.12.154:8080/v2/asset/category/LifeInsurance');
-    final response =
-        await http.get(url, headers: {"Authorization": token.toString(),"ngrok-skip-browser-warning": "69420",});
+    final response = await http.get(url, headers: {
+      "Authorization": token.toString(),
+      "ngrok-skip-browser-warning": "69420",
+    });
 
     if (response.statusCode == 200) {
       final data = LifeInsuranceResponse.fromJson(jsonDecode(response.body));
@@ -77,7 +79,7 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
             const Text('Life Insurance', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : lifeInsurances.isNotEmpty == true
               ? ListView.builder(
                   itemCount: lifeInsurances.length,
@@ -95,7 +97,8 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   onPressed: () async {
-                                    final updatedInsurance = await Navigator.push(
+                                    final updatedInsurance =
+                                        await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => LifeInsuranceEdit(
@@ -106,14 +109,16 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                                     );
                                     if (updatedInsurance != null) {
                                       setState(() {
-                                        lifeInsurances[index] = updatedInsurance;
+                                        lifeInsurances[index] =
+                                            updatedInsurance;
                                       });
                                     }
                                   },
                                 ),
                               ],
                             ),
-                            Text('insuranceCompanyName: ${insurance.insuranceCompanyName}'),
+                            Text(
+                                'insuranceCompanyName: ${insurance.insuranceCompanyName}'),
                             const SizedBox(height: 8.0),
                             Text('policyName: ${insurance.policyName}'),
                             const SizedBox(height: 8.0),
@@ -131,11 +136,9 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (BuildContext context) {
+                                  builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
+                                      title: const Text("Delete Asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -143,13 +146,11 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
+                                              color: Color(0xff429bb8),
                                             ),
                                           ),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
@@ -160,14 +161,17 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<LifeInsurance>
+                                                newlifeInsurances =
+                                                <LifeInsurance>[];
+                                            newlifeInsurances
+                                                .addAll(lifeInsurances);
+                                            newlifeInsurances.removeAt(index);
                                             setState(() {
-                                              lifeInsurances!
-                                                  .removeAt(
-                                                  index);
+                                              lifeInsurances =
+                                                  newlifeInsurances;
                                             });
                                           },
                                         ),
@@ -178,22 +182,17 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
+                                backgroundColor: const Color(0xff429bb8),
                               ),
                               child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
+                                  Icon(Icons.delete, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                      style: TextStyle(color: Colors.white)),
                                 ],
                               ),
                             ),
@@ -216,7 +215,7 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  LifeInsuranceAdd(
+              builder: (context) => LifeInsuranceAdd(
                 assetType: category,
               ),
             ),
@@ -244,7 +243,7 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
+  Future<void> deleteAssetStatus(int index) async {
     final mutualFund = lifeInsurances[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -263,29 +262,9 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          lifeInsurances.removeAt(index);
-          getData();
-        });
-
-        // Call getData() outside setState() to ensure immediate UI update
-
         DisplayUtils.showToast("life insurance successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete life insurance. ${response.data}");
+
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }

@@ -123,6 +123,11 @@ class _MutualFundAddState extends State<MutualFundAdd> {
   }
 
   void _submitForm() async {
+
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -170,5 +175,17 @@ class _MutualFundAddState extends State<MutualFundAdd> {
     _fundTypeController.clear();
     _commentsController.clear();
     _attachmentController.clear();
+  }
+
+
+  bool _validateForm() {
+    if (_amcNameController.value.text.isEmpty) { // Check if AMC name is empty
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('AMC Name is required')),
+      );
+      return false;
+    }
+    return true;
   }
 }

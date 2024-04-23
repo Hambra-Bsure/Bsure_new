@@ -185,10 +185,11 @@ class _GoldAddState extends State<GoldAdd> {
           value: value,
           onChanged: onChanged,
           items: items,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
+            labelText: labelText, // Update to include labelText as label
             border: OutlineInputBorder(),
             contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -196,6 +197,10 @@ class _GoldAddState extends State<GoldAdd> {
   }
 
   void _submitForm() async {
+    if (!_validateForm()) {
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -241,5 +246,27 @@ class _GoldAddState extends State<GoldAdd> {
       print('Failed to submit data: $e');
       // Handle errors
     }
+  }
+
+  bool _validateForm() {
+    if (_selectedMetalType == null ||
+        _selectedType == null ||
+        _weightController.text.isEmpty) {
+      if (_selectedMetalType == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Metal Type is required')),
+        );
+      } else if (_selectedType == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Type is required')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Weight in grams is required')),
+        );
+      }
+      return false;
+    }
+    return true;
   }
 }

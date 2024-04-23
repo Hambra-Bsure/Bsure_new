@@ -79,7 +79,7 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
             style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : nonlifeInsurances.isNotEmpty == true
               ? ListView.builder(
                   itemCount: nonlifeInsurances.length,
@@ -137,11 +137,9 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (BuildContext context) {
+                                  builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
+                                      title: const Text("Delete Asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -149,13 +147,11 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
+                                              color: Color(0xff429bb8),
                                             ),
                                           ),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
@@ -166,14 +162,17 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<NonLifeInsurance>
+                                                newnonlifeinsurance =
+                                                <NonLifeInsurance>[];
+                                            newnonlifeinsurance
+                                                .addAll(nonlifeInsurances);
+                                            newnonlifeinsurance.removeAt(index);
                                             setState(() {
-                                              nonlifeInsurances!
-                                                  .removeAt(
-                                                  index);
+                                              nonlifeInsurances =
+                                                  newnonlifeinsurance;
                                             });
                                           },
                                         ),
@@ -184,22 +183,17 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
+                                backgroundColor: const Color(0xff429bb8),
                               ),
                               child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
+                                  Icon(Icons.delete, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                      style: TextStyle(color: Colors.white)),
                                 ],
                               ),
                             ),
@@ -250,7 +244,7 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
+  Future<void> deleteAssetStatus(int index) async {
     final mutualFund = nonlifeInsurances[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -269,29 +263,8 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          nonlifeInsurances.removeAt(index);
-          getData();
-        });
-
-        // Call getData() outside setState() to ensure immediate UI update
-
         DisplayUtils.showToast(" non life insurance successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete non life insurance. ${response.data}");
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }

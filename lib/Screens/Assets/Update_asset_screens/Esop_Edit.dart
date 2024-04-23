@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/esop.dart';
+import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/bond_screen.dart';
 import '../get_asset_screens/esop_screen.dart';
 
@@ -84,12 +85,13 @@ class _EsopEditState extends State<EsopEdit> {
                 },
               ),
               TextFormField(
-                initialValue: expiryDate,
-                decoration: const InputDecoration(labelText: 'Expiry Date'),
-                onChanged: (value) {
-                  setState(() {
-                    expiryDate = value;
-                  });
+                controller: TextEditingController(
+                  text: expiryDate,
+                ),
+                // Format date as text
+                decoration: const InputDecoration(labelText: 'Maturity Date'),
+                onTap: () {
+                  _selectDate(context);
                 },
               ),
               TextFormField(
@@ -151,6 +153,7 @@ class _EsopEditState extends State<EsopEdit> {
                   // Call API to update Esop details
                   final response = await updateEsop(updatedEsop);
                   print(response);
+                  DisplayUtils.showToast('Asset Updated Successfully');
 
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
@@ -170,6 +173,24 @@ class _EsopEditState extends State<EsopEdit> {
       ),
     );
   }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime initialDateTime = DateTime.parse(expiryDate);
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDateTime, // Pass DateTime object
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != initialDateTime) {
+      setState(() {
+        expiryDate = picked.toIso8601String(); // Convert DateTime to String
+      });
+    }
+  }
+
 
   Future<Esop?> updateEsop(Esop esop) async {
     final prefs = await SharedPreferences.getInstance();

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/life_insurance_screen.dart';
+import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,9 +38,13 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
     insuranceCompanyName = widget.insurance.insuranceCompanyName;
     policyName = widget.insurance.policyName;
     policyNumber = widget.insurance.policyNumber;
-    coverageAmount = widget.insurance.coverageAmount.toString();
-    maturityDate = DateTime.parse(widget.insurance.maturityDate);
-    comments= widget.insurance.comments;
+    coverageAmount = widget.insurance.coverageAmount != null
+        ? widget.insurance.coverageAmount.toString()
+        : ''; // Initialize coverage amount with empty string if null
+    maturityDate = widget.insurance.maturityDate != null
+        ? DateTime.parse(widget.insurance.maturityDate!)
+        : DateTime.now(); // Use DateTime.now() as default value
+    comments = widget.insurance.comments;
     attachment = widget.insurance.attachment;
   }
 
@@ -50,10 +55,12 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
       firstDate: DateTime(1900),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != maturityDate)
+    if (picked != null && picked != maturityDate) {
+      final String formattedDate = picked.toIso8601String();
       setState(() {
-        maturityDate = picked;
+        maturityDate = DateTime.parse(formattedDate);
       });
+    }
   }
 
   @override
@@ -71,7 +78,8 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
           children: [
             TextFormField(
               initialValue: insuranceCompanyName,
-              decoration: const InputDecoration(labelText: 'Insurance Company Name'),
+              decoration:
+                  const InputDecoration(labelText: 'Insurance Company Name'),
               onChanged: (value) {
                 setState(() {
                   insuranceCompanyName = value;
@@ -80,8 +88,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
             ),
             TextFormField(
               initialValue: policyName,
-              decoration:
-              const InputDecoration(labelText: 'Policy Name'),
+              decoration: const InputDecoration(labelText: 'Policy Name'),
               onChanged: (value) {
                 setState(() {
                   policyName = value;
@@ -90,8 +97,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
             ),
             TextFormField(
               initialValue: policyNumber,
-              decoration:
-              const InputDecoration(labelText: ' Policy Number'),
+              decoration: const InputDecoration(labelText: ' Policy Number'),
               onChanged: (value) {
                 setState(() {
                   policyNumber = value;
@@ -100,8 +106,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
             ),
             TextFormField(
               initialValue: coverageAmount,
-              decoration:
-              const InputDecoration(labelText: 'Coverage Amount'),
+              decoration: const InputDecoration(labelText: 'Coverage Amount'),
               onChanged: (value) {
                 setState(() {
                   coverageAmount = value;
@@ -109,7 +114,9 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
               },
             ),
             TextFormField(
-              controller: TextEditingController(text: DateFormat('yyyy-MM-dd').format(maturityDate)), // Format date as text
+              controller: TextEditingController(
+                  text: DateFormat('yyyy-MM-dd').format(maturityDate)),
+              // Format date as text
               decoration: const InputDecoration(labelText: 'Maturity Date'),
               onTap: () {
                 _selectDate(context);
@@ -136,36 +143,42 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () async {
+                int parsedCoverageAmount = 0; // Default value if parsing fails
+
+                try {
+                  parsedCoverageAmount = int.parse(coverageAmount);
+                } catch (e) {
+                  print('Invalid coverage amount format: $e');
+                  // Handle the parsing error here, such as showing a message to the user
+                }
+
                 final updatedInsurance = LifeInsurance(
                   insuranceCompanyName: insuranceCompanyName,
                   policyName: policyName,
                   policyNumber: policyNumber,
-                  coverageAmount: int.parse(coverageAmount),
-                  maturityDate: maturityDate.toString(), // Pass DateTime object directly
+                  coverageAmount: parsedCoverageAmount,
+                  maturityDate: maturityDate.toString(),
+                  // Pass DateTime object directly
                   comments: comments,
                   attachment: attachment,
                   assetId: widget.insurance.assetId,
                   category: widget.assetType,
                 );
-
                 // Call API to update bank account details
                 final response = await updateInsurance(updatedInsurance);
+                DisplayUtils.showToast('Asset Updated Successfully');
+                
                 Navigator.pop(context);
                 Navigator.pushReplacement<void, void>(
                   context,
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) => LifeInsuranceScreen(assetType: widget.assetType),
+                    builder: (BuildContext context) =>
+                        LifeInsuranceScreen(assetType: widget.assetType),
                   ),
                 );
                 if (response != null) {
                   // Handle success
                 } else {
-                  // Handle error
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to update Life insurance'),
-                    ),
-                  );
                 }
               },
               child: const Text('Update'),
@@ -176,7 +189,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
     );
   }
 
-  Future<LifeInsurance?>updateInsurance(LifeInsurance insurance) async {
+  Future<LifeInsurance?> updateInsurance(LifeInsurance insurance) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -191,8 +204,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
     try {
       final response = await dio.put(
         'http://43.205.12.154:8080/v2/asset/${insurance.assetId}',
-        data: insurance
-            .toJson(), // Convert account object to JSON and send as request body
+        data: insurance.toJson(), // Convert account object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {

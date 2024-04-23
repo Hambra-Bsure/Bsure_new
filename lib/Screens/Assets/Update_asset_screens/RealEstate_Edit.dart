@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/real_estate.dart';
+import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/bank_account_screen.dart';
 
 class RealEstateEdit extends StatefulWidget {
@@ -60,14 +61,27 @@ class _RealEstateEditState extends State<RealEstateEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                initialValue: typeOfProperty,
-                decoration: const InputDecoration(labelText: 'Type Of Property'),
+              DropdownButtonFormField<String>(
+                value: typeOfProperty,
                 onChanged: (value) {
                   setState(() {
-                    typeOfProperty = value;
+                    typeOfProperty = value!;
                   });
                 },
+                items: const [
+                  DropdownMenuItem<String>(
+                    value: 'Residential',
+                    child: Text('Residential'),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'Commercial',
+                    child: Text('Commercial'),
+                  ),
+                ],
+                decoration: const InputDecoration(
+                  labelText: 'Type Of Property',
+                 // border: OutlineInputBorder(),
+                ),
               ),
               TextFormField(
                 initialValue: address,
@@ -184,6 +198,7 @@ class _RealEstateEditState extends State<RealEstateEdit> {
                   // Call API to update real estate details
                   final response = await updateRealEstate(updatedRealEstate);
                   print(response);
+                  DisplayUtils.showToast('Asset Updated Successfully');
         
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(

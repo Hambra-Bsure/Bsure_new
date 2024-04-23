@@ -1,17 +1,22 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/gold.dart';
+import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/gold_screen.dart';
+import '../post_asset_addition/Gold.dart';
 
 class GoldEdit extends StatefulWidget {
   final Golds gold;
   final String assetType;
 
-  const GoldEdit(
-      {Key? key, required this.gold, required this.assetType})
-      : super(key: key);
+  const GoldEdit({
+    Key? key,
+    required this.gold,
+    required this.assetType,
+  }) : super(key: key);
 
   @override
   State<GoldEdit> createState() => _GoldEditState();
@@ -42,8 +47,7 @@ class _GoldEditState extends State<GoldEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit Gold',
-            style: TextStyle(color: Colors.white)),
+        title: const Text('Edit Gold', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -51,14 +55,37 @@ class _GoldEditState extends State<GoldEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                initialValue: metalType,
-                decoration: const InputDecoration(labelText: 'Metal Type'),
+              buildDropdownField(
+                value: metalType,
                 onChanged: (value) {
                   setState(() {
-                    metalType = value;
+                    metalType = value.toString();
                   });
                 },
+                items: MetalType.values.map((type) {
+                  return DropdownMenuItem<String>(
+                    value: type.toString().split('.').last,
+                    child: Text(type.toString().split('.').last),
+                  );
+                }).toList(),
+                labelText: 'Metal Type',
+                mandatory: true,
+              ),
+              buildDropdownField(
+                value: type,
+                onChanged: (value) {
+                  setState(() {
+                    type = value.toString();
+                  });
+                },
+                items: Type.values.map((type) {
+                  return DropdownMenuItem<String>(
+                    value: type.toString().split('.').last,
+                    child: Text(type.toString().split('.').last),
+                  );
+                }).toList(),
+                labelText: 'Type',
+                mandatory: true,
               ),
               TextFormField(
                 initialValue: weightInGrams,
@@ -99,11 +126,11 @@ class _GoldEditState extends State<GoldEdit> {
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
-                  // Update the RealEstate object with the new values
-                  final updatedgold = Golds(
+                  // Update the Gold object with the new values
+                  final updatedGold = Golds(
                     metalType: metalType,
                     type: type,
-                    weightInGrams: int.parse(weightInGrams),
+                    weightInGrams: int.tryParse(weightInGrams) ?? 0,
                     whereItIsKept: whereItIsKept,
                     comments: comments,
                     attachment: attachment,
@@ -111,9 +138,10 @@ class _GoldEditState extends State<GoldEdit> {
                     category: widget.assetType,
                   );
 
-                  // Call API to update real estate details
-                  final response = await updateGold(updatedgold);
+                  // Call API to update gold details
+                  final response = await updateGold(updatedGold);
                   print(response);
+                  DisplayUtils.showToast('Asset Updated Successfully');
 
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
@@ -134,6 +162,53 @@ class _GoldEditState extends State<GoldEdit> {
     );
   }
 
+  Widget buildDropdownField({
+    required String value,
+    required ValueChanged<String?> onChanged,
+    required List<DropdownMenuItem<String>> items,
+    required String labelText,
+    bool mandatory = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonFormField<String>(
+          value: value,
+          onChanged: onChanged,
+          items: items,
+          decoration: InputDecoration(
+            labelText: labelText, // Update to include labelText as label
+           // border: const OutlineInputBorder(),
+           // contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    bool mandatory = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          labelText + (mandatory ? ' *' : ''),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          decoration: const InputDecoration(
+            //border: OutlineInputBorder(),
+            //contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<Golds?> updateGold(Golds gold) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -149,12 +224,11 @@ class _GoldEditState extends State<GoldEdit> {
     try {
       final response = await dio.put(
         'http://43.205.12.154:8080/v2/asset/${gold.assetId}',
-        data: gold
-            .toJson(), // Convert real estate object to JSON and send as request body
+        data: gold.toJson(), // Convert gold object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {
-        // Parse and return updated real estate details
+        // Parse and return updated gold details
         return Golds.fromJson(jsonDecode(response.data));
       } else {
         return null; // Return null if update fails

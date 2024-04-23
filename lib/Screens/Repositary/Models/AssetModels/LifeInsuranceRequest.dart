@@ -4,7 +4,7 @@ class LifeInsuranceRequest {
   String? policyName;
   String? policyNumber;
   int? coverageAmount;
-  String maturityDate; // Change the type to String
+  String? maturityDate; // Change the type to String
   String? comments;
   String? attachment;
 

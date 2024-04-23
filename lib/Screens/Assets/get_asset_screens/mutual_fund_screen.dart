@@ -22,7 +22,8 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
   bool isLoading = false;
 
   // Define a variable to hold the category name
-  final String category = 'MutualFund'; // Assuming the category is 'BankAccount'
+  final String category =
+      'MutualFund'; // Assuming the category is 'BankAccount'
 
   @override
   void initState() {
@@ -40,8 +41,10 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
 
     final url =
         Uri.parse('http://43.205.12.154:8080/v2/asset/category/MutualFund');
-    final response =
-        await http.get(url, headers: {"Authorization": token.toString(),"ngrok-skip-browser-warning": "69420",});
+    final response = await http.get(url, headers: {
+      "Authorization": token.toString(),
+      "ngrok-skip-browser-warning": "69420",
+    });
 
     if (response.statusCode == 200) {
       final data = MutualFundResponse.fromJson(jsonDecode(response.body));
@@ -76,7 +79,7 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
         title: const Text('Mutual Fund', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text("No Assets found"))
           : mutualFunds.isNotEmpty == true
               ? ListView.builder(
                   itemCount: mutualFunds.length,
@@ -106,7 +109,10 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
                                     if (updatedFund != null) {
                                       setState(() {
                                         // Update the corresponding Mutual Fund item in the list
-                                        final index = mutualFunds.indexWhere((element) => element.assetId == updatedFund.assetId);
+                                        final index = mutualFunds.indexWhere(
+                                            (element) =>
+                                                element.assetId ==
+                                                updatedFund.assetId);
                                         if (index != -1) {
                                           mutualFunds[index] = updatedFund;
                                         }
@@ -116,8 +122,7 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
                                 ),
                               ],
                             ),
-                            Text(
-                              'AMC Name: ${fund.amcName}'),
+                            Text('AMC Name: ${fund.amcName}'),
                             const SizedBox(height: 8.0),
                             Text('Scheme Name: ${fund.schemeName}'),
                             const SizedBox(height: 8.0),
@@ -133,11 +138,9 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (BuildContext context) {
+                                  builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text(
-                                          "Delete Asset?"),
+                                      title: const Text("Delete Asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -145,13 +148,11 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(
-                                                  0xff429bb8),
+                                              color: Color(0xff429bb8),
                                             ),
                                           ),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
@@ -162,15 +163,14 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            Navigator.of(context)
-                                                .pop();
-                                            deleteAssetStatus(
-                                                index, context);
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<MutualFund> newmutualfunds =
+                                                <MutualFund>[];
+                                            newmutualfunds.addAll(mutualFunds);
+                                            newmutualfunds.removeAt(index);
                                             setState(() {
-                                              mutualFunds!
-                                                  .removeAt(
-                                                  index);
-                                              getData();
+                                              mutualFunds = newmutualfunds;
                                             });
                                           },
                                         ),
@@ -181,22 +181,17 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                const Color(0xff429bb8),
+                                backgroundColor: const Color(0xff429bb8),
                               ),
                               child: const Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.white),
+                                  Icon(Icons.delete, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text("Delete",
-                                      style: TextStyle(
-                                          color: Colors.white)),
+                                      style: TextStyle(color: Colors.white)),
                                 ],
                               ),
                             ),
@@ -219,7 +214,7 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  MutualFundAdd(
+              builder: (context) => MutualFundAdd(
                 assetType: category,
               ),
             ),
@@ -247,7 +242,7 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index, BuildContext context) async {
+  Future<void> deleteAssetStatus(int index) async {
     final mutualFund = mutualFunds[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -266,29 +261,9 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Remove the deleted bank account from the list
-        setState(() {
-          mutualFunds.removeAt(index);
-          getData();
-        });
-
-        // Call getData() outside setState() to ensure immediate UI update
-
         DisplayUtils.showToast("Mutual Fund successfully deleted.");
-      } else {
-        DisplayUtils.showToast("Failed to delete Mutual Fund. ${response.data}");
+
       }
-    } catch (e) {
-      DisplayUtils.showToast("API failure");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to delete bank account. Please check your internet connection.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (e) {}
   }
 }
