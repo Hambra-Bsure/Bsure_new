@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class ReferralPolicy extends StatelessWidget {
-  const ReferralPolicy({Key? key}) : super(key: key);
+  const ReferralPolicy({super.key});
 
   @override
   Widget build(BuildContext context) {

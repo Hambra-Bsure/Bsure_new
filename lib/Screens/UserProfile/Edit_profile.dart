@@ -9,7 +9,7 @@ import 'Get_profile.dart';
 class EditUser extends StatefulWidget {
   final GetUserResponse? userProfile;
 
-  const EditUser({Key? key, required this.userProfile}) : super(key: key);
+  const EditUser({super.key, required this.userProfile});
 
   @override
   State<EditUser> createState() => _EditUserState();
@@ -160,7 +160,7 @@ class _EditUserState extends State<EditUser> {
       panNumber:
           _panNumberController.text.isEmpty ? null : _panNumberController.text,
       age: int.tryParse(_ageController.text) ?? 0,
-      gender: _gender!,
+      gender: _gender,
     );
 
     try {
@@ -198,8 +198,7 @@ class _EditUserState extends State<EditUser> {
     if (_firstNameController.text.isEmpty ||
         _lastNameController.text.isEmpty ||
         _whatsappController.text.isEmpty ||
-        _ageController.text.isEmpty ||
-        _gender == null) {
+        _ageController.text.isEmpty) {
       if (_firstNameController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('First Name is required')),

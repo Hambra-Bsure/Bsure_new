@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:Bsure_devapp/Screens/Nominees/Get_all_nominees.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ import 'package:Bsure_devapp/Screens/Repositary/Models/Nominee_models/Get_Nomine
 class NomineeEditScreen extends StatefulWidget {
   final Nominees nominee;
 
-  const NomineeEditScreen({Key? key, required this.nominee}) : super(key: key);
+  const NomineeEditScreen({super.key, required this.nominee});
 
   @override
   _NomineeEditScreenState createState() => _NomineeEditScreenState();
@@ -203,7 +202,7 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
                     Navigator.pushReplacement<void, void>(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (BuildContext context) => GetNomineeScreen(),
+                        builder: (BuildContext context) => const GetNomineeScreen(),
                       ),
                     );
                   },

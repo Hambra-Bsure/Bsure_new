@@ -27,14 +27,14 @@ class GoldRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetType'] = this.assetType;
-    data['metalType'] = this.metalType;
-    data['type'] = this.type;
-    data['weightInGrams'] = this.weightInGrams;
-    data['whereItIsKept'] = this.whereItIsKept;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assetType'] = assetType;
+    data['metalType'] = metalType;
+    data['type'] = type;
+    data['weightInGrams'] = weightInGrams;
+    data['whereItIsKept'] = whereItIsKept;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
     return data;
   }
 }

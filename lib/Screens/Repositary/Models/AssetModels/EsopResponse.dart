@@ -6,18 +6,18 @@ class EsopResponse {
   EsopResponse({this.asset, this.success, this.message});
 
   EsopResponse.fromJson(Map<String, dynamic> json) {
-    asset = json['asset'] != null ? new Asset.fromJson(json['asset']) : null;
+    asset = json['asset'] != null ? Asset.fromJson(json['asset']) : null;
     success = json['success'];
     message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.asset != null) {
-      data['asset'] = this.asset!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (asset != null) {
+      data['asset'] = asset!.toJson();
     }
-    data['success'] = this.success;
-    data['message'] = this.message;
+    data['success'] = success;
+    data['message'] = message;
     return data;
   }
 }
@@ -26,7 +26,7 @@ class Asset {
   int? id;
   int? userId;
   String? category;
-  Null? otherAssets;
+  Null otherAssets;
 
   Asset({this.id, this.userId, this.category, this.otherAssets});
 
@@ -38,11 +38,11 @@ class Asset {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['userId'] = this.userId;
-    data['category'] = this.category;
-    data['OtherAssets'] = this.otherAssets;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['userId'] = userId;
+    data['category'] = category;
+    data['OtherAssets'] = otherAssets;
     return data;
   }
 }

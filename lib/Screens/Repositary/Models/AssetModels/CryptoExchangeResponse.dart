@@ -6,18 +6,18 @@ class CryptoExchangeResponse {
   CryptoExchangeResponse({this.asset, this.success, this.message});
 
   CryptoExchangeResponse.fromJson(Map<String, dynamic> json) {
-    asset = json['asset'] != null ? new Asset.fromJson(json['asset']) : null;
+    asset = json['asset'] != null ? Asset.fromJson(json['asset']) : null;
     success = json['success'];
     message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.asset != null) {
-      data['asset'] = this.asset!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (asset != null) {
+      data['asset'] = asset!.toJson();
     }
-    data['success'] = this.success;
-    data['message'] = this.message;
+    data['success'] = success;
+    data['message'] = message;
     return data;
   }
 }
@@ -35,17 +35,17 @@ class Asset {
     userId = json['userId'];
     category = json['category'];
     cryptoExchange = json['CryptoExchange'] != null
-        ? new CryptoExchange.fromJson(json['CryptoExchange'])
+        ? CryptoExchange.fromJson(json['CryptoExchange'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['userId'] = this.userId;
-    data['category'] = this.category;
-    if (this.cryptoExchange != null) {
-      data['CryptoExchange'] = this.cryptoExchange!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['userId'] = userId;
+    data['category'] = category;
+    if (cryptoExchange != null) {
+      data['CryptoExchange'] = cryptoExchange!.toJson();
     }
     return data;
   }
@@ -80,14 +80,14 @@ class CryptoExchange {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['exchangeName'] = this.exchangeName;
-    data['accountNumber'] = this.accountNumber;
-    data['walletAddress'] = this.walletAddress;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['exchangeName'] = exchangeName;
+    data['accountNumber'] = accountNumber;
+    data['walletAddress'] = walletAddress;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }

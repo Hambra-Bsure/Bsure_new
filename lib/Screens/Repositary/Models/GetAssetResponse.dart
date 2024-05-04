@@ -7,18 +7,18 @@ class GetAssetResponse {
 
   GetAssetResponse.fromJson(Map<String, dynamic> json) {
     assets =
-    json['assets'] != null ? new Assets.fromJson(json['assets']) : null;
+    json['assets'] != null ? Assets.fromJson(json['assets']) : null;
     success = json['success'];
     message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.assets != null) {
-      data['assets'] = this.assets!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (assets != null) {
+      data['assets'] = assets!.toJson();
     }
-    data['success'] = this.success;
-    data['message'] = this.message;
+    data['success'] = success;
+    data['message'] = message;
     return data;
   }
 }
@@ -61,145 +61,145 @@ class Assets {
     if (json['bankAccount'] != null) {
       bankAccount = <BankAccount>[];
       json['bankAccount'].forEach((v) {
-        bankAccount!.add(new BankAccount.fromJson(v));
+        bankAccount!.add(BankAccount.fromJson(v));
       });
     }
     if (json['mutualFund'] != null) {
       mutualFund = <MutualFund>[];
       json['mutualFund'].forEach((v) {
-        mutualFund!.add(new MutualFund.fromJson(v));
+        mutualFund!.add(MutualFund.fromJson(v));
       });
     }
     if (json['stockBroker'] != null) {
       stockBroker = <StockBroker>[];
       json['stockBroker'].forEach((v) {
-        stockBroker!.add(new StockBroker.fromJson(v));
+        stockBroker!.add(StockBroker.fromJson(v));
       });
     }
     if (json['lifeInsurance'] != null) {
       lifeInsurance = <LifeInsurance>[];
       json['lifeInsurance'].forEach((v) {
-        lifeInsurance!.add(new LifeInsurance.fromJson(v));
+        lifeInsurance!.add(LifeInsurance.fromJson(v));
       });
     }
     if (json['postOfficeAccount'] != null) {
       postOfficeAccount = <PostOfficeAccount>[];
       json['postOfficeAccount'].forEach((v) {
-        postOfficeAccount!.add(new PostOfficeAccount.fromJson(v));
+        postOfficeAccount!.add(PostOfficeAccount.fromJson(v));
       });
     }
     if (json['nonLifeInsurance'] != null) {
       nonLifeInsurance = <NonLifeInsurance>[];
       json['nonLifeInsurance'].forEach((v) {
-        nonLifeInsurance!.add(new NonLifeInsurance.fromJson(v));
+        nonLifeInsurance!.add(NonLifeInsurance.fromJson(v));
       });
     }
     if (json['cryptoExchange'] != null) {
       cryptoExchange = <CryptoExchange>[];
       json['cryptoExchange'].forEach((v) {
-        cryptoExchange!.add(new CryptoExchange.fromJson(v));
+        cryptoExchange!.add(CryptoExchange.fromJson(v));
       });
     }
     if (json['nps'] != null) {
       nps = <Nps>[];
       json['nps'].forEach((v) {
-        nps!.add(new Nps.fromJson(v));
+        nps!.add(Nps.fromJson(v));
       });
     }
     if (json['pf'] != null) {
       pf = <Pf>[];
       json['pf'].forEach((v) {
-        pf!.add(new Pf.fromJson(v));
+        pf!.add(Pf.fromJson(v));
       });
     }
     if (json['ppf'] != null) {
       ppf = <Ppf>[];
       json['ppf'].forEach((v) {
-        ppf!.add(new Ppf.fromJson(v));
+        ppf!.add(Ppf.fromJson(v));
       });
     }
     if (json['realEstate'] != null) {
       realEstate = <RealEstate>[];
       json['realEstate'].forEach((v) {
-        realEstate!.add(new RealEstate.fromJson(v));
+        realEstate!.add(RealEstate.fromJson(v));
       });
     }
     if (json['otherAssets'] != null) {
       otherAssets = <OtherAssets>[];
       json['otherAssets'].forEach((v) {
-        otherAssets!.add(new OtherAssets.fromJson(v));
+        otherAssets!.add(OtherAssets.fromJson(v));
       });
     }
     if (json['loanGiven'] != null) {
       loanGiven = <LoanGiven>[];
       json['loanGiven'].forEach((v) {
-        loanGiven!.add(new LoanGiven.fromJson(v));
+        loanGiven!.add(LoanGiven.fromJson(v));
       });
     }
     if (json['vehicle'] != null) {
       vehicle = <Vehicle>[];
       json['vehicle'].forEach((v) {
-        vehicle!.add(new Vehicle.fromJson(v));
+        vehicle!.add(Vehicle.fromJson(v));
       });
     }
     if (json['gold'] != null) {
       gold = <Gold>[];
       json['gold'].forEach((v) {
-        gold!.add(new Gold.fromJson(v));
+        gold!.add(Gold.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.bankAccount != null) {
-      data['bankAccount'] = this.bankAccount!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (bankAccount != null) {
+      data['bankAccount'] = bankAccount!.map((v) => v.toJson()).toList();
     }
-    if (this.mutualFund != null) {
-      data['mutualFund'] = this.mutualFund!.map((v) => v.toJson()).toList();
+    if (mutualFund != null) {
+      data['mutualFund'] = mutualFund!.map((v) => v.toJson()).toList();
     }
-    if (this.stockBroker != null) {
-      data['stockBroker'] = this.stockBroker!.map((v) => v.toJson()).toList();
+    if (stockBroker != null) {
+      data['stockBroker'] = stockBroker!.map((v) => v.toJson()).toList();
     }
-    if (this.lifeInsurance != null) {
+    if (lifeInsurance != null) {
       data['lifeInsurance'] =
-          this.lifeInsurance!.map((v) => v.toJson()).toList();
+          lifeInsurance!.map((v) => v.toJson()).toList();
     }
-    if (this.postOfficeAccount != null) {
+    if (postOfficeAccount != null) {
       data['postOfficeAccount'] =
-          this.postOfficeAccount!.map((v) => v.toJson()).toList();
+          postOfficeAccount!.map((v) => v.toJson()).toList();
     }
-    if (this.nonLifeInsurance != null) {
+    if (nonLifeInsurance != null) {
       data['nonLifeInsurance'] =
-          this.nonLifeInsurance!.map((v) => v.toJson()).toList();
+          nonLifeInsurance!.map((v) => v.toJson()).toList();
     }
-    if (this.cryptoExchange != null) {
+    if (cryptoExchange != null) {
       data['cryptoExchange'] =
-          this.cryptoExchange!.map((v) => v.toJson()).toList();
+          cryptoExchange!.map((v) => v.toJson()).toList();
     }
-    if (this.nps != null) {
-      data['nps'] = this.nps!.map((v) => v.toJson()).toList();
+    if (nps != null) {
+      data['nps'] = nps!.map((v) => v.toJson()).toList();
     }
-    if (this.pf != null) {
-      data['pf'] = this.pf!.map((v) => v.toJson()).toList();
+    if (pf != null) {
+      data['pf'] = pf!.map((v) => v.toJson()).toList();
     }
-    if (this.ppf != null) {
-      data['ppf'] = this.ppf!.map((v) => v.toJson()).toList();
+    if (ppf != null) {
+      data['ppf'] = ppf!.map((v) => v.toJson()).toList();
     }
-    if (this.realEstate != null) {
-      data['realEstate'] = this.realEstate!.map((v) => v.toJson()).toList();
+    if (realEstate != null) {
+      data['realEstate'] = realEstate!.map((v) => v.toJson()).toList();
     }
-    if (this.otherAssets != null) {
-      data['otherAssets'] = this.otherAssets!.map((v) => v.toJson()).toList();
+    if (otherAssets != null) {
+      data['otherAssets'] = otherAssets!.map((v) => v.toJson()).toList();
     }
-    if (this.loanGiven != null) {
-      data['loanGiven'] = this.loanGiven!.map((v) => v.toJson()).toList();
+    if (loanGiven != null) {
+      data['loanGiven'] = loanGiven!.map((v) => v.toJson()).toList();
     }
-    if (this.vehicle != null) {
-      data['vehicle'] = this.vehicle!.map((v) => v.toJson()).toList();
+    if (vehicle != null) {
+      data['vehicle'] = vehicle!.map((v) => v.toJson()).toList();
     }
-    if (this.gold != null) {
-      data['gold'] = this.gold!.map((v) => v.toJson()).toList();
+    if (gold != null) {
+      data['gold'] = gold!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -240,16 +240,16 @@ class BankAccount {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['bankName'] = this.bankName;
-    data['accountNumber'] = this.accountNumber;
-    data['ifscCode'] = this.ifscCode;
-    data['branchName'] = this.branchName;
-    data['accountType'] = this.accountType;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['bankName'] = bankName;
+    data['accountNumber'] = accountNumber;
+    data['ifscCode'] = ifscCode;
+    data['branchName'] = branchName;
+    data['accountType'] = accountType;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -286,15 +286,15 @@ class MutualFund {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['amcName'] = this.amcName;
-    data['schemeName'] = this.schemeName;
-    data['folioNumber'] = this.folioNumber;
-    data['fundType'] = this.fundType;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['amcName'] = amcName;
+    data['schemeName'] = schemeName;
+    data['folioNumber'] = folioNumber;
+    data['fundType'] = fundType;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -325,13 +325,13 @@ class StockBroker {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['brokerName'] = this.brokerName;
-    data['dematAccountNumber'] = this.dematAccountNumber;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['brokerName'] = brokerName;
+    data['dematAccountNumber'] = dematAccountNumber;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -371,16 +371,16 @@ class LifeInsurance {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['insuranceCompanyName'] = this.insuranceCompanyName;
-    data['policyName'] = this.policyName;
-    data['policyNumber'] = this.policyNumber;
-    data['coverageAmount'] = this.coverageAmount;
-    data['maturityDate'] = this.maturityDate;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['insuranceCompanyName'] = insuranceCompanyName;
+    data['policyName'] = policyName;
+    data['policyNumber'] = policyNumber;
+    data['coverageAmount'] = coverageAmount;
+    data['maturityDate'] = maturityDate;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -414,14 +414,14 @@ class PostOfficeAccount {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['branchName'] = this.branchName;
-    data['accountNumber'] = this.accountNumber;
-    data['accountType'] = this.accountType;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['branchName'] = branchName;
+    data['accountNumber'] = accountNumber;
+    data['accountType'] = accountType;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -458,15 +458,15 @@ class NonLifeInsurance {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['insuranceCompanyName'] = this.insuranceCompanyName;
-    data['typeOfInsurance'] = this.typeOfInsurance;
-    data['policyName'] = this.policyName;
-    data['policyNumber'] = this.policyNumber;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['insuranceCompanyName'] = insuranceCompanyName;
+    data['typeOfInsurance'] = typeOfInsurance;
+    data['policyName'] = policyName;
+    data['policyNumber'] = policyNumber;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -500,14 +500,14 @@ class CryptoExchange {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['exchangeName'] = this.exchangeName;
-    data['accountNumber'] = this.accountNumber;
-    data['walletAddress'] = this.walletAddress;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['exchangeName'] = exchangeName;
+    data['accountNumber'] = accountNumber;
+    data['walletAddress'] = walletAddress;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -530,12 +530,12 @@ class Nps {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['pranNumber'] = this.pranNumber;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['pranNumber'] = pranNumber;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -558,12 +558,12 @@ class Pf {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['uanNumber'] = this.uanNumber;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['uanNumber'] = uanNumber;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -594,13 +594,13 @@ class Ppf {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['ppfAccountNumber'] = this.ppfAccountNumber;
-    data['institutionName'] = this.institutionName;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['ppfAccountNumber'] = ppfAccountNumber;
+    data['institutionName'] = institutionName;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -649,19 +649,19 @@ class RealEstate {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['typeOfProperty'] = this.typeOfProperty;
-    data['address'] = this.address;
-    data['khataNumber'] = this.khataNumber;
-    data['northOfProperty'] = this.northOfProperty;
-    data['southOfProperty'] = this.southOfProperty;
-    data['eastOfProperty'] = this.eastOfProperty;
-    data['westOfProperty'] = this.westOfProperty;
-    data['image'] = this.image;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['typeOfProperty'] = typeOfProperty;
+    data['address'] = address;
+    data['khataNumber'] = khataNumber;
+    data['northOfProperty'] = northOfProperty;
+    data['southOfProperty'] = southOfProperty;
+    data['eastOfProperty'] = eastOfProperty;
+    data['westOfProperty'] = westOfProperty;
+    data['image'] = image;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -685,12 +685,12 @@ class OtherAssets {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['assetName'] = this.assetName;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['assetName'] = assetName;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -727,15 +727,15 @@ class LoanGiven {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['borrowerName'] = this.borrowerName;
-    data['loanAmount'] = this.loanAmount;
-    data['loanGivenDate'] = this.loanGivenDate;
-    data['interestRate'] = this.interestRate;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['borrowerName'] = borrowerName;
+    data['loanAmount'] = loanAmount;
+    data['loanGivenDate'] = loanGivenDate;
+    data['interestRate'] = interestRate;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -775,16 +775,16 @@ class Vehicle {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['vehicleType'] = this.vehicleType;
-    data['brandName'] = this.brandName;
-    data['modelName'] = this.modelName;
-    data['registrationNumber'] = this.registrationNumber;
-    data['chassisNumber'] = this.chassisNumber;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['vehicleType'] = vehicleType;
+    data['brandName'] = brandName;
+    data['modelName'] = modelName;
+    data['registrationNumber'] = registrationNumber;
+    data['chassisNumber'] = chassisNumber;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }
@@ -821,15 +821,15 @@ class Gold {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['metalType'] = this.metalType;
-    data['type'] = this.type;
-    data['weightInGrams'] = this.weightInGrams;
-    data['whereItIsKept'] = this.whereItIsKept;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['metalType'] = metalType;
+    data['type'] = type;
+    data['weightInGrams'] = weightInGrams;
+    data['whereItIsKept'] = whereItIsKept;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }

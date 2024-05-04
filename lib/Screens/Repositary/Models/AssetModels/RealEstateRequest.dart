@@ -39,18 +39,18 @@ class RealEstateRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetType'] = this.assetType;
-    data['typeOfProperty'] = this.typeOfProperty;
-    data['address'] = this.address;
-    data['khataNumber'] = this.khataNumber;
-    data['northOfProperty'] = this.northOfProperty;
-    data['southOfProperty'] = this.southOfProperty;
-    data['eastOfProperty'] = this.eastOfProperty;
-    data['westOfProperty'] = this.westOfProperty;
-    data['image'] = this.image;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assetType'] = assetType;
+    data['typeOfProperty'] = typeOfProperty;
+    data['address'] = address;
+    data['khataNumber'] = khataNumber;
+    data['northOfProperty'] = northOfProperty;
+    data['southOfProperty'] = southOfProperty;
+    data['eastOfProperty'] = eastOfProperty;
+    data['westOfProperty'] = westOfProperty;
+    data['image'] = image;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
     return data;
   }
 }

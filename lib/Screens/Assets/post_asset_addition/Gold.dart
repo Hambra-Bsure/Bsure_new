@@ -9,7 +9,7 @@ import '../../Repositary/Retrofit/node_api_client.dart';
 class GoldAdd extends StatefulWidget {
   final String assetType;
 
-  const GoldAdd({Key? key, required this.assetType}) : super(key: key);
+  const GoldAdd({super.key, required this.assetType});
 
   @override
   _GoldAddState createState() => _GoldAddState();
@@ -187,7 +187,7 @@ class _GoldAddState extends State<GoldAdd> {
           items: items,
           decoration: InputDecoration(
             labelText: labelText, // Update to include labelText as label
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
@@ -217,12 +217,8 @@ class _GoldAddState extends State<GoldAdd> {
 
     final request = GoldRequest(
       assetType: widget.assetType,
-      metalType: _selectedMetalType != null
-          ? _selectedMetalType.toString().split('.').last
-          : null,
-      type: _selectedType != null
-          ? _selectedType.toString().split('.').last
-          : null,
+      metalType: _selectedMetalType?.toString().split('.').last,
+      type: _selectedType?.toString().split('.').last,
       weightInGrams: int.parse(_weightController.text),
       whereItIsKept: _whereItIsKeptController.text,
       comments: _commentsController.text,

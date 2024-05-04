@@ -7,14 +7,14 @@ class UserResponse {
 
   UserResponse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
+    if (user != null) {
+      data['user'] = user!.toJson();
     }
     return data;
   }
@@ -64,19 +64,19 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['firstName'] = this.firstName;
-    data['lastName'] = this.lastName;
-    data['email'] = this.email;
-    data['mobileNumber'] = this.mobileNumber;
-    data['whatsappNumber'] = this.whatsappNumber;
-    data['secondaryNumber'] = this.secondaryNumber;
-    data['address'] = this.address;
-    data['panNumber'] = this.panNumber;
-    data['age'] = this.age;
-    data['gender'] = this.gender;
-    data['photo'] = this.photo;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['firstName'] = firstName;
+    data['lastName'] = lastName;
+    data['email'] = email;
+    data['mobileNumber'] = mobileNumber;
+    data['whatsappNumber'] = whatsappNumber;
+    data['secondaryNumber'] = secondaryNumber;
+    data['address'] = address;
+    data['panNumber'] = panNumber;
+    data['age'] = age;
+    data['gender'] = gender;
+    data['photo'] = photo;
     return data;
   }
 }

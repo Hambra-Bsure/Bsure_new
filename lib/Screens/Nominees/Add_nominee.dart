@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -23,6 +22,8 @@ enum Relation {
 }
 
 class AddNominee extends StatefulWidget {
+  const AddNominee({super.key});
+
   @override
   _AddNomineeState createState() => _AddNomineeState();
 }

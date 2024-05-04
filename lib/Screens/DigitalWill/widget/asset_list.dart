@@ -11,9 +11,9 @@ class AssetList extends StatefulWidget {
   final List<Asset> assets;
 
   const AssetList({
-    Key? key,
+    super.key,
     required this.assets,
-  }) : super(key: key);
+  });
 
   @override
   State<AssetList> createState() => _AssetListState();

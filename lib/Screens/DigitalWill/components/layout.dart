@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'my_button.dart';
 
 class Layout extends StatelessWidget {
-  const Layout({Key? key,  required this.childWidget, required this.onTap}) : super(key: key);
+  const Layout({super.key,  required this.childWidget, required this.onTap});
 
 
   final Widget childWidget;

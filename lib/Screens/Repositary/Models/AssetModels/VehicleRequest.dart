@@ -30,15 +30,15 @@ class VehicleRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetType'] = this.assetType;
-    data['vehicleType'] = this.vehicleType;
-    data['brandName'] = this.brandName;
-    data['modelName'] = this.modelName;
-    data['registrationNumber'] = this.registrationNumber;
-    data['chassisNumber'] = this.chassisNumber;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assetType'] = assetType;
+    data['vehicleType'] = vehicleType;
+    data['brandName'] = brandName;
+    data['modelName'] = modelName;
+    data['registrationNumber'] = registrationNumber;
+    data['chassisNumber'] = chassisNumber;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
     return data;
   }
 }

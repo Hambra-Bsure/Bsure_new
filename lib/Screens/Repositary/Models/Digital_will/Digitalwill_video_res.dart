@@ -12,10 +12,10 @@ class Digitalwillvideo_response {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['isValid'] = this.isValid;
-    data['message'] = this.message;
-    data['videoUrl'] = this.videoUrl;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['isValid'] = isValid;
+    data['message'] = message;
+    data['videoUrl'] = videoUrl;
     return data;
   }
 }

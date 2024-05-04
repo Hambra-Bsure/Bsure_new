@@ -9,8 +9,7 @@ import '../../Repositary/Retrofit/node_api_client.dart';
 class CryptoExchangeAdd extends StatefulWidget {
   final String assetType;
 
-  const CryptoExchangeAdd({Key? key, required this.assetType})
-      : super(key: key);
+  const CryptoExchangeAdd({super.key, required this.assetType});
 
   @override
   _CryptoExchangeAddState createState() => _CryptoExchangeAddState();

@@ -11,7 +11,7 @@ import '../post_asset_addition/OtherAssets.dart';
 class OtherScreen extends StatefulWidget {
   final String assetType;
 
-  const OtherScreen({Key? key, required this.assetType}) : super(key: key);
+  const OtherScreen({super.key, required this.assetType});
 
   @override
   _OtherScreenState createState() => _OtherScreenState();
@@ -72,7 +72,7 @@ class _OtherScreenState extends State<OtherScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff429bb8),
+        backgroundColor: const Color(0xff429bb8),
         title: const Text('Other',
             style: TextStyle(color: Colors.white)), // Corrected title
       ),

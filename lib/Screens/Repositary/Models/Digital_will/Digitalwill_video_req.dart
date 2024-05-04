@@ -4,7 +4,7 @@ class Digitalwill_video_request {
   Digitalwill_video_request({this.video});
 
   Digitalwill_video_request.fromUrl(String url) {
-    this.video = video;
+    video = video;
   }
 
   factory Digitalwill_video_request.fromJson(Map<String, dynamic> json) {

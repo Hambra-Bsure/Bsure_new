@@ -4,7 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'Contact_Us_screen.dart';
 
 class RefundPolicy extends StatelessWidget {
-  const RefundPolicy({Key? key}) : super(key: key);
+  const RefundPolicy({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +109,7 @@ class RefundPolicy extends StatelessWidget {
 }
 
 class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({Key? key}) : super(key: key);
+  const HeaderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -154,10 +154,10 @@ class PolicySectionWidget extends StatelessWidget {
   final String content;
 
   const PolicySectionWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.content,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

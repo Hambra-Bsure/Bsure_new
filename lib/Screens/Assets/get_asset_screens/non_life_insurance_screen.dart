@@ -74,7 +74,7 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff429bb8),
+        backgroundColor: const Color(0xff429bb8),
         title: const Text('Non Life Insurance',
             style: TextStyle(color: Colors.white)),
       ),
@@ -95,7 +95,7 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit),
                                   onPressed: () async {
                                     final updatednonlifeinsurance =
                                         await Navigator.push(

@@ -30,15 +30,15 @@ class EditNomineeReq {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['nomineeId'] = this.nomineeId;
-    data['firstName'] = this.firstName;
-    data['lastName'] = this.lastName;
-    data['email'] = this.email;
-    data['mobileNumber'] = this.mobileNumber;
-    data['address'] = this.address;
-    data['relation'] = this.relation;
-    data['age'] = this.age;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['nomineeId'] = nomineeId;
+    data['firstName'] = firstName;
+    data['lastName'] = lastName;
+    data['email'] = email;
+    data['mobileNumber'] = mobileNumber;
+    data['address'] = address;
+    data['relation'] = relation;
+    data['age'] = age;
     return data;
   }
 }

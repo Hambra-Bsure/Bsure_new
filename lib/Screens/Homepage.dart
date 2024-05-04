@@ -4,13 +4,12 @@ import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/category.dart';
 import 'package:Bsure_devapp/Screens/Nominees/Get_all_nominees.dart';
 import 'package:flutter/material.dart';
 import 'DigitalWill/WillScreen.dart';
-import 'DigitalWill/widget/asset_list.dart';
 import 'Settings_screen/Profile_page.dart';
 import 'ShareAssets/AssetScreen.dart';
 import 'UserProfile/Get_profile.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({Key? key}) : super(key: key);
+  const Homepage({super.key});
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -386,7 +385,7 @@ class CustomCard extends StatelessWidget {
   final String title;
   final String description;
 
-  const CustomCard({
+  const CustomCard({super.key, 
     required this.title,
     required this.description,
   });
@@ -429,7 +428,7 @@ class ClickableCardWithMessage extends StatelessWidget {
   final String title;
   final String description;
 
-  const ClickableCardWithMessage({
+  const ClickableCardWithMessage({super.key, 
     required this.onTap,
     required this.title,
     required this.description,

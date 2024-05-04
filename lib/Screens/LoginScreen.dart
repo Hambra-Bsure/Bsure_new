@@ -13,7 +13,7 @@ import 'Settings_screen/Terms_of_use.dart';
 import 'Utils/SharedPrefHelper.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TermsOfUse(),
+                        builder: (context) => const TermsOfUse(),
                       ),
                     );
                   },
@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PrivacyPolicyScreen(),
+                        builder: (context) => const PrivacyPolicyScreen(),
                       ),
                     );
                   },
@@ -201,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildLoginButton() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed:
@@ -251,7 +251,7 @@ class _LoginPageState extends State<LoginPage> {
 
       print('Response: $response'); // Print the response for debugging
 
-      if (response != null && response.success != null) {
+      if (response.success != null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String userId = response.userId.toString();
         prefs.setString(SharedPrefHelper().USER_ID, userId);

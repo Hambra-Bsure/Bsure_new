@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Willbenefits extends StatelessWidget {
-  const Willbenefits({Key? key}) : super(key: key);
+  const Willbenefits({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class Willbenefits extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Text(
         title,
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -60,15 +60,15 @@ class Willbenefits extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 10.0),
           child: Text(
             subTitle,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
         Text(
           content,
-          style: TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 16),
           textAlign: TextAlign.justify,
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -78,7 +78,7 @@ class Willbenefits extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Text(
         feature,
-        style: TextStyle(fontSize: 16),
+        style: const TextStyle(fontSize: 16),
         textAlign: TextAlign.justify,
       ),
     );

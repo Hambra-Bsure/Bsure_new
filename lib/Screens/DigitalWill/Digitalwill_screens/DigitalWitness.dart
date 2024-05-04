@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DigitalWitnessScreen extends StatefulWidget {
+  const DigitalWitnessScreen({super.key});
+
   @override
   _DigitalWitnessScreenState createState() => _DigitalWitnessScreenState();
 }

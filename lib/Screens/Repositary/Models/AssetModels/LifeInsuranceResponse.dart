@@ -6,18 +6,18 @@ class LifeInsuranceResponse {
   LifeInsuranceResponse({this.asset, this.success, this.message});
 
   LifeInsuranceResponse.fromJson(Map<String, dynamic> json) {
-    asset = json['asset'] != null ? new Asset.fromJson(json['asset']) : null;
+    asset = json['asset'] != null ? Asset.fromJson(json['asset']) : null;
     success = json['success'];
     message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.asset != null) {
-      data['asset'] = this.asset!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (asset != null) {
+      data['asset'] = asset!.toJson();
     }
-    data['success'] = this.success;
-    data['message'] = this.message;
+    data['success'] = success;
+    data['message'] = message;
     return data;
   }
 }
@@ -35,17 +35,17 @@ class Asset {
     userId = json['userId'];
     category = json['category'];
     lifeInsurance = json['LifeInsurance'] != null
-        ? new LifeInsurance.fromJson(json['LifeInsurance'])
+        ? LifeInsurance.fromJson(json['LifeInsurance'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['userId'] = this.userId;
-    data['category'] = this.category;
-    if (this.lifeInsurance != null) {
-      data['LifeInsurance'] = this.lifeInsurance!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['userId'] = userId;
+    data['category'] = category;
+    if (lifeInsurance != null) {
+      data['LifeInsurance'] = lifeInsurance!.toJson();
     }
     return data;
   }
@@ -57,7 +57,7 @@ class LifeInsurance {
   String? policyName;
   String? policyNumber;
   int? coverageAmount;
-  Null? maturityDate;
+  Null maturityDate;
   String? comments;
   String? attachment;
   int? assetId;
@@ -86,16 +86,16 @@ class LifeInsurance {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['insuranceCompanyName'] = this.insuranceCompanyName;
-    data['policyName'] = this.policyName;
-    data['policyNumber'] = this.policyNumber;
-    data['coverageAmount'] = this.coverageAmount;
-    data['maturityDate'] = this.maturityDate;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['insuranceCompanyName'] = insuranceCompanyName;
+    data['policyName'] = policyName;
+    data['policyNumber'] = policyNumber;
+    data['coverageAmount'] = coverageAmount;
+    data['maturityDate'] = maturityDate;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }

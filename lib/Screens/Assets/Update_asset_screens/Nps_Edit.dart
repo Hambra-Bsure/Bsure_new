@@ -1,23 +1,16 @@
 import 'dart:convert';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/nps_screen.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Repositary/Models/GetAssetResponse.dart';
 import '../../Repositary/Models/get_asset_models/Nps.dart';
-import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
-import '../get_asset_screens/bank_account_screen.dart';
 
 class NpsEdit extends StatefulWidget {
   final NPS nps;
   final String assetType;
 
-  const NpsEdit({Key? key, required this.nps, required this.assetType})
-      : super(key: key);
+  const NpsEdit({super.key, required this.nps, required this.assetType});
 
   @override
   State<NpsEdit> createState() => _NPSEditState();

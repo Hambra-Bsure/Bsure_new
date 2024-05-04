@@ -15,11 +15,11 @@ class OtherAssetRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetType'] = this.assetType;
-    data['assetName'] = this.assetName;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assetType'] = assetType;
+    data['assetName'] = assetName;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
     return data;
   }
 }

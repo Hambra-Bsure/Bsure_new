@@ -27,14 +27,14 @@ class NonLifeInsuranceRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetType'] = this.assetType;
-    data['insuranceCompanyName'] = this.insuranceCompanyName;
-    data['typeOfInsurance'] = this.typeOfInsurance;
-    data['policyName'] = this.policyName;
-    data['policyNumber'] = this.policyNumber;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assetType'] = assetType;
+    data['insuranceCompanyName'] = insuranceCompanyName;
+    data['typeOfInsurance'] = typeOfInsurance;
+    data['policyName'] = policyName;
+    data['policyNumber'] = policyNumber;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
     return data;
   }
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class MyTextInput extends StatelessWidget {
-  const MyTextInput({Key? key,
+  const MyTextInput({super.key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
-  }) : super(key: key);
+  });
 
   final TextEditingController controller;
   final String hintText;

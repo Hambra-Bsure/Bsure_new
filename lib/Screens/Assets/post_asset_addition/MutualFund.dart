@@ -9,7 +9,7 @@ import '../../Repositary/Retrofit/node_api_client.dart';
 class MutualFundAdd extends StatefulWidget {
   final String assetType;
 
-  const MutualFundAdd({Key? key, required this.assetType}) : super(key: key);
+  const MutualFundAdd({super.key, required this.assetType});
 
   @override
   _MutualFundAddState createState() => _MutualFundAddState();

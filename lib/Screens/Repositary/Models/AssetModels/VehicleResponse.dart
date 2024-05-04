@@ -6,18 +6,18 @@ class VehicleResponse {
   VehicleResponse({this.asset, this.success, this.message});
 
   VehicleResponse.fromJson(Map<String, dynamic> json) {
-    asset = json['asset'] != null ? new Asset.fromJson(json['asset']) : null;
+    asset = json['asset'] != null ? Asset.fromJson(json['asset']) : null;
     success = json['success'];
     message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.asset != null) {
-      data['asset'] = this.asset!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (asset != null) {
+      data['asset'] = asset!.toJson();
     }
-    data['success'] = this.success;
-    data['message'] = this.message;
+    data['success'] = success;
+    data['message'] = message;
     return data;
   }
 }
@@ -35,16 +35,16 @@ class Asset {
     userId = json['userId'];
     category = json['category'];
     vehicle =
-    json['Vehicle'] != null ? new Vehicle.fromJson(json['Vehicle']) : null;
+    json['Vehicle'] != null ? Vehicle.fromJson(json['Vehicle']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['userId'] = this.userId;
-    data['category'] = this.category;
-    if (this.vehicle != null) {
-      data['Vehicle'] = this.vehicle!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['userId'] = userId;
+    data['category'] = category;
+    if (vehicle != null) {
+      data['Vehicle'] = vehicle!.toJson();
     }
     return data;
   }
@@ -85,16 +85,16 @@ class Vehicle {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['vehicleType'] = this.vehicleType;
-    data['brandName'] = this.brandName;
-    data['modelName'] = this.modelName;
-    data['registrationNumber'] = this.registrationNumber;
-    data['chassisNumber'] = this.chassisNumber;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['vehicleType'] = vehicleType;
+    data['brandName'] = brandName;
+    data['modelName'] = modelName;
+    data['registrationNumber'] = registrationNumber;
+    data['chassisNumber'] = chassisNumber;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }

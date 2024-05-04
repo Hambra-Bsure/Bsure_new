@@ -12,7 +12,7 @@ const startColorBackground = Color(0xFFF5F4F2);
 const endColorBackground = Color(0xFFF5EAE6);
 
 class Intro extends StatefulWidget {
-  const Intro({Key? key}) : super(key: key);
+  const Intro({super.key});
 
   @override
   State<StatefulWidget> createState() => _IntroState();
@@ -84,7 +84,7 @@ class _IntroState extends State<Intro> {
               Expanded(
                 child: ListView(
                   children: <Widget>[
-                    Container(
+                    SizedBox(
                       height: height * 0.8, // Adjust this value as needed
                       child: PageIndicatorContainer(
                         align: IndicatorAlign.bottom,
@@ -217,11 +217,11 @@ class PageItem extends StatelessWidget {
   final String description;
 
   const PageItem({
-    Key? key,
+    super.key,
     required this.message,
     required this.imagePath,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

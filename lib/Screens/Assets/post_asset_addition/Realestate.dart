@@ -13,7 +13,7 @@ enum PropertyType { Residential, Commercial }
 class RealEstateAdd extends StatefulWidget {
   final String assetType;
 
-  const RealEstateAdd({Key? key, required this.assetType}) : super(key: key);
+  const RealEstateAdd({super.key, required this.assetType});
 
   @override
   _RealEstateAddState createState() => _RealEstateAddState();
@@ -89,7 +89,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                       value: type,
                       child: Text(type.toString().split('.').last),
                     );
-                  }).toList(),
+                  }),
                 ],
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),

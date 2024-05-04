@@ -12,7 +12,7 @@ import '../Update_asset_screens/Esop_Edit.dart';
 class EsopScreen extends StatefulWidget {
   final String assetType;
 
-  const EsopScreen({Key? key, required this.assetType}) : super(key: key);
+  const EsopScreen({super.key, required this.assetType});
 
   @override
   _EsopScreenState createState() => _EsopScreenState();
@@ -74,7 +74,7 @@ class _EsopScreenState extends State<EsopScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff429bb8),
+        backgroundColor: const Color(0xff429bb8),
         title: const Text('Esop', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading

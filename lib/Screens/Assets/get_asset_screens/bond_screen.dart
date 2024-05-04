@@ -11,7 +11,7 @@ import '../Update_asset_screens/Bond_Edit.dart';
 class BondScreen extends StatefulWidget {
   final String assetType;
 
-  const BondScreen({Key? key, required this.assetType}) : super(key: key);
+  const BondScreen({super.key, required this.assetType});
 
   @override
   _BondScreenState createState() => _BondScreenState();

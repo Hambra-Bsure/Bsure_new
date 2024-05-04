@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class LoadingAssets extends StatelessWidget {
-  const LoadingAssets({Key? key}) : super(key: key);
+  const LoadingAssets({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class LoadingAssets extends StatelessWidget {
 }
 
 class Loading extends StatelessWidget {
-  const Loading({Key? key}) : super(key: key);
+  const Loading({super.key});
 
   @override
   Widget build(BuildContext context) {

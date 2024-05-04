@@ -74,7 +74,7 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff429bb8),
+        backgroundColor: const Color(0xff429bb8),
         title: const Text('StockBroker', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
@@ -94,7 +94,7 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit),
                                   onPressed: () async {
                                     final updatedBroker = await Navigator.push(
                                       context,

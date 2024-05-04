@@ -1,13 +1,9 @@
 import 'dart:convert';
-import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/real_estate_screen.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/get_asset_models/loan_given.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Repositary/Models/get_asset_models/real_estate.dart';
 import '../../Utils/DisplayUtils.dart';
-import '../get_asset_screens/bank_account_screen.dart';
 import '../get_asset_screens/loan_given_screen.dart';
 
 class LoanGivenEdit extends StatefulWidget {
@@ -15,8 +11,7 @@ class LoanGivenEdit extends StatefulWidget {
   final String assetType;
 
   const LoanGivenEdit(
-      {Key? key, required this.loan, required this.assetType})
-      : super(key: key);
+      {super.key, required this.loan, required this.assetType});
 
   @override
   State<LoanGivenEdit> createState() => _LoanGivenEditState();

@@ -9,7 +9,7 @@ import 'package:Bsure_devapp/Screens/Nominees/Add_nominee.dart';
 import 'Edit_nominee.dart'; // Import the NomineeEdit screen
 
 class GetNomineeScreen extends StatefulWidget {
-  const GetNomineeScreen({Key? key}) : super(key: key);
+  const GetNomineeScreen({super.key});
 
   @override
   _GetNomineeScreenState createState() => _GetNomineeScreenState();
@@ -87,7 +87,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit),
                                   onPressed: () async {
                                     final Updatednominee = await Navigator.push(
                                       context,
@@ -201,7 +201,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddNominee(),
+              builder: (context) => const AddNominee(),
             ),
           );
           getData();

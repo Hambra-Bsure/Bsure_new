@@ -1,26 +1,17 @@
 import 'dart:convert';
-import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/nps_screen.dart';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/other_screen.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/get_asset_models/others.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../Repositary/Models/get_asset_models/pf.dart';
-import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
-import '../get_asset_screens/Pf_screen.dart';
-import '../get_asset_screens/bank_account_screen.dart';
 
 class OtherEdit extends StatefulWidget {
   final Other others;
   final String assetType;
 
-  const OtherEdit({Key? key, required this.others, required this.assetType})
-      : super(key: key);
+  const OtherEdit({super.key, required this.others, required this.assetType});
 
   @override
   State<OtherEdit> createState() => _OtherEditState();

@@ -5,15 +5,13 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/real_estate.dart';
 import '../../Utils/DisplayUtils.dart';
-import '../get_asset_screens/bank_account_screen.dart';
 
 class RealEstateEdit extends StatefulWidget {
   final RealEstate realestate;
   final String assetType;
 
   const RealEstateEdit(
-      {Key? key, required this.realestate, required this.assetType})
-      : super(key: key);
+      {super.key, required this.realestate, required this.assetType});
 
   @override
   State<RealEstateEdit> createState() => _RealEstateEditState();

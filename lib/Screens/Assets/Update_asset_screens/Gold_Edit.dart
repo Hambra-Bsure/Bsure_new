@@ -13,10 +13,10 @@ class GoldEdit extends StatefulWidget {
   final String assetType;
 
   const GoldEdit({
-    Key? key,
+    super.key,
     required this.gold,
     required this.assetType,
-  }) : super(key: key);
+  });
 
   @override
   State<GoldEdit> createState() => _GoldEditState();

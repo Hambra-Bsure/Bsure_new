@@ -11,17 +11,17 @@ class GetBankResponse {
     if (json['assets'] != null) {
       assets = <Assets>[];
       json['assets'].forEach((v) {
-        assets!.add(new Assets.fromJson(v));
+        assets!.add(Assets.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    data['message'] = this.message;
-    if (this.assets != null) {
-      data['assets'] = this.assets!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
+    data['message'] = message;
+    if (assets != null) {
+      data['assets'] = assets!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -62,16 +62,16 @@ class Assets {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['category'] = this.category;
-    data['bankName'] = this.bankName;
-    data['accountNumber'] = this.accountNumber;
-    data['ifscCode'] = this.ifscCode;
-    data['branchName'] = this.branchName;
-    data['accountType'] = this.accountType;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['category'] = category;
+    data['bankName'] = bankName;
+    data['accountNumber'] = accountNumber;
+    data['ifscCode'] = ifscCode;
+    data['branchName'] = branchName;
+    data['accountType'] = accountType;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }

@@ -2,12 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../Repositary/Models/AssetModels/GetCategoryResponse.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
-import 'BankAccount.dart';
-import 'MutualFund.dart';
-import 'Non-LifeInsurance.dart';
-import 'PostOfficeAccount.dart'; // Import your NodeClient class
+// Import your NodeClient class
 
 class CategoryScreen extends StatefulWidget {
+  const CategoryScreen({super.key});
+
   @override
   _CategoryScreenState createState() => _CategoryScreenState();
 }
@@ -138,7 +137,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
     home: CategoryScreen(),
   ));

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:expandable_text/expandable_text.dart';
 import 'package:lottie/lottie.dart';
 import 'Contact_Us_screen.dart';
 
 
 class FAQ extends StatelessWidget {
-  const FAQ({Key? key}) : super(key: key);
+  const FAQ({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,7 @@ class FAQ extends StatelessWidget {
             const HeaderWidget(),
             const SizedBox(height: 20),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question: 'What does Bsure.live do ?',
               answer: 'Here is the list of things Bsure do'
                   '(1). Store your asset details in secure platform'
@@ -33,7 +32,7 @@ class FAQ extends StatelessWidget {
                   '(4). Helps your family to get the assets transferred to your name.',
             ),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question: 'Why Bsure.live charges a subscription fee?',
               answer: 'There are 2 kinds of companies in this world.'
                   '(1). Companies who offer services for free:'
@@ -48,7 +47,7 @@ class FAQ extends StatelessWidget {
                   ' financial information.',
             ),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question: 'Who can be a nominee ?',
               answer: 'You can decide any person as your nominee. Please note'
                   ' that the nominee you have selected may have rights '
@@ -57,7 +56,7 @@ class FAQ extends StatelessWidget {
                   ' and parents as nominees.',
             ),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question: 'When can the information be shared with the nominee ?',
               answer: 'The asset information can be shared with the nominee in '
                   'the following conditions'
@@ -69,7 +68,7 @@ class FAQ extends StatelessWidget {
                   ' the validation from the user is successful.',
             ),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question: 'Can a minor be a nominee ?',
               answer:
               'Yes. A minor can be a nominee. But make sure to appoint a guardian with'
@@ -77,7 +76,7 @@ class FAQ extends StatelessWidget {
                   ' child once he/she is eligible.',
             ),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question:
               'What details does the nominee need to provide to get access to information ?',
               answer:
@@ -86,7 +85,7 @@ class FAQ extends StatelessWidget {
                   '(2). Nominee\'s identity proof.',
             ),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question: 'Things to be noted while filling the asset details ?',
               answer: 'Ensure to fill all the columns of asset details.'
                   '(1). It is highly recommended to put the folio number, '
@@ -97,7 +96,7 @@ class FAQ extends StatelessWidget {
                   '(4). We recommend attaching a copy of the identity proof of the nominees.',
             ),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question:
               'Who has the right over the wealth? The nominees mentioned on bank/investments or the nominees mentioned on the will?',
               answer:
@@ -105,14 +104,14 @@ class FAQ extends StatelessWidget {
                   ' over the nominees mentioned on the investments/bank accounts.',
             ),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question:
               'There are more than 1 wills registered for the user. Which "will" will have merit?',
               answer: 'In normal circumstances, the latest registered "will"'
                   ' precedes all the previous wills.',
             ),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question:
               'Should a digital will be enough or do I need to register the will?',
               answer: 'Bsure encourages users to opt for a digital will as it'
@@ -122,7 +121,7 @@ class FAQ extends StatelessWidget {
                   ' even the digital will is enough.',
             ),
             const Divider(color: Color(0xff429bb8)),
-            FAQSectionWidget(
+            const FAQSectionWidget(
               question: 'What else is required to make a will?',
               answer: 'A will should normally have the following:'
                   '(1). 2 witnesses who understand that the "will"'
@@ -174,7 +173,7 @@ class FAQ extends StatelessWidget {
 }
 
 class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({Key? key}) : super(key: key);
+  const HeaderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -221,10 +220,10 @@ class FAQSectionWidget extends StatelessWidget {
   final String answer;
 
   const FAQSectionWidget({
-    Key? key,
+    super.key,
     required this.question,
     required this.answer,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -240,7 +239,7 @@ class FAQSectionWidget extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
             child: Text(
               answer,
-              style: TextStyle(fontSize: 15),
+              style: const TextStyle(fontSize: 15),
             ),
           ),
         ],

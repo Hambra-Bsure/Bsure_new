@@ -11,8 +11,7 @@ class BondEdit extends StatefulWidget {
   final String assetType;
 
   const BondEdit(
-      {Key? key, required this.bond, required this.assetType})
-      : super(key: key);
+      {super.key, required this.bond, required this.assetType});
 
   @override
   State<BondEdit> createState() => _BondEditState();

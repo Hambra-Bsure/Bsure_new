@@ -3,7 +3,7 @@ import 'package:lottie/lottie.dart';
 
 
 class NoNomineelist extends StatelessWidget {
-  const NoNomineelist({Key? key}) : super(key: key);
+  const NoNomineelist({super.key});
 
   @override
   Widget build(BuildContext context) {

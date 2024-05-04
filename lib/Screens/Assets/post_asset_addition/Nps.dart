@@ -9,7 +9,7 @@ import '../../Repositary/Retrofit/node_api_client.dart';
 class NpsAdd extends StatefulWidget {
   final String assetType;
 
-  const NpsAdd({Key? key, required this.assetType}) : super(key: key);
+  const NpsAdd({super.key, required this.assetType});
 
   @override
   _NpsAddState createState() => _NpsAddState();
@@ -81,9 +81,9 @@ class _NpsAddState extends State<NpsAdd> {
               ),
             ),
             if (mandatory)
-              Text(
+              const Text(
                 ' *',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),

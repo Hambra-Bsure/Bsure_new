@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class TermsOfUse extends StatefulWidget {
-  const TermsOfUse({Key? key}) : super(key: key);
+  const TermsOfUse({super.key});
 
   @override
   State<TermsOfUse> createState() => _TermsOfUseState();

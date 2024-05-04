@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
@@ -18,8 +17,7 @@ enum AccountType {
 class BankAccountAdd extends StatefulWidget {
   final String assetType;
 
-  const BankAccountAdd({Key? key, required this.assetType})
-      : super(key: key);
+  const BankAccountAdd({super.key, required this.assetType});
 
   @override
   _BankAccountAddState createState() => _BankAccountAddState();
@@ -256,7 +254,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                 value: type,
                 child: Text(accountTypeToString(type)),
               );
-            }).toList(),
+            }),
           ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -335,7 +333,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
       }
 
       // If no file is uploaded, set fileUrl to an empty string or null
-      if (fileUrl == null || fileUrl.isEmpty) {
+      if (fileUrl.isEmpty) {
         fileUrl = ''; // or fileUrl = null;
       }
 

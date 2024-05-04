@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SaveButton extends StatelessWidget {
-  const SaveButton({Key? key,  required this.onTap, required this.text}) : super(key: key);
+  const SaveButton({super.key,  required this.onTap, required this.text});
 
   final Function() onTap;
   final String text;

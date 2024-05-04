@@ -8,7 +8,7 @@ import '../../Repositary/Retrofit/node_api_client.dart';
 class LoanGivenAdd extends StatefulWidget {
   final String assetType;
 
-  const LoanGivenAdd({Key? key, required this.assetType}) : super(key: key);
+  const LoanGivenAdd({super.key, required this.assetType});
 
   @override
   _LoanGivenAddState createState() => _LoanGivenAddState();
@@ -222,7 +222,7 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
     );
 
     try {
-      final response = await client.CreateLoanGiven(token!, request);
+      final response = await client.CreateLoanGiven(token, request);
       print(response);
 
       // Close the current screen

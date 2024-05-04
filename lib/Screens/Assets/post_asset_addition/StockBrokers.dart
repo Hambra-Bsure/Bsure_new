@@ -5,13 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Retrofit/node_api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../get_asset_screens/mutual_fund_screen.dart';
 
 class StockBrokerAdd extends StatefulWidget {
   final String assetType;
 
-  const StockBrokerAdd({Key? key, required this.assetType})
-      : super(key: key);
+  const StockBrokerAdd({super.key, required this.assetType});
 
   @override
   _StockBrokerAddState createState() => _StockBrokerAddState();

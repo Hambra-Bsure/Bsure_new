@@ -1,22 +1,17 @@
 import 'dart:convert';
-import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/real_estate_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/Vehicle.dart';
-import '../../Repositary/Models/get_asset_models/real_estate.dart';
 import '../../Utils/DisplayUtils.dart';
-import '../get_asset_screens/bank_account_screen.dart';
 import '../get_asset_screens/vehicle_screen.dart';
-import '../post_asset_addition/VehicleScreen.dart';
 
 class VehicleEdit extends StatefulWidget {
   final Vehicle vehicle;
   final String assetType;
 
   const VehicleEdit(
-      {Key? key, required this.vehicle, required this.assetType})
-      : super(key: key);
+      {super.key, required this.vehicle, required this.assetType});
 
   @override
   State<VehicleEdit> createState() => _VehicleEditState();

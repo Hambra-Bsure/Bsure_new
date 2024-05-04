@@ -14,7 +14,7 @@ import 'Refund_policy.dart';
 import 'Terms_of_use.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +196,7 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         child: Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             //color: Theme.of(context).primaryColor,
           ),
         ),

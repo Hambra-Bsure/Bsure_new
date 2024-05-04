@@ -5,7 +5,7 @@ import 'ShareAssetswithme.dart';
 import 'ShareassetBenefits.dart';
 
 class AssetScreen extends StatelessWidget {
-  const AssetScreen({Key? key}) : super(key: key);
+  const AssetScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -110,18 +110,18 @@ class AssetScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Shareassetbenefits()),
+                        builder: (context) => const Shareassetbenefits()),
                   );
                 },
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color(0xff429bb8),
+                      color: const Color(0xff429bb8),
                       width: 2.0,
                     ),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  padding: EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: RichText(
                     text: TextSpan(
                       children: [
@@ -129,7 +129,7 @@ class AssetScreen extends StatelessWidget {
                           text: "Click here ",
                           style: TextStyle(
                             fontSize: 18 * scaleFactor,
-                            color: Color(0xff429bb8),
+                            color: const Color(0xff429bb8),
                           ),
                         ),
                         TextSpan(

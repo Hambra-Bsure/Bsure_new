@@ -30,13 +30,13 @@ class LifeInsuranceRequest {
         attachment = json['attachment'];
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetType'] = this.assetType;
-    data['insuranceCompanyName'] = this.insuranceCompanyName;
-    data['policyName'] = this.policyName;
-    data['policyNumber'] = this.policyNumber;
-    data['coverageAmount'] = this.coverageAmount;
-    data['maturityDate'] = this.maturityDate;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assetType'] = assetType;
+    data['insuranceCompanyName'] = insuranceCompanyName;
+    data['policyName'] = policyName;
+    data['policyNumber'] = policyNumber;
+    data['coverageAmount'] = coverageAmount;
+    data['maturityDate'] = maturityDate;
     data['comments'] = comments;
     data['attachment'] = attachment;
     return data;

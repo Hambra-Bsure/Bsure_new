@@ -1,12 +1,8 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/bank_account.dart';
-import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/bank_account_screen.dart';
 
@@ -21,8 +17,7 @@ class BankAccountEdit extends StatefulWidget {
   final String assetType;
 
   const BankAccountEdit(
-      {Key? key, required this.account, required this.assetType})
-      : super(key: key);
+      {super.key, required this.account, required this.assetType});
 
   @override
   State<BankAccountEdit> createState() => _BankAccountEditState();
@@ -51,6 +46,7 @@ class _BankAccountEditState extends State<BankAccountEdit> {
     attachment = widget.account.attachment;
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

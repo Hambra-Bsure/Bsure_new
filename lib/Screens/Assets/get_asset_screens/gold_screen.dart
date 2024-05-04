@@ -11,7 +11,7 @@ import '../post_asset_addition/Gold.dart';
 class GoldScreen extends StatefulWidget {
   final String assetType;
 
-  const GoldScreen({Key? key, required this.assetType}) : super(key: key);
+  const GoldScreen({super.key, required this.assetType});
 
   @override
   _GoldScreenState createState() => _GoldScreenState();

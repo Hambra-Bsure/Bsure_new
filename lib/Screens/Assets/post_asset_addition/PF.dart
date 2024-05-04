@@ -9,7 +9,7 @@ import '../../Repositary/Retrofit/node_api_client.dart';
 class PfAdd extends StatefulWidget {
   final String assetType;
 
-  const PfAdd({Key? key, required this.assetType}) : super(key: key);
+  const PfAdd({super.key, required this.assetType});
 
   @override
   _PfAddState createState() => _PfAddState();

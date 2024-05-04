@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/non_life_insurance_screen.dart';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/post_office_account_screen.dart';
-import 'package:Bsure_devapp/Screens/Repositary/Models/get_asset_models/non_life_insurance.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

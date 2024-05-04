@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Shareassetbenefits extends StatelessWidget {
+  const Shareassetbenefits({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +50,7 @@ class Shareassetbenefits extends StatelessWidget {
         children: [
           Text(
             text,
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
             textAlign: TextAlign.justify,
           ),
         ],

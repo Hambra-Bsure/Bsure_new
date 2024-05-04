@@ -73,7 +73,7 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff429bb8),
+        backgroundColor: const Color(0xff429bb8),
         title: const Text('Crypto Exchange',
             style: TextStyle(color: Colors.white)),
       ),

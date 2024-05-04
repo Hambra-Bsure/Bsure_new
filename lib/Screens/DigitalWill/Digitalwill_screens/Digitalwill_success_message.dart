@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -7,7 +6,7 @@ import 'DigitalWitness.dart';
 import 'Digitalwillpreview.dart';
 
 class Nomineeforallassets4 extends StatefulWidget {
-  const Nomineeforallassets4({Key? key}) : super(key: key);
+  const Nomineeforallassets4({super.key});
 
   @override
   State<Nomineeforallassets4> createState() => _Nomineeforallassets3State();
@@ -92,12 +91,12 @@ class _Nomineeforallassets3State extends State<Nomineeforallassets4> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              DigitalWitnessScreen()), // Replace NextScreen with your desired screen
+                              const DigitalWitnessScreen()), // Replace NextScreen with your desired screen
                     );
                   },
-                  child: const Icon(Icons.arrow_forward),
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
+                  child: const Icon(Icons.arrow_forward),
                 ),
               ],
             ),

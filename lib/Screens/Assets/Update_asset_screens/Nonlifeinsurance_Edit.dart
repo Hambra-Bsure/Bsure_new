@@ -2,10 +2,7 @@ import 'dart:convert';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/non_life_insurance_screen.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/get_asset_models/non_life_insurance.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Utils/DisplayUtils.dart';
@@ -15,8 +12,7 @@ class NonLifeInsuranceEdit extends StatefulWidget {
   final String assetType;
 
   const NonLifeInsuranceEdit(
-      {Key? key, required this.nonlifeinsurance, required this.assetType})
-      : super(key: key);
+      {super.key, required this.nonlifeinsurance, required this.assetType});
 
   @override
   State<NonLifeInsuranceEdit> createState() => _NonLifeInsuranceEditState();

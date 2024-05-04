@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class Error extends StatelessWidget {
-  const Error({Key? key}) : super(key: key);
+  const Error({super.key});
 
   @override
   Widget build(BuildContext context) {

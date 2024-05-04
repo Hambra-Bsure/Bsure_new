@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/bank_account.dart';
-import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../Update_asset_screens/Bank_Account_Edit.dart';
 
@@ -16,8 +15,7 @@ class BankAccountsScreen extends StatefulWidget {
   final BankAccount? updatedAccount;
 
   const BankAccountsScreen(
-      {Key? key, required this.assetType, this.updatedAccount})
-      : super(key: key);
+      {super.key, required this.assetType, this.updatedAccount});
 
   @override
   _BankAccountsScreenState createState() => _BankAccountsScreenState();
@@ -109,7 +107,7 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit),
                                   onPressed: () async {
                                     final updatedAccount = await Navigator.push(
                                       context,

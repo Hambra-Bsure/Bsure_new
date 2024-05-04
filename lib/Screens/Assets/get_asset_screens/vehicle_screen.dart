@@ -11,7 +11,7 @@ import '../Update_asset_screens/Vehicle_Edit.dart';
 class VehicleScreen extends StatefulWidget {
   final String assetType;
 
-  const VehicleScreen({Key? key, required this.assetType}) : super(key: key);
+  const VehicleScreen({super.key, required this.assetType});
 
   @override
   _VehicleScreenState createState() => _VehicleScreenState();

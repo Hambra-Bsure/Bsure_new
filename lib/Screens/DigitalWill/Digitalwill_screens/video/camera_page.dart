@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:Bsure_devapp/Screens/DigitalWill/Digitalwill_screens/video/video_page.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 import '../../../Repositary/Models/User_models/Get_user_res.dart';
 import '../../../Utils/DisplayUtils.dart';
@@ -15,7 +13,7 @@ import '../../../Utils/SharedPrefHelper.dart'; // Import the http package
 
 
 class CameraExampleHome extends StatefulWidget {
-  const CameraExampleHome({Key? key});
+  const CameraExampleHome({super.key, Key? key});
 
   @override
   State<CameraExampleHome> createState() => _CameraExampleHomeState();
@@ -259,7 +257,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
       if (mounted) {
         setState(() {});
       }
-    } on CameraException catch (e) {}
+    } on CameraException {}
   }
 
   Future<void> stopVideoRecording() async {
@@ -280,7 +278,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
           );
         }
       }
-    } on CameraException catch (e) {}
+    } on CameraException {}
   }
 
   void _startTimer() {
@@ -312,7 +310,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
 }
 
 class CameraApp extends StatelessWidget {
-  const CameraApp({Key? key});
+  const CameraApp({super.key, Key? key});
 
   @override
   Widget build(BuildContext context) {

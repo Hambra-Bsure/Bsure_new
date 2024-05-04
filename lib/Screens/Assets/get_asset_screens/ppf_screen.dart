@@ -74,7 +74,7 @@ class _PPfScreenState extends State<PPfScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff429bb8),
+        backgroundColor: const Color(0xff429bb8),
         title: const Text('PPf', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading

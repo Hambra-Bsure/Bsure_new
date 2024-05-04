@@ -11,7 +11,7 @@ import 'components/no_nominee.dart';
 const Color darkBlue = Color.fromARGB(255, 18, 32, 47);
 
 class AppWidget extends StatefulWidget {
-  const AppWidget({Key? key}) : super(key: key);
+  const AppWidget({super.key});
 
   @override
   State<AppWidget> createState() => _AppWidgetState();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class NoAssetlist extends StatelessWidget {
-  const NoAssetlist({Key? key}) : super(key: key);
+  const NoAssetlist({super.key});
 
   @override
   Widget build(BuildContext context) {

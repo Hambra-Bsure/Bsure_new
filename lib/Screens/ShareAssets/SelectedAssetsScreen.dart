@@ -8,12 +8,11 @@ import '../DigitalWill/components/no_nominee.dart';
 import '../Repositary/Models/Nominee_models/Get_Nominee_response.dart';
 import '../Repositary/Models/Share_assets/Share_asset_res.dart';
 import '../Repositary/Models/Share_assets/response.dart';
-import '../Repositary/Retrofit/node_api_client.dart';
 import '../Utils/DisplayUtils.dart';
 import 'MyShareAsssets.dart';
 
 class SelectedAssetsScreen extends StatefulWidget {
-  const SelectedAssetsScreen({Key? key}) : super(key: key);
+  const SelectedAssetsScreen({super.key});
 
   @override
   State<SelectedAssetsScreen> createState() => _SelectedAssetsScreenState();
@@ -356,11 +355,11 @@ class AssetCard extends StatefulWidget {
   final ValueChanged<bool> onSelected;
 
   const AssetCard({
-    Key? key,
+    super.key,
     required this.asset,
     required this.isSelected, // Include isSelected parameter here
     required this.onSelected,
-  }) : super(key: key);
+  });
 
   @override
   _AssetCardState createState() => _AssetCardState();

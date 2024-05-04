@@ -8,7 +8,7 @@ import '../../../Utils/DisplayUtils.dart';
 import '../Digitalwill_success_message.dart';
 
 class NomineeForAllAssets extends StatefulWidget {
-  const NomineeForAllAssets({Key? key}) : super(key: key);
+  const NomineeForAllAssets({super.key});
 
   @override
   State<NomineeForAllAssets> createState() => _NomineeForAllAssetsState();

@@ -9,7 +9,7 @@ import '../get_asset_screens/esop_screen.dart';
 class EsopAdd extends StatefulWidget {
   final String assetType;
 
-  const EsopAdd({Key? key, required this.assetType}) : super(key: key);
+  const EsopAdd({super.key, required this.assetType});
 
   @override
   _EsopAddState createState() => _EsopAddState();

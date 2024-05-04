@@ -1,22 +1,16 @@
 import 'dart:convert';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/mutual_fund_screen.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Repositary/Models/get_asset_models/bank_account.dart';
 import '../../Repositary/Models/get_asset_models/mutual_fund.dart';
-import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
-import '../get_asset_screens/bank_account_screen.dart';
 
 class MutualFundEdit extends StatefulWidget {
   final MutualFund fund;
   final String assetType;
 
-  const MutualFundEdit({Key? key, required this.assetType, required this.fund}) : super(key: key);
+  const MutualFundEdit({super.key, required this.assetType, required this.fund});
 
   @override
   State<MutualFundEdit> createState() => _MutualFundEditState();

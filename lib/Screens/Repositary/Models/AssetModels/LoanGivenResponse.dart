@@ -6,18 +6,18 @@ class LoanGivenResponse {
   LoanGivenResponse({this.asset, this.success, this.message});
 
   LoanGivenResponse.fromJson(Map<String, dynamic> json) {
-    asset = json['asset'] != null ? new Asset.fromJson(json['asset']) : null;
+    asset = json['asset'] != null ? Asset.fromJson(json['asset']) : null;
     success = json['success'];
     message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.asset != null) {
-      data['asset'] = this.asset!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (asset != null) {
+      data['asset'] = asset!.toJson();
     }
-    data['success'] = this.success;
-    data['message'] = this.message;
+    data['success'] = success;
+    data['message'] = message;
     return data;
   }
 }
@@ -35,17 +35,17 @@ class Asset {
     userId = json['userId'];
     category = json['category'];
     loanGiven = json['LoanGiven'] != null
-        ? new LoanGiven.fromJson(json['LoanGiven'])
+        ? LoanGiven.fromJson(json['LoanGiven'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['userId'] = this.userId;
-    data['category'] = this.category;
-    if (this.loanGiven != null) {
-      data['LoanGiven'] = this.loanGiven!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['userId'] = userId;
+    data['category'] = category;
+    if (loanGiven != null) {
+      data['LoanGiven'] = loanGiven!.toJson();
     }
     return data;
   }
@@ -83,15 +83,15 @@ class LoanGiven {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['borrowerName'] = this.borrowerName;
-    data['loanAmount'] = this.loanAmount;
-    data['loanGivenDate'] = this.loanGivenDate;
-    data['interestRate'] = this.interestRate;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['borrowerName'] = borrowerName;
+    data['loanAmount'] = loanAmount;
+    data['loanGivenDate'] = loanGivenDate;
+    data['interestRate'] = interestRate;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }

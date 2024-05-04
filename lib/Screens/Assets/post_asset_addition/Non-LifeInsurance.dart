@@ -9,7 +9,7 @@ import '../get_asset_screens/non_life_insurance_screen.dart';
 class NonLifeInsuranceAdd extends StatefulWidget {
   final String assetType;
 
-  const NonLifeInsuranceAdd({Key? key, required this.assetType}) : super(key: key);
+  const NonLifeInsuranceAdd({super.key, required this.assetType});
 
   @override
   _NonLifeInsuranceAddState createState() => _NonLifeInsuranceAddState();
@@ -131,16 +131,16 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
-          text: TextSpan(
+          text: const TextSpan(
             children: [
-              const TextSpan(
+              TextSpan(
                 text: 'Type of Insurance ',
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const TextSpan(
+              TextSpan(
                 text: '*',
                 style: TextStyle(
                   color: Colors.red,

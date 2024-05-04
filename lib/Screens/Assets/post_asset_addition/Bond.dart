@@ -9,7 +9,7 @@ import '../get_asset_screens/bond_screen.dart';
 class BondAdd extends StatefulWidget {
   final String assetType;
 
-  const BondAdd({Key? key, required this.assetType}) : super(key: key);
+  const BondAdd({super.key, required this.assetType});
 
   @override
   _BondAddState createState() => _BondAddState();

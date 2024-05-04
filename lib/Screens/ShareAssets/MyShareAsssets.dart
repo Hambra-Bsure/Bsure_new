@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Repositary/Models/Share_assets/Myshare_asset_res.dart';
 
 class MyAssetsScreen extends StatefulWidget {
-  const MyAssetsScreen({Key? key}) : super(key: key);
+  const MyAssetsScreen({super.key});
 
   @override
   _MyAssetsScreenState createState() => _MyAssetsScreenState();

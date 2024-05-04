@@ -27,14 +27,14 @@ class MutualFundRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetType'] = this.assetType;
-    data['amcName'] = this.amcName;
-    data['schemeName'] = this.schemeName;
-    data['folioNumber'] = this.folioNumber;
-    data['fundType'] = this.fundType;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assetType'] = assetType;
+    data['amcName'] = amcName;
+    data['schemeName'] = schemeName;
+    data['folioNumber'] = folioNumber;
+    data['fundType'] = fundType;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
     return data;
   }
 }

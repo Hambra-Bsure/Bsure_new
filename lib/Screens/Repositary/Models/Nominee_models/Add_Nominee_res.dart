@@ -51,22 +51,22 @@ class AddNomineeResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['firstName'] = this.firstName;
-    data['lastName'] = this.lastName;
-    data['mobileNumber'] = this.mobileNumber;
-    data['email'] = this.email;
-    data['address'] = this.address;
-    data['relation'] = this.relation;
-    data['age'] = this.age;
-    data['image'] = this.image;
-    data['idProof'] = this.idProof;
-    data['guardianName'] = this.guardianName;
-    data['guardianMobileNumber'] = this.guardianMobileNumber;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['userId'] = this.userId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['firstName'] = firstName;
+    data['lastName'] = lastName;
+    data['mobileNumber'] = mobileNumber;
+    data['email'] = email;
+    data['address'] = address;
+    data['relation'] = relation;
+    data['age'] = age;
+    data['image'] = image;
+    data['idProof'] = idProof;
+    data['guardianName'] = guardianName;
+    data['guardianMobileNumber'] = guardianMobileNumber;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['userId'] = userId;
     return data;
   }
 }

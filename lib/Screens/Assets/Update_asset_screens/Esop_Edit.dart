@@ -4,15 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/esop.dart';
 import '../../Utils/DisplayUtils.dart';
-import '../get_asset_screens/bond_screen.dart';
 import '../get_asset_screens/esop_screen.dart';
 
 class EsopEdit extends StatefulWidget {
   final Esop esop;
   final String assetType;
 
-  const EsopEdit({Key? key, required this.esop, required this.assetType})
-      : super(key: key);
+  const EsopEdit({super.key, required this.esop, required this.assetType});
 
   @override
   State<EsopEdit> createState() => _EsopEditState();

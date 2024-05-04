@@ -14,11 +14,11 @@ class PfRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetType'] = this.assetType;
-    data['uanNumber'] = this.uanNumber;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assetType'] = assetType;
+    data['uanNumber'] = uanNumber;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
     return data;
   }
 }

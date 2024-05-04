@@ -1,24 +1,17 @@
 import 'dart:convert';
-import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/nps_screen.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Repositary/Models/get_asset_models/pf.dart';
-import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/Pf_screen.dart';
-import '../get_asset_screens/bank_account_screen.dart';
 
 class PfEdit extends StatefulWidget {
   final PF pf;
   final String assetType;
 
-  const PfEdit({Key? key, required this.pf, required this.assetType})
-      : super(key: key);
+  const PfEdit({super.key, required this.pf, required this.assetType});
 
   @override
   State<PfEdit> createState() => _NPSEditState();

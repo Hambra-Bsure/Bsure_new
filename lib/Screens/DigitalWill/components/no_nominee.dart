@@ -4,7 +4,7 @@ import 'package:lottie/lottie.dart';
 import '../../Nominees/Get_all_nominees.dart';
 
 class NoNominee extends StatelessWidget {
-  const NoNominee({Key? key}) : super(key: key);
+  const NoNominee({super.key});
 
   @override
   Widget build(BuildContext context) {

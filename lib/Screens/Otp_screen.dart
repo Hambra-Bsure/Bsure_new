@@ -13,8 +13,7 @@ class OtpScreen extends StatefulWidget {
   final String? mobilenumber;
   final String? email;
 
-  const OtpScreen({Key? key, required this.mobilenumber, this.email})
-      : super(key: key);
+  const OtpScreen({super.key, required this.mobilenumber, this.email});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -365,7 +364,7 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _listenOtp() async {
-    await SmsAutoFill().listenForCode;
+    SmsAutoFill().listenForCode;
 
     SmsAutoFill().code.listen((String otp) {
       if (otp.isNotEmpty) {

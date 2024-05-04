@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/post_office_account_screen.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Repositary/Models/get_asset_models/post_office_account.dart';
 import '../../Repositary/Models/AssetModels/PostOfficeAccountRequest.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 
@@ -19,8 +17,7 @@ enum AccountType {
 class PostOfficeAccountAdd extends StatefulWidget {
   final String assetType;
 
-  const PostOfficeAccountAdd({Key? key, required this.assetType})
-      : super(key: key);
+  const PostOfficeAccountAdd({super.key, required this.assetType});
 
   @override
   _PostOfficeAccountAddState createState() => _PostOfficeAccountAddState();
@@ -132,7 +129,7 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
                 value: type,
                 child: Text(accountTypeToString(type)),
               );
-            }).toList(),
+            }),
           ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),

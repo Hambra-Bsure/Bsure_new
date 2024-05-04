@@ -2,11 +2,8 @@ import 'dart:convert';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/life_insurance_screen.dart';
 import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/life_Insurance.dart';
 
@@ -15,8 +12,7 @@ class LifeInsuranceEdit extends StatefulWidget {
   final String assetType;
 
   const LifeInsuranceEdit(
-      {Key? key, required this.insurance, required this.assetType})
-      : super(key: key);
+      {super.key, required this.insurance, required this.assetType});
 
   @override
   State<LifeInsuranceEdit> createState() => _LifeInsuranceEditState();

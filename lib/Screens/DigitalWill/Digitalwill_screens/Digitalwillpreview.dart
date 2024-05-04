@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Repositary/Models/Digital_will/Digitalwill_get_res.dart';
-import '../../Repositary/Retrofit/Headers.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../Digitalwill_mainscreen.dart';
 
 class DigitalWillScreen extends StatefulWidget {
-  const DigitalWillScreen({Key? key}) : super(key: key);
+  const DigitalWillScreen({super.key});
 
   @override
   _DigitalWillScreenState createState() => _DigitalWillScreenState();
@@ -171,7 +170,7 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
                             ],
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 );

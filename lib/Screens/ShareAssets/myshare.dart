@@ -19,11 +19,13 @@ List<BankInfo> sampleBankInfo = [
 
 // Define the ShareAssetsScreen widget
 class ShareAssets extends StatelessWidget {
+  const ShareAssets({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Share Bank Information'),
+        title: const Text('Share Bank Information'),
       ),
       body: ListView.builder(
         itemCount: sampleBankInfo.length,
@@ -48,7 +50,7 @@ class ShareAssets extends StatelessWidget {
           // Implement functionality to share bank information
           _showShareDialog(context);
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -59,8 +61,8 @@ class ShareAssets extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Share Bank Information'),
-          content: Column(
+          title: const Text('Share Bank Information'),
+          content: const Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
@@ -82,13 +84,13 @@ class ShareAssets extends StatelessWidget {
                 sampleBankInfo.add(BankInfo('New Bank', 'New Branch', 'New Account Type'));
                 Navigator.of(context).pop();
               },
-              child: Text('Share'),
+              child: const Text('Share'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         );

@@ -4,7 +4,7 @@ import 'Digitalwill_mainscreen.dart';
 import 'Willbenefits.dart';
 
 class WillScreen extends StatelessWidget {
-  const WillScreen({Key? key}) : super(key: key);
+  const WillScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

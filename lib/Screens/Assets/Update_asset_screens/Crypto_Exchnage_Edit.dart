@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/crypto_exchange.dart';
 import '../../Utils/DisplayUtils.dart';
@@ -13,7 +10,7 @@ class CryptoExchangeEdit extends StatefulWidget {
   final CryptoExchange cryptoexchange;
   final String assetType;
 
-  const CryptoExchangeEdit({Key? key, required this.cryptoexchange, required this.assetType}) : super(key: key);
+  const CryptoExchangeEdit({super.key, required this.cryptoexchange, required this.assetType});
 
   @override
   State<CryptoExchangeEdit> createState() => _CryptoExchangeEditState();

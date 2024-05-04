@@ -38,7 +38,7 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.get("token");
 
-    final category = 'PostOfficeAccount'; // Add this line
+    const category = 'PostOfficeAccount'; // Add this line
     print('Category: $category'); // Print category for debugging
 
     final url = Uri.parse(

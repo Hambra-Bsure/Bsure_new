@@ -7,15 +7,15 @@ class DigitalwillgetResponse {
     if (json['assets'] != null) {
       assets = <Assets>[];
       json['assets'].forEach((v) {
-        assets!.add(new Assets.fromJson(v));
+        assets!.add(Assets.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.assets != null) {
-      data['assets'] = this.assets!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (assets != null) {
+      data['assets'] = assets!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -43,19 +43,19 @@ class Assets {
     if (json['nominees'] != null) {
       nominees = <Nominees>[];
       json['nominees'].forEach((v) {
-        nominees!.add(new Nominees.fromJson(v));
+        nominees!.add(Nominees.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetId'] = this.assetId;
-    data['categoryId'] = this.categoryId;
-    data['assetName'] = this.assetName;
-    data['assetIdentity'] = this.assetIdentity;
-    if (this.nominees != null) {
-      data['nominees'] = this.nominees!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assetId'] = assetId;
+    data['categoryId'] = categoryId;
+    data['assetName'] = assetName;
+    data['assetIdentity'] = assetIdentity;
+    if (nominees != null) {
+      data['nominees'] = nominees!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -79,12 +79,12 @@ class Nominees {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['mobile'] = this.mobile;
-    data['relation'] = this.relation;
-    data['share'] = this.share;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['mobile'] = mobile;
+    data['relation'] = relation;
+    data['share'] = share;
     return data;
   }
 }

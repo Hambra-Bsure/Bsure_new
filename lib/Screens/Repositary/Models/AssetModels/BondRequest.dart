@@ -37,7 +37,7 @@ class BondRequest {
     data['bondNumber'] = bondNumber;
     data['authorityWhoIssuedTheBond'] = authorityWhoIssuedTheBond;
     data['typeOfBond'] = typeOfBond;
-    data['maturityDate'] = this.maturityDate; // Update maturityDate assignment
+    data['maturityDate'] = maturityDate; // Update maturityDate assignment
     data['comments'] = comments;
     data['attachment'] = attachment;
     return data;

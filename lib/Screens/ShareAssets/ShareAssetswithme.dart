@@ -7,7 +7,7 @@ import '../Repositary/Models/Share_assets/Shareasset_withme_res.dart';
 import '../Repositary/Retrofit/node_api_client.dart';
 
 class Shareassetwithme extends StatefulWidget {
-  const Shareassetwithme({Key? key}) : super(key: key);
+  const Shareassetwithme({super.key});
 
   @override
   _ShareassetwithmeState createState() => _ShareassetwithmeState();
@@ -72,7 +72,7 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : shareAssetsResponse != null && shareAssetsResponse.success == true
+          : shareAssetsResponse.success == true
               ? Column(
                   children: [
                     // Dropdown for selecting usernames
@@ -113,7 +113,7 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
       ));
     }
 
-    List<AssetDetails> selectedUserAssets = shareAssetsResponse!
+    List<AssetDetails> selectedUserAssets = shareAssetsResponse
         .assetDetailsList!
         .where((asset) => asset.userName == userName)
         .toList();

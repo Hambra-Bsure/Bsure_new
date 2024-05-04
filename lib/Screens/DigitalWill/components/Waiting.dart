@@ -3,7 +3,7 @@ import 'package:lottie/lottie.dart';
 
 
 class Waiting extends StatelessWidget {
-  const Waiting({Key? key}) : super(key: key);
+  const Waiting({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class Waiting extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              Text("Waiting")
+              const Text("Waiting")
             ],
           ),
         ),

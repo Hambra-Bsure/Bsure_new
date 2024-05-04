@@ -3,12 +3,10 @@ import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/post_office_accoun
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/ppf_screen.dart';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/real_estate_screen.dart';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/vehicle_screen.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/category_response.dart';
-import '../../Repositary/Retrofit/Headers.dart';
 import 'Pf_screen.dart';
 import 'bond_screen.dart';
 import 'crypto_exchange_screen.dart';
@@ -24,7 +22,7 @@ import 'other_screen.dart';
 import 'stock_broker_screen.dart';
 
 class CategoriesScreen extends StatefulWidget {
-  const CategoriesScreen({Key? key}) : super(key: key);
+  const CategoriesScreen({super.key});
 
   @override
   _CategoriesScreenState createState() => _CategoriesScreenState();

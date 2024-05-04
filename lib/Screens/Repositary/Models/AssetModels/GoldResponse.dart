@@ -6,18 +6,18 @@ class GoldResponse {
   GoldResponse({this.asset, this.success, this.message});
 
   GoldResponse.fromJson(Map<String, dynamic> json) {
-    asset = json['asset'] != null ? new Asset.fromJson(json['asset']) : null;
+    asset = json['asset'] != null ? Asset.fromJson(json['asset']) : null;
     success = json['success'];
     message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.asset != null) {
-      data['asset'] = this.asset!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (asset != null) {
+      data['asset'] = asset!.toJson();
     }
-    data['success'] = this.success;
-    data['message'] = this.message;
+    data['success'] = success;
+    data['message'] = message;
     return data;
   }
 }
@@ -34,16 +34,16 @@ class Asset {
     id = json['id'];
     userId = json['userId'];
     category = json['category'];
-    gold = json['Gold'] != null ? new Gold.fromJson(json['Gold']) : null;
+    gold = json['Gold'] != null ? Gold.fromJson(json['Gold']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['userId'] = this.userId;
-    data['category'] = this.category;
-    if (this.gold != null) {
-      data['Gold'] = this.gold!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['userId'] = userId;
+    data['category'] = category;
+    if (gold != null) {
+      data['Gold'] = gold!.toJson();
     }
     return data;
   }
@@ -81,15 +81,15 @@ class Gold {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['metalType'] = this.metalType;
-    data['type'] = this.type;
-    data['weightInGrams'] = this.weightInGrams;
-    data['whereItIsKept'] = this.whereItIsKept;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['metalType'] = metalType;
+    data['type'] = type;
+    data['weightInGrams'] = weightInGrams;
+    data['whereItIsKept'] = whereItIsKept;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }

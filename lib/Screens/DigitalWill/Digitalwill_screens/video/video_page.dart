@@ -14,8 +14,7 @@ import '../Digitalwill_success_message.dart';
 class VideoDisplayScreen extends StatefulWidget {
   final String videoPath;
 
-  const VideoDisplayScreen({Key? key, required this.videoPath})
-      : super(key: key);
+  const VideoDisplayScreen({super.key, required this.videoPath});
 
   @override
   _VideoDisplayScreenState createState() => _VideoDisplayScreenState();

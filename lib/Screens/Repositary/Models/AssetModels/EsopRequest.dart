@@ -33,16 +33,16 @@ class EsopRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['assetType'] = this.assetType;
-    data['companyName'] = this.companyName;
-    data['numberOfStocks'] = this.numberOfStocks;
-    data['optionPrice'] = this.optionPrice;
-    data['expiryDate'] = this.expiryDate;
-    data['totalSharesAvailableForIssue'] = this.totalSharesAvailableForIssue;
-    data['issuePricePerShare'] = this.issuePricePerShare;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assetType'] = assetType;
+    data['companyName'] = companyName;
+    data['numberOfStocks'] = numberOfStocks;
+    data['optionPrice'] = optionPrice;
+    data['expiryDate'] = expiryDate;
+    data['totalSharesAvailableForIssue'] = totalSharesAvailableForIssue;
+    data['issuePricePerShare'] = issuePricePerShare;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
     return data;
   }
 }

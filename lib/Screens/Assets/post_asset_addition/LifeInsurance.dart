@@ -8,7 +8,7 @@ import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/LifeInsurance
 class LifeInsuranceAdd extends StatefulWidget {
   final String assetType;
 
-  const LifeInsuranceAdd({Key? key, required this.assetType}) : super(key: key);
+  const LifeInsuranceAdd({super.key, required this.assetType});
 
   @override
   _LifeInsuranceAddState createState() => _LifeInsuranceAddState();

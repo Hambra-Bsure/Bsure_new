@@ -6,18 +6,18 @@ class RealEstateResponse {
   RealEstateResponse({this.asset, this.success, this.message});
 
   RealEstateResponse.fromJson(Map<String, dynamic> json) {
-    asset = json['asset'] != null ? new Asset.fromJson(json['asset']) : null;
+    asset = json['asset'] != null ? Asset.fromJson(json['asset']) : null;
     success = json['success'];
     message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.asset != null) {
-      data['asset'] = this.asset!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (asset != null) {
+      data['asset'] = asset!.toJson();
     }
-    data['success'] = this.success;
-    data['message'] = this.message;
+    data['success'] = success;
+    data['message'] = message;
     return data;
   }
 }
@@ -35,17 +35,17 @@ class Asset {
     userId = json['userId'];
     category = json['category'];
     realEstate = json['RealEstate'] != null
-        ? new RealEstate.fromJson(json['RealEstate'])
+        ? RealEstate.fromJson(json['RealEstate'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['userId'] = this.userId;
-    data['category'] = this.category;
-    if (this.realEstate != null) {
-      data['RealEstate'] = this.realEstate!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['userId'] = userId;
+    data['category'] = category;
+    if (realEstate != null) {
+      data['RealEstate'] = realEstate!.toJson();
     }
     return data;
   }
@@ -95,19 +95,19 @@ class RealEstate {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['typeOfProperty'] = this.typeOfProperty;
-    data['address'] = this.address;
-    data['khataNumber'] = this.khataNumber;
-    data['northOfProperty'] = this.northOfProperty;
-    data['southOfProperty'] = this.southOfProperty;
-    data['eastOfProperty'] = this.eastOfProperty;
-    data['westOfProperty'] = this.westOfProperty;
-    data['image'] = this.image;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['typeOfProperty'] = typeOfProperty;
+    data['address'] = address;
+    data['khataNumber'] = khataNumber;
+    data['northOfProperty'] = northOfProperty;
+    data['southOfProperty'] = southOfProperty;
+    data['eastOfProperty'] = eastOfProperty;
+    data['westOfProperty'] = westOfProperty;
+    data['image'] = image;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }

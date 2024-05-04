@@ -6,7 +6,7 @@ import 'will_state.dart';
 
 
 class WillBloc extends Bloc<WillEvent, WillState> {
-  WillBloc(WillState state) : super(state) {
+  WillBloc(super.state) {
     on<ManualDistribution>(_onManualDistribution);
     on<EqualDistribute>(_onEqualDistribute);
     on<UndoAllAssetsEqualDistribute>(_onUndoAllAssetsEqualDistribute);

@@ -6,18 +6,18 @@ class MutualFundResponse {
   MutualFundResponse({this.asset, this.success, this.message});
 
   MutualFundResponse.fromJson(Map<String, dynamic> json) {
-    asset = json['asset'] != null ? new Asset.fromJson(json['asset']) : null;
+    asset = json['asset'] != null ? Asset.fromJson(json['asset']) : null;
     success = json['success'];
     message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.asset != null) {
-      data['asset'] = this.asset!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (asset != null) {
+      data['asset'] = asset!.toJson();
     }
-    data['success'] = this.success;
-    data['message'] = this.message;
+    data['success'] = success;
+    data['message'] = message;
     return data;
   }
 }
@@ -35,17 +35,17 @@ class Asset {
     userId = json['userId'];
     category = json['category'];
     mutualFund = json['MutualFund'] != null
-        ? new MutualFund.fromJson(json['MutualFund'])
+        ? MutualFund.fromJson(json['MutualFund'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['userId'] = this.userId;
-    data['category'] = this.category;
-    if (this.mutualFund != null) {
-      data['MutualFund'] = this.mutualFund!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['userId'] = userId;
+    data['category'] = category;
+    if (mutualFund != null) {
+      data['MutualFund'] = mutualFund!.toJson();
     }
     return data;
   }
@@ -83,15 +83,15 @@ class MutualFund {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['amcName'] = this.amcName;
-    data['schemeName'] = this.schemeName;
-    data['folioNumber'] = this.folioNumber;
-    data['fundType'] = this.fundType;
-    data['comments'] = this.comments;
-    data['attachment'] = this.attachment;
-    data['assetId'] = this.assetId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['amcName'] = amcName;
+    data['schemeName'] = schemeName;
+    data['folioNumber'] = folioNumber;
+    data['fundType'] = fundType;
+    data['comments'] = comments;
+    data['attachment'] = attachment;
+    data['assetId'] = assetId;
     return data;
   }
 }

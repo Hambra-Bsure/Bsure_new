@@ -112,86 +112,84 @@ class PreviewScreen extends StatelessWidget {
     final bloc = BlocProvider.of<WillBloc>(context);
     final willState = bloc.state;
 
-    if (willState is WillState) {
-      final List<Asset> assets = willState.assets;
+    final List<Asset> assets = willState.assets;
 
-      // Convert the list of assets to the required format for submission
-      final List<AssetReq> assetReqs = assets.map((asset) {
-        return AssetReq(
-          assetId: asset.assetId,
-          nominees: asset.nominees.map((nominee) {
-            return NomineeReq(
-              nomineeId: nominee.id,
-              share: nominee.share
-                  .toDouble(), // Convert share to double if necessary
-            );
-          }).toList(),
-        );
-      }).toList();
-
-      // Create a WillState object
-      final WillState willStateObject = WillState(assets: assets);
-
-      final response = await client.digitalWillSave(
-        token: token,
-        request: assetReqs, // Pass the WillState object
+    // Convert the list of assets to the required format for submission
+    final List<AssetReq> assetReqs = assets.map((asset) {
+      return AssetReq(
+        assetId: asset.assetId,
+        nominees: asset.nominees.map((nominee) {
+          return NomineeReq(
+            nomineeId: nominee.id,
+            share: nominee.share
+                .toDouble(), // Convert share to double if necessary
+          );
+        }).toList(),
       );
+    }).toList();
 
-      if (response.isValid == true) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Center(
-              child: Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      "Choose an option",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const NomineeForAllAssets(),
-                          ),
-                        );
-                      },
-                      child: const Text("Verify Otp"),
-                    ),
-                    const SizedBox(height: 8.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CameraApp(),
-                          ),
-                        );
-                      },
-                      child: const Text("Verify video"),
-                    ),
-                  ],
-                ),
+    // Create a WillState object
+    final WillState willStateObject = WillState(assets: assets);
+
+    final response = await client.digitalWillSave(
+      token: token,
+      request: assetReqs, // Pass the WillState object
+    );
+
+    if (response.isValid == true) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.white,
               ),
-            );
-          },
-        );
-        // Show the dialog here
-      } else {
-        // Handle the error as needed
-      }
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Choose an option",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NomineeForAllAssets(),
+                        ),
+                      );
+                    },
+                    child: const Text("Verify Otp"),
+                  ),
+                  const SizedBox(height: 8.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CameraApp(),
+                        ),
+                      );
+                    },
+                    child: const Text("Verify video"),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+      // Show the dialog here
+    } else {
+      // Handle the error as needed
     }
-  }
+    }
 }

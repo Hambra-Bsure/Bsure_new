@@ -6,7 +6,7 @@ import '../../Assets/get_asset_screens/category.dart';
 
 
 class NoAsset extends StatelessWidget {
-  const NoAsset({Key? key}) : super(key: key);
+  const NoAsset({super.key});
 
   @override
   Widget build(BuildContext context) {

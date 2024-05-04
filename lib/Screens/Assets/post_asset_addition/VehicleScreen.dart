@@ -9,7 +9,7 @@ import '../get_asset_screens/vehicle_screen.dart';
 class VehicleAdd extends StatefulWidget {
   final String assetType;
 
-  const VehicleAdd({Key? key, required this.assetType}) : super(key: key);
+  const VehicleAdd({super.key, required this.assetType});
 
   @override
   _VehicleAddState createState() => _VehicleAddState();
@@ -180,7 +180,7 @@ class _VehicleAddState extends State<VehicleAdd> {
           items: items,
           decoration: InputDecoration(
             labelText: labelText, // Update to include labelText as label
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),

@@ -9,7 +9,7 @@ import '../../Repositary/Retrofit/node_api_client.dart';
 class OtherAssetAdd extends StatefulWidget {
   final String assetType;
 
-  const OtherAssetAdd({Key? key, required this.assetType}) : super(key: key);
+  const OtherAssetAdd({super.key, required this.assetType});
 
   @override
   _OtherAssetAddState createState() => _OtherAssetAddState();

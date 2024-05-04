@@ -8,7 +8,7 @@ class ContactUsScreen extends StatelessWidget {
   final TextEditingController textdata1 = TextEditingController();
   final TextEditingController textdata2 = TextEditingController();
 
-  ContactUsScreen({Key? key}) : super(key: key);
+  ContactUsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

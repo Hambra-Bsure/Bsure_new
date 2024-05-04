@@ -9,7 +9,7 @@ import '../../Repositary/Retrofit/node_api_client.dart';
 class PpfAdd extends StatefulWidget {
   final String assetType;
 
-  const PpfAdd({Key? key, required this.assetType}) : super(key: key);
+  const PpfAdd({super.key, required this.assetType});
 
   @override
   _PpfAddState createState() => _PpfAddState();
@@ -89,9 +89,9 @@ class _PpfAddState extends State<PpfAdd> {
               ),
             ),
             if (mandatory)
-              Text(
+              const Text(
                 ' *',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),

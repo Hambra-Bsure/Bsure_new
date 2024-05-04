@@ -6,7 +6,7 @@ import '../Repositary/Retrofit/node_api_client.dart';
 import '../Utils/SharedPrefHelper.dart';
 
 class AccountDeletionScreen extends StatelessWidget {
-  const AccountDeletionScreen({Key? key}) : super(key: key);
+  const AccountDeletionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
