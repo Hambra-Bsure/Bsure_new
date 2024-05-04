@@ -21,7 +21,7 @@ class _NodeClient implements NodeClient {
   String? baseUrl;
 
   @override
-  Future<LoginResponse2> login2(LoginRequest2 Request) async {
+  Future<LoginResponse2> login(LoginRequest2 Request) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -35,7 +35,7 @@ class _NodeClient implements NodeClient {
     )
             .compose(
               _dio.options,
-              '/login2',
+              '/v2/auth/login',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -49,7 +49,7 @@ class _NodeClient implements NodeClient {
   }
 
   @override
-  Future<VerifyResponse> verify(VerifyRequest req) async {
+  Future<VerifyResponse> verifyotp(VerifyRequest req) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -63,7 +63,7 @@ class _NodeClient implements NodeClient {
     )
             .compose(
               _dio.options,
-              '/verify',
+              '/v2/auth/verify',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -711,25 +711,21 @@ class _NodeClient implements NodeClient {
   }
 
   @override
-  Future<AddNomineeResponse> AddNominee(
-    String token,
-    AddNomineeRequest req,
-  ) async {
+  Future<AssetsResponse2> getAllCategoryAssets2(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(req.toJson());
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<AddNomineeResponse>(Options(
-      method: 'POST',
+        .fetch<Map<String, dynamic>>(_setStreamType<AssetsResponse2>(Options(
+      method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/v2/nominee',
+              '/asset/category/all2',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -738,7 +734,278 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = AddNomineeResponse.fromJson(_result.data!);
+    final value = AssetsResponse2.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<Digitalwillsaveresponse> digitalWillSave({
+    String? token,
+    List<AssetReq>? request,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = request!.map((e) => e.toJson()).toList();
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Digitalwillsaveresponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/will/assets',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = Digitalwillsaveresponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<DigitalwillgetResponse> digitalWillGetData(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<DigitalwillgetResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/will/assets',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = DigitalwillgetResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<confirmationotpresponse> confirmOtp(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<confirmationotpresponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/will/confirmation',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = confirmationotpresponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<digitalwillverifyotpresponse> digitalwillVerifyOtp(
+    String token,
+    digitalverifyotprequest req,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(req.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<digitalwillverifyotpresponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/will/verify',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = digitalwillverifyotpresponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<Digitalwill_video_request> digitalwillVideo(
+    String token,
+    Digitalwillvideo_response req,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(req.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Digitalwill_video_request>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/will/video',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = Digitalwill_video_request.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ShareAssetResponse> ShareAssets(
+    String token,
+    ShareAssetRequest shareAssetRequest,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(shareAssetRequest.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<ShareAssetResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/shareAsset/share',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = ShareAssetResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<MyShareAssetsResponse> getSharedAssets(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<MyShareAssetsResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/shareAsset/share-by-me',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = MyShareAssetsResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ShareAssetswithmeResponse> getSharedAssetswithme(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ShareAssetswithmeResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/shareAsset/share-with-me',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = ShareAssetswithmeResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<Deleteshareresponse> deleteShareAsset(
+    String token,
+    int id,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Deleteshareresponse>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/v2/share/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = Deleteshareresponse.fromJson(_result.data!);
     return value;
   }
 

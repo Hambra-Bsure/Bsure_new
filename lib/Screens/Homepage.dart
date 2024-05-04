@@ -1,12 +1,13 @@
 // ignore_for_file: file_names
 
-import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/GetCategoryResponse.dart';
+import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/category.dart';
+import 'package:Bsure_devapp/Screens/Nominees/Get_all_nominees.dart';
 import 'package:flutter/material.dart';
-
-import 'Assets/get_asset_screens/category.dart';
-import 'Nominee_screens/Add_nominee.dart';
-import 'Nominee_screens/Get_all_nominees.dart';
+import 'DigitalWill/WillScreen.dart';
+import 'DigitalWill/widget/asset_list.dart';
 import 'Settings_screen/Profile_page.dart';
+import 'ShareAssets/AssetScreen.dart';
+import 'UserProfile/Get_profile.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -19,6 +20,7 @@ class _HomepageState extends State<Homepage> {
   int _currentStep = 0;
 
   int selectedIndex = 0;
+
   //AssetDetailsBean? products;
   var isLoaded = false;
 
@@ -138,19 +140,17 @@ class _HomepageState extends State<Homepage> {
                                     context,
                                     'Nominee',
                                     'assets/images/img_7.png',
-                                    GetNomineeScreen()),
-                                buildGridItem(
-                                    context,
-                                    'Nudge',
-                                    'assets/images/img_1.png',
-                                   // const NudgeScreen()),
+                                    const GetNomineeScreen()),
+                                // buildGridItem(
+                                //     context,
+                                //     'Nudge',
+                                //     'assets/images/img_1.png',
+                                //     const NudgeScreen()),
                                 buildGridItem(context, 'ShareAssets',
-                                    Icons.share,
-                                    //const AssetScreen()),
+                                    Icons.share, const AssetScreen()),
                                 buildGridItem(context, 'Digitalwill',
-                                    Icons.design_services,
-                                    const CategoriesScreen() as Widget),
-                                ))],
+                                    Icons.design_services, const WillScreen()),
+                              ],
                             ),
                           ),
                         ],
@@ -318,17 +318,17 @@ class _HomepageState extends State<Homepage> {
 
   void continued() {
     if (_currentStep == 0) {
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(builder: (context) => const ProfileScreen()),
-      // );
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+      );
     } else if (_currentStep == 1) {
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(builder: (context) => const AssetList()),
-      // );
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const CategoriesScreen()),
+      );
     } else if (_currentStep == 2) {
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(builder: (context) => const NomineeScreen()),
-      // );
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const GetNomineeScreen()),
+      );
     } else if (_currentStep == 3) {
       // Navigator.of(context).push(
       //   MaterialPageRoute(builder: (context) => const NudgeScreen()),

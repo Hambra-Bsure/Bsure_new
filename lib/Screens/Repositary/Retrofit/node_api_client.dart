@@ -33,18 +33,30 @@ import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/StockBrokerRe
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/VehicleRequest.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/VehicleResponse.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/GetAssetResponse.dart';
-import 'package:Bsure_devapp/Screens/Repositary/Models/Nominee_models/Add_Nominee_req.dart';
-import 'package:Bsure_devapp/Screens/Repositary/Models/Nominee_models/Add_Nominee_res.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+import '../../DigitalWill/Digitalwill_screens/utils/assets2_response_model.dart';
+import '../../DigitalWill/widget/will_save_request.dart';
 import '../Models/AssetModels/BondResponse.dart';
 import '../Models/AssetModels/NonLifeInsuranceRequest.dart';
 import '../Models/AssetModels/NonLifeInsuranceResponse.dart';
 import '../Models/AssetModels/GetbankResponse.dart';
+import '../Models/Digital_will/Confirmation_otp_res.dart';
+import '../Models/Digital_will/Digitalwill_get_res.dart';
+import '../Models/Digital_will/Digitalwill_save_res.dart';
+import '../Models/Digital_will/Digitalwill_verifyotp_req.dart';
+import '../Models/Digital_will/Digitalwill_verifyotp_res.dart';
+import '../Models/Digital_will/Digitalwill_video_req.dart';
+import '../Models/Digital_will/Digitalwill_video_res.dart';
 import '../Models/LoginRequest.dart';
 import '../Models/LoginResponse.dart';
 import '../Models/OtpVerifyRequest.dart';
 import '../Models/OtpVerifyResponse.dart';
+import '../Models/Share_assets/Delete_share_res.dart';
+import '../Models/Share_assets/Myshare_asset_res.dart';
+import '../Models/Share_assets/Share_asset_req.dart';
+import '../Models/Share_assets/Share_asset_res.dart';
+import '../Models/Share_assets/Shareasset_withme_res.dart';
 
 part 'node_api_client.g.dart';
 
@@ -57,11 +69,17 @@ abstract class NodeClient {
 
   //authentication
 
-  @POST("/login2")
-  Future<LoginResponse2> login2(@Body() LoginRequest2 Request);
+  @POST("/v2/auth/login")
+  Future<LoginResponse2> login(@Body() LoginRequest2 Request);
 
-  @POST("/verify")
-  Future<VerifyResponse> verify(@Body() VerifyRequest req);
+  @POST("/v2/auth/verify")
+  Future<VerifyResponse> verifyotp(@Body() VerifyRequest req);
+
+  // @POST("/login2")
+  // Future<LoginResponse2> login2(@Body() LoginRequest2 Request);
+
+  // @POST("/verify")
+  // Future<VerifyResponse> verify(@Body() VerifyRequest req);
 
   //get all Categorys
 
@@ -156,10 +174,64 @@ abstract class NodeClient {
       @Header('Authorization') String token, @Body() EsopRequest req);
 
 
-  // Nominees
 
-  @POST("/v2/nominee")
-  Future<AddNomineeResponse> AddNominee(
-      @Header('Authorization') String token, @Body() AddNomineeRequest req);
+  //Digitalwil
+
+  // @GET("/v2/asset")
+  // Future<GetAllCategoryResponse> getAllCategoryAssets(
+  //     @Header('Authorization') String token);
+
+  @GET("/asset/category/all2")
+  Future<AssetsResponse2> getAllCategoryAssets2(
+      @Header('Authorization') String token);
+
+  // @GET("/v2/asset/all")
+  // Future<Response> fetchGetAllAssets(
+  //     @Header('Authorization') String token);
+
+  @POST("/will/assets")
+  Future<Digitalwillsaveresponse> digitalWillSave({
+    @Header('Authorization') String? token,
+    @Body() List<AssetReq>? request,
+  });
+
+  @GET("/will/assets")
+  Future<DigitalwillgetResponse> digitalWillGetData(
+      @Header('Authorization') String token);
+
+  @POST("/will/confirmation")
+  Future<confirmationotpresponse> confirmOtp(
+      @Header('Authorization') String token);
+
+  @POST("/will/verify")
+  Future<digitalwillverifyotpresponse> digitalwillVerifyOtp(
+      @Header('Authorization') String token,
+      @Body() digitalverifyotprequest req);
+
+  @POST("/will/video")
+  Future<Digitalwill_video_request> digitalwillVideo(
+      @Header('Authorization') String token,
+      @Body() Digitalwillvideo_response req);
+
+
+   //share assets
+
+  @POST("/shareAsset/share")
+  Future<ShareAssetResponse> ShareAssets(@Header('Authorization') String token,
+      @Body() ShareAssetRequest shareAssetRequest);
+
+  @GET("/shareAsset/share-by-me")
+  Future<MyShareAssetsResponse> getSharedAssets(
+      @Header('Authorization') String token);
+
+  @GET("/shareAsset/share-with-me")
+  Future<ShareAssetswithmeResponse> getSharedAssetswithme(
+      @Header('Authorization') String token);
+
+  @DELETE("/v2/share/{id}") // Assuming 'id' is a path parameter
+  Future<Deleteshareresponse> deleteShareAsset(
+      @Header('Authorization') String token,
+      @Path('id') int id // Specify the type of 'id'
+      );
 
 }

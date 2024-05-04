@@ -6,6 +6,7 @@ import 'package:sms_autofill/sms_autofill.dart';
 import 'Homepage.dart';
 import 'Repositary/Models/OtpVerifyRequest.dart';
 import 'Repositary/Retrofit/node_api_client.dart';
+import 'UserProfile/Get_profile.dart';
 import 'Utils/SharedPrefHelper.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -309,7 +310,7 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
         final verifyRequest =
             VerifyRequest(otp: int.parse(otp), userId: int.parse(userId));
 
-        final response = await nodeClient.verify(verifyRequest);
+        final response = await nodeClient.verifyotp(verifyRequest);
         final verifyResponse = response;
 
         if (verifyResponse.user != null && verifyResponse.token != null) {
@@ -317,18 +318,24 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
           await prefs.setBool(SharedPrefHelper().USER_LOGIN_STATUS, true);
           prefs.setString('token', verifyResponse.token!);
 
+          // Retrieve isNewUser flag from SharedPreferences
+          bool isNewUser = prefs.getBool("isNewUser") ?? false;
+          print(isNewUser);
+
           if (verifyResponse.user!.userId != null) {
-            // Existing User
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Homepage()),
-            );
-          } else {
-            // New User
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => const ProfileScreen()),
-            // );
+            if (isNewUser) {
+              // New User
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            } else {
+              // Existing User
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Homepage()),
+              );
+            }
           }
         } else {
           setState(() {

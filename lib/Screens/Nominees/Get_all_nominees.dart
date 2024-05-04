@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Utils/DisplayUtils.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/Nominee_models/Get_Nominee_response.dart';
-import 'package:Bsure_devapp/Screens/Nominee_screens/Add_nominee.dart';
+import 'package:Bsure_devapp/Screens/Nominees/Add_nominee.dart';
 import 'Edit_nominee.dart'; // Import the NomineeEdit screen
 
 class GetNomineeScreen extends StatefulWidget {

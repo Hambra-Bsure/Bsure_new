@@ -1,28 +1,30 @@
 class AddNomineeRequest {
-  String? firstName;
-  String? lastName;
-  String? email;
+  late String firstName;
+  late String lastName;
+  late String address;
+  late String relation;
+  late int age;
+
   String? mobileNumber;
-  String? address;
-  String? relation;
-  int? age;
+  String? email;
   String? image;
   String? idProof;
   String? guardianName;
   String? guardianMobileNumber;
 
-  AddNomineeRequest(
-      {this.firstName,
-        this.lastName,
-        this.email,
-        this.mobileNumber,
-        this.address,
-        this.relation,
-        this.age,
-        this.image,
-        this.idProof,
-        this.guardianName,
-        this.guardianMobileNumber});
+  AddNomineeRequest({
+    required this.firstName,
+    required this.lastName,
+    required this.address,
+    required this.relation,
+    required this.age,
+    this.email,
+    this.mobileNumber,
+    this.image,
+    this.idProof,
+    this.guardianName,
+    this.guardianMobileNumber,
+  });
 
   AddNomineeRequest.fromJson(Map<String, dynamic> json) {
     firstName = json['firstName'];
@@ -34,23 +36,47 @@ class AddNomineeRequest {
     age = json['age'];
     image = json['image'];
     idProof = json['idProof'];
-    guardianName = json['guardianName'];
-    guardianMobileNumber = json['guardianMobileNumber'];
+
+    // Check if 'guardianName' exists in the JSON and if it's not null
+    if (json.containsKey('guardianName') && json['guardianName'] != null) {
+      guardianName = json['guardianName']; // Assign the value if it's not null
+    } else {
+      guardianName = null; // Assign null if the value is null or not present
+    }
+
+    // Similar handling for 'guardianMobileNumber'
+    if (json.containsKey('guardianMobileNumber') &&
+        json['guardianMobileNumber'] != null) {
+      guardianMobileNumber = json['guardianMobileNumber'];
+    } else {
+      guardianMobileNumber = null;
+    }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['firstName'] = this.firstName;
-    data['lastName'] = this.lastName;
-    data['email'] = this.email;
-    data['mobileNumber'] = this.mobileNumber;
-    data['address'] = this.address;
-    data['relation'] = this.relation;
-    data['age'] = this.age;
-    data['image'] = this.image;
-    data['idProof'] = this.idProof;
-    data['guardianName'] = this.guardianName;
-    data['guardianMobileNumber'] = this.guardianMobileNumber;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['firstName'] = firstName;
+    data['lastName'] = lastName;
+    data['address'] = address;
+    data['relation'] = relation;
+    data['age'] = age;
+
+    if (email != null && email != "") data['email'] = email;
+    if (mobileNumber != null && mobileNumber != "") {
+      data['mobileNumber'] = mobileNumber;
+    }
+    if (image != null && image != "") data['image'] = image;
+    if (idProof != null && idProof != "") data['idProof'] = idProof;
+    if (guardianName != null && guardianName != "") {
+      data['guardianName'] = guardianName;
+    }
+    if (guardianMobileNumber != null && guardianMobileNumber != "") {
+      data['guardianMobileNumber'] = guardianMobileNumber;
+    }
+    print("="*100);
+    print("nominee payload");
+    print(data);
+
     return data;
   }
 }

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:Bsure_devapp/Screens/Nominee_screens/Get_all_nominees.dart';
+import 'package:Bsure_devapp/Screens/Nominees/Get_all_nominees.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -129,12 +129,9 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
                                 ),
                               ],
                             ),
-                            Text(
-                              'Bank Name: ${account.bankName}',
-                            ),
+                            Text('Bank Name: ${account.bankName}',),
                             const SizedBox(height: 8.0),
-                            Text(
-                                'Account Number: ${account.accountNumber ?? ""}'),
+                            Text('Account Number: ${account.accountNumber ?? ""}'),
                             const SizedBox(height: 8.0),
                             Text('IFSC Code: ${account.ifscCode ?? ""}'),
                             const SizedBox(height: 8.0),

@@ -247,12 +247,19 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final loginRequest = LoginRequest2(username: mobileNumber);
-      final LoginResponse2 response = await client.login2(loginRequest);
+      final LoginResponse2 response = await client.login(loginRequest);
 
-      if (response.user != null && response.success != null) {
+      print('Response: $response'); // Print the response for debugging
+
+      if (response != null && response.success != null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        String userId = response.user!.userId.toString();
+        String userId = response.userId.toString();
         prefs.setString(SharedPrefHelper().USER_ID, userId);
+
+        // Save the newUser flag to SharedPreferences
+        prefs.setBool("isNewUser", response.newUser ?? false);
+       print(response.newUser);
+
 
         Navigator.push(
           context,
@@ -263,14 +270,12 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         );
-        // print("App Signature : $appSignature");
       } else {
         Fluttertoast.showToast(msg: "Login failed");
       }
     } catch (e) {
+      print('Error: $e'); // Print the error for debugging
       Fluttertoast.showToast(msg: 'Network error: $e');
-      // Log the error for debugging purposes
-      //print('Login Error: $e');
     }
   }
 }

@@ -7,30 +7,30 @@ class AddNomineeResponse {
   String? address;
   String? relation;
   int? age;
-  Null? image;
-  Null? idProof;
-  Null? guardianName;
-  Null? guardianMobileNumber;
+  String? image;
+  String? idProof;
+  String? guardianName;
+  String? guardianMobileNumber;
   String? createdAt;
   String? updatedAt;
   int? userId;
 
   AddNomineeResponse(
       {this.id,
-        this.firstName,
-        this.lastName,
-        this.mobileNumber,
-        this.email,
-        this.address,
-        this.relation,
-        this.age,
-        this.image,
-        this.idProof,
-        this.guardianName,
-        this.guardianMobileNumber,
-        this.createdAt,
-        this.updatedAt,
-        this.userId});
+      this.firstName,
+      this.lastName,
+      this.mobileNumber,
+      this.email,
+      this.address,
+      this.relation,
+      this.age,
+      this.image,
+      this.idProof,
+      this.guardianName,
+      this.guardianMobileNumber,
+      this.createdAt,
+      this.updatedAt,
+      this.userId});
 
   AddNomineeResponse.fromJson(Map<String, dynamic> json) {
     id = json['id'];

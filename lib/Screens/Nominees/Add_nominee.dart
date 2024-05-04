@@ -132,12 +132,12 @@ class _AddNomineeState extends State<AddNominee> {
                   TextFormField(
                     controller: emailController,
                     decoration: const InputDecoration(labelText: 'Email'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter email';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value!.isEmpty) {
+                    //     return 'Please enter email';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -237,6 +237,12 @@ class _AddNomineeState extends State<AddNominee> {
                         age = int.parse(value);
                         isGuardianVisible = age < 18;
                       });
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter age';
+                      }
+                      return null;
                     },
                   ),
                   Text(result),
@@ -483,7 +489,16 @@ class _AddNomineeState extends State<AddNominee> {
   }
 
   void submitNominee() async {
-    // Ensure proper initialization of relationMapping
+    String firstName = firstNameController.text;
+    String lastName = lastNameController.text;
+    String email = emailController.text;
+    String mobileNumber = mobileNumberController.text;
+    String address = addressController.text;
+
+    // Verify that guardian fields are not null before accessing their text properties
+    String guardianName = guardianNameController.text;
+    String guardianMobileNumber = guardianMobileNumberController.text;
+
     Map<Relation, String> relationMapping = {
       Relation.Father: 'father',
       Relation.Mother: 'mother',
@@ -497,48 +512,21 @@ class _AddNomineeState extends State<AddNominee> {
     };
 
     // Check if selected relation is not null before using it
-    String? selectedRelationValue =
-        _selectedRelation != null ? relationMapping[_selectedRelation!] : null;
+    String selectedRelationValue =
+        relationMapping[_selectedRelation] ?? "other";
 
-    // Check if text controllers contain non-null values before accessing their text properties
-    String firstName =
-        firstNameController.text.isNotEmpty ? firstNameController.text : '';
-    String lastName =
-        lastNameController.text.isNotEmpty ? lastNameController.text : '';
-    String email = emailController.text.isNotEmpty ? emailController.text : '';
-    String mobileNumber = mobileNumberController.text.isNotEmpty
-        ? mobileNumberController.text
-        : '';
-    String address =
-        addressController.text.isNotEmpty ? addressController.text : '';
-
-    // Verify that guardian fields are not null before accessing their text properties
-    String? guardianName = guardianNameController.text.isNotEmpty
-        ? guardianNameController.text
-        : null;
-    String? guardianMobileNumber =
-        guardianMobileNumberController.text.isNotEmpty
-            ? guardianMobileNumberController.text
-            : null;
-
-    // Read the content of the selected file
-
-    // Prepare data to be sent
-    AddNomineeRequest nomineeRequest = AddNomineeRequest(
+    final req = AddNomineeRequest(
       firstName: firstName,
       lastName: lastName,
-      email: email,
-      mobileNumber: mobileNumber,
       address: address,
       relation: selectedRelationValue,
       age: age,
+      email: email,
+      mobileNumber: mobileNumber,
       guardianName: guardianName,
       guardianMobileNumber: guardianMobileNumber,
-      //image: '',
-      //idProof: '',
     );
 
-    // Send data to API
     try {
       final prefs = await SharedPreferences.getInstance();
       var token = prefs.getString("token");
@@ -548,14 +536,13 @@ class _AddNomineeState extends State<AddNominee> {
         return;
       }
 
-      final response = await http.post(
-        Uri.parse('http://43.205.12.154:8080/v2/nominee'),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        body: jsonEncode(nomineeRequest.toJson()),
-      );
+      final response =
+          await http.post(Uri.parse('http://43.205.12.154:8080/v2/nominee'),
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": token,
+              },
+              body: jsonEncode(req.toJson()));
 
       // Handle response
       if (response.statusCode == 200) {
