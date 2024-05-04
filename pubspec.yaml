@@ -13,11 +13,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.5
   http: ^0.13.3
   cached_network_image: ^3.2.3
   lottie: ^2.1.0
-  circular_profile_avatar: ^2.0.5
   flutter_launcher_icons: ^0.13.1
   flutter_svg: ^2.0.7
   expandable_text: ^2.3.0
@@ -26,54 +24,38 @@ dependencies:
   json_annotation: ^4.7.0
   shared_preferences: ^2.0.15
   fluttertoast: ^8.1.2
-  get: ^4.6.5
-  provider: ^6.0.5
+  provider: ^6.0.5 #TODO: check where it's been used if not remove it.
   intro_slider: ^4.2.0
-  smooth_page_indicator: ^1.0.0+2
-  page_indicator: ^0.4.1
   share_plus: ^7.1.0
   pin_code_fields: ^8.0.1
   sms_autofill: ^2.3.0
   image_picker: ^1.0.4
   file_picker: ^6.1.1
-  coupon_uikit: ^0.2.0
-  clipboard: ^0.1.3
-  confetti: ^0.7.0
-  path_provider: ^2.0.5
-  googleapis: ^12.0.0
-  googleapis_auth: ^1.4.1
-  url_launcher: ^6.0.13
+  path_provider: ^2.0.5 #TODO: check where it's been used if not remove it.
+  url_launcher: ^6.0.13 #TODO: check where it's been used if not remove it.
   line_awesome_flutter: ^2.0.0
-  flutter_pdfview: ^1.3.1
-  photo_view: ^0.14.0
+  photo_view: ^0.14.0 #TODO: check where it's been used if not remove it.
   universal_platform: ^1.0.0+1
   dio: ^5.4.0
   intl: ^0.19.0
-  carousel_slider: ^4.2.1
   google_fonts: ^4.0.4
-  animations: ^2.0.8
-  font_awesome_flutter: ^10.6.0
-  flutter_hooks: ^0.20.3
+  font_awesome_flutter: ^10.6.0 #TODO: check where it's been used if not remove it.
+  flutter_hooks: ^0.20.3 #TODO: check where it's been used if not remove it.
   video_player: ^2.8.1
   camera: ^0.10.5+7
-  gallery_saver: ^2.3.2
   razorpay_flutter: ^1.3.5
   rxdart: ^0.27.7
   freezed_annotation: ^2.4.1
   uuid: ^4.3.3
   freezed: ^2.4.6
   flutter_bloc: ^8.1.3
-  rational: ^2.2.2
+  rational: ^2.2.2 #TODO: check where it's been used if not remove it.
   accordion: ^2.6.0
-  colorful_safe_area: ^0.3.0
   contacts_service: ^0.6.3
   permission_handler: ^10.3.0
-  flutter_native_contact_picker: ^0.0.6
+  page_indicator: ^0.4.1
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
   flutter_lints: ^3.0.1
   retrofit_generator: ^8.0.0
   build_runner: ^2.3.3
