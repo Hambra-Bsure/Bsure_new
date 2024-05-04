@@ -53,7 +53,7 @@ import '../Models/LoginResponse.dart';
 import '../Models/OtpVerifyRequest.dart';
 import '../Models/OtpVerifyResponse.dart';
 import '../Models/Share_assets/Delete_share_res.dart';
-import '../Models/Share_assets/Myshare_asset_res.dart';
+import '../Models/Share_assets/my_share_asset_res.dart';
 import '../Models/Share_assets/Share_asset_req.dart';
 import '../Models/Share_assets/Share_asset_res.dart';
 import '../Models/Share_assets/Shareasset_withme_res.dart';
@@ -63,7 +63,6 @@ part 'node_api_client.g.dart';
 //@RestApi(baseUrl: 'https://api.bsure.live')
 //@RestApi(baseUrl: 'https://wgflssl8-8080.inc1.devtunnels.ms')
 @RestApi(baseUrl: 'http://43.205.12.154:8080')
-
 abstract class NodeClient {
   factory NodeClient(Dio dio) = _NodeClient;
 
@@ -173,8 +172,6 @@ abstract class NodeClient {
   Future<EsopResponse> CreateEsop(
       @Header('Authorization') String token, @Body() EsopRequest req);
 
-
-
   //Digitalwil
 
   // @GET("/v2/asset")
@@ -213,8 +210,7 @@ abstract class NodeClient {
       @Header('Authorization') String token,
       @Body() Digitalwillvideo_response req);
 
-
-   //share assets
+  //share assets
 
   @POST("/shareAsset/share")
   Future<ShareAssetResponse> ShareAssets(@Header('Authorization') String token,
@@ -233,5 +229,4 @@ abstract class NodeClient {
       @Header('Authorization') String token,
       @Path('id') int id // Specify the type of 'id'
       );
-
 }

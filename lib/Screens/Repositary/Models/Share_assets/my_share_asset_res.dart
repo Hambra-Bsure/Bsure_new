@@ -1,11 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-part 'Myshare_asset_res.freezed.dart';
-part 'Myshare_asset_res.g.dart';
+part 'my_share_asset_res.freezed.dart';
+part 'my_share_asset_res.g.dart';
 
 @freezed
 abstract class MyShareAssetsResponse with _$MyShareAssetsResponse {
   factory MyShareAssetsResponse({
-    required bool? success,
+    required bool success,
     required List<Asset> assets,
   }) = _MyShareAssetsResponse;
 
@@ -20,13 +20,11 @@ abstract class Asset with _$Asset {
     required int userId,
     required String category,
     required List<Nominee> nominees,
-    BankAccount? bankAccount,
-    MutualFund? mutualFund,
+    required List<Detail> details,
   }) = _Asset;
 
   factory Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);
 }
-
 
 @freezed
 abstract class Nominee with _$Nominee {
@@ -43,9 +41,6 @@ abstract class Nominee with _$Nominee {
     required String? idProof,
     required String? guardianName,
     required String? guardianMobileNumber,
-    required String createdAt,
-    required String updatedAt,
-    required int userId,
   }) = _Nominee;
 
   factory Nominee.fromJson(Map<String, dynamic> json) =>
@@ -53,36 +48,11 @@ abstract class Nominee with _$Nominee {
 }
 
 @freezed
-class BankAccount with _$BankAccount {
-  factory BankAccount({
-    required String category,
-    required String bankName,
-    required int assetId,
-    required String attachment,
-    required String comments,
-    required String accountType,
-    required String branchName,
-    required String? ifscCode,
-    required String? accountNumber,
-  }) = _BankAccount;
+abstract class Detail with _$Detail {
+  factory Detail({
+    required String fieldName,
+    required String fieldValue,
+  }) = _Detail;
 
-  factory BankAccount.fromJson(Map<String, Object?> json) =>
-      _$BankAccountFromJson(json);
-}
-
-@freezed
-abstract class MutualFund with _$MutualFund {
-  factory MutualFund({
-    required int id,
-    required String amcName,
-    required String schemeName,
-    required String folioNumber,
-    required String fundType,
-    required String comments,
-    required String attachment,
-    required int assetId,
-  }) = _MutualFund;
-
-  factory MutualFund.fromJson(Map<String, dynamic> json) =>
-      _$MutualFundFromJson(json);
+  factory Detail.fromJson(Map<String, dynamic> json) => _$DetailFromJson(json);
 }

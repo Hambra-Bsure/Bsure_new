@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Repositary/Models/Share_assets/Myshare_asset_res.dart';
+import '../Repositary/Models/Share_assets/my_share_asset_res.dart';
 
 class MyAssetsScreen extends StatefulWidget {
   const MyAssetsScreen({super.key});
@@ -26,7 +26,9 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
       var token = prefs.getString("token");
 
       Dio dio = Dio();
-      dio.options.headers["Authorization"] = token;
+      //TODO: just for testing fix this later
+      dio.options.headers["Authorization"] =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsInVzZXJNb2JpbGUiOiI3MDkzMDY2NTAyIiwiaWF0IjoxNzE0NDcwNjczLCJleHAiOjE3MTUwNzU0NzN9.wz3FdwJ6lK2e1hersBrHVa1EtY_lEh6oNgOF4HZp_2E";
 
       const url = 'http://43.205.12.154:8080/v2/share/by-me';
 
@@ -102,22 +104,18 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
                     fontWeight: FontWeight.bold, // Making category name bold
                   ),
                 ),
-                if (asset.category == 'BankAccount' &&
-                    asset.bankAccount != null) ...[
-                  Text('Bank Name: ${asset.bankAccount?.bankName}'),
-                  Text('Account Number: ${asset.bankAccount?.accountNumber}'),
-                  Text('Ifsc Code: ${asset.bankAccount?.ifscCode}'),
-                  Text('Branch Name: ${asset.bankAccount?.branchName}'),
-                  Text('Account Type: ${asset.bankAccount?.accountType}'),
-                  Text('Comments: ${asset.bankAccount?.comments}'),
-                  // Add additional fields specific to BankAccount here
-                ],
-                if (asset.category == 'MutualFund' &&
-                    asset.mutualFund != null) ...[
-                  Text('AMC Name: ${asset.mutualFund?.amcName}'),
-                  Text('Scheme Name: ${asset.mutualFund?.schemeName}'),
-                  // Add additional fields specific to MutualFund here
-                ],
+                // if (asset.category == 'BankAccount' &&
+                //     asset.bankAccount != null) ...[
+                //   Text('Bank Name: ${asset.bankAccount?.bankName}'),
+                //   Text('Account Number: ${asset.bankAccount?.accountNumber}'),
+                //   Text('Ifsc Code: ${asset.bankAccount?.ifscCode}'),
+                //   Text('Branch Name: ${asset.bankAccount?.branchName}'),
+                //   Text('Account Type: ${asset.bankAccount?.accountType}'),
+                //   Text('Comments: ${asset.bankAccount?.comments}'),
+                //   // Add additional fields specific to BankAccount here
+                // ],
+                ...x(asset.details),
+
                 const Divider(),
                 for (var nominee in asset.nominees)
                   CheckboxListTile(
@@ -151,4 +149,12 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
       },
     );
   }
+}
+
+List<Widget> x(List<Detail> details) {
+  List<Widget> list = [];
+  for (var detail in details) {
+    list.add(Text("${detail.fieldName}: ${detail.fieldValue}"));
+  }
+  return list;
 }
