@@ -15,7 +15,7 @@ class AssetScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title:
-            const Text('Asset Screen', style: TextStyle(color: Colors.white)),
+            const Text('Share Assets', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Container(

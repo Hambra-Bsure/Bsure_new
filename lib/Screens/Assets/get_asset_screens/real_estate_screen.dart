@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:Bsure_devapp/Screens/Assets/post_asset_addition/Realestate.dart';
+import 'package:Bsure_devapp/Screens/Assets/post_asset_addition/real_estate.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -171,7 +171,8 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
                                           onPressed: () async {
                                             Navigator.of(context).pop();
                                             deleteAssetStatus(index);
-                                            List<RealEstate> newrealestate = <RealEstate>[];
+                                            List<RealEstate> newrealestate =
+                                                <RealEstate>[];
                                             newrealestate.addAll(realEstates);
                                             newrealestate.removeAt(index);
                                             setState(() {

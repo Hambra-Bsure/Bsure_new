@@ -30,7 +30,7 @@ class _HomepageState extends State<Homepage> {
   var width = 0.0;
 
   bool backToTop = false;
-  bool isLastindex = false;
+  bool isLastIndex = false;
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _HomepageState extends State<Homepage> {
     scrollController.addListener(() {
       setState(() {
         backToTop = -scrollController.offset > 400 ? true : false;
-        isLastindex = -scrollController.offset >
+        isLastIndex = -scrollController.offset >
                 -scrollController.position.maxScrollExtent
             ? true
             : false;
@@ -385,7 +385,8 @@ class CustomCard extends StatelessWidget {
   final String title;
   final String description;
 
-  const CustomCard({super.key, 
+  const CustomCard({
+    super.key,
     required this.title,
     required this.description,
   });
@@ -428,7 +429,8 @@ class ClickableCardWithMessage extends StatelessWidget {
   final String title;
   final String description;
 
-  const ClickableCardWithMessage({super.key, 
+  const ClickableCardWithMessage({
+    super.key,
     required this.onTap,
     required this.title,
     required this.description,
