@@ -78,7 +78,7 @@ class _RealEstateEditState extends State<RealEstateEdit> {
                 ],
                 decoration: const InputDecoration(
                   labelText: 'Type Of Property',
-                 // border: OutlineInputBorder(),
+                  // border: OutlineInputBorder(),
                 ),
               ),
               TextFormField(
@@ -131,7 +131,8 @@ class _RealEstateEditState extends State<RealEstateEdit> {
               ),
               TextFormField(
                 initialValue: eastOfProperty,
-                decoration: const InputDecoration(labelText: ' East Of Property'),
+                decoration:
+                    const InputDecoration(labelText: ' East Of Property'),
                 onChanged: (value) {
                   setState(() {
                     eastOfProperty = value;
@@ -140,7 +141,8 @@ class _RealEstateEditState extends State<RealEstateEdit> {
               ),
               TextFormField(
                 initialValue: westOfProperty,
-                decoration: const InputDecoration(labelText: ' West Of Property'),
+                decoration:
+                    const InputDecoration(labelText: ' West Of Property'),
                 onChanged: (value) {
                   setState(() {
                     westOfProperty = value;
@@ -192,12 +194,12 @@ class _RealEstateEditState extends State<RealEstateEdit> {
                     category: widget.assetType,
                     image: image,
                   );
-        
+
                   // Call API to update real estate details
                   final response = await updateRealEstate(updatedRealEstate);
-                  print(response);
+
                   DisplayUtils.showToast('Asset Updated Successfully');
-        
+
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
                     context,
@@ -243,7 +245,6 @@ class _RealEstateEditState extends State<RealEstateEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

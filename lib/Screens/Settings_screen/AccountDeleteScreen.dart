@@ -66,7 +66,7 @@ class AccountDeletionScreen extends StatelessWidget {
                 const SizedBox(height: 5),
                 TextField(
                   decoration:
-                  const InputDecoration(labelText: 'Reason for deletion'),
+                      const InputDecoration(labelText: 'Reason for deletion'),
                   onChanged: (value) {
                     deletionReason = value;
                   },
@@ -95,7 +95,7 @@ class AccountDeletionScreen extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content:
-                      Text('Please provide a reason for Account deletion.'),
+                          Text('Please provide a reason for Account deletion.'),
                     ),
                   );
                 }
@@ -116,7 +116,7 @@ class AccountDeletionScreen extends StatelessWidget {
     final client = NodeClient(dio);
     try {
       //var response = await client.deleteAccount(token.toString());
-     // print(response);
+      //
       _showDeletionSuccessDialog(context);
     } catch (e) {
       // Handle API failure

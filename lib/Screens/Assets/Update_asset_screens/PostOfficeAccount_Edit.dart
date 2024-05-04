@@ -121,8 +121,9 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
                 );
 
                 // Call API to update non-life insurance details
-                final response = await updatePostOfficeAccount(updatedPostOfficeAccount);
-                print(response);
+                final response =
+                    await updatePostOfficeAccount(updatedPostOfficeAccount);
+
                 DisplayUtils.showToast('Asset Updated Successfully');
 
                 Navigator.pop(context);
@@ -135,8 +136,7 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
                   ),
                 );
                 if (response != null) {
-                } else {
-                }
+                } else {}
               },
               child: const Text('Update'),
             ),
@@ -173,7 +173,6 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

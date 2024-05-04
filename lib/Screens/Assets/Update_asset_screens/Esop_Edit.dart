@@ -66,7 +66,7 @@ class _EsopEditState extends State<EsopEdit> {
               TextFormField(
                 initialValue: numberOfStocks,
                 decoration:
-                const InputDecoration(labelText: 'Number of Stocks'),
+                    const InputDecoration(labelText: 'Number of Stocks'),
                 onChanged: (value) {
                   setState(() {
                     numberOfStocks = value;
@@ -104,8 +104,8 @@ class _EsopEditState extends State<EsopEdit> {
               ),
               TextFormField(
                 initialValue: issuePricePerShare,
-                decoration: const InputDecoration(
-                    labelText: 'Issue Price Per Share'),
+                decoration:
+                    const InputDecoration(labelText: 'Issue Price Per Share'),
                 onChanged: (value) {
                   setState(() {
                     issuePricePerShare = value;
@@ -140,7 +140,7 @@ class _EsopEditState extends State<EsopEdit> {
                     optionPrice: int.tryParse(optionPrice),
                     expiryDate: expiryDate,
                     totalSharesAvailableForIssue:
-                    int.tryParse(totalSharesAvailableForIssue),
+                        int.tryParse(totalSharesAvailableForIssue),
                     issuePricePerShare: int.tryParse(issuePricePerShare),
                     comments: comments,
                     attachment: attachment,
@@ -150,7 +150,7 @@ class _EsopEditState extends State<EsopEdit> {
 
                   // Call API to update Esop details
                   final response = await updateEsop(updatedEsop);
-                  print(response);
+
                   DisplayUtils.showToast('Asset Updated Successfully');
 
                   Navigator.pop(context);
@@ -189,7 +189,6 @@ class _EsopEditState extends State<EsopEdit> {
     }
   }
 
-
   Future<Esop?> updateEsop(Esop esop) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -205,7 +204,8 @@ class _EsopEditState extends State<EsopEdit> {
     try {
       final response = await dio.put(
         'http://43.205.12.154:8080/v2/asset/${esop.assetId}',
-        data: esop.toJson(), // Convert Esop object to JSON and send as request body
+        data: esop
+            .toJson(), // Convert Esop object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {
@@ -215,7 +215,6 @@ class _EsopEditState extends State<EsopEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

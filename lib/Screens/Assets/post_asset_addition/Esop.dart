@@ -212,7 +212,7 @@ class _EsopAddState extends State<EsopAdd> {
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 

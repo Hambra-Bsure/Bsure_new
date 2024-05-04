@@ -208,7 +208,7 @@ class _GoldAddState extends State<GoldAdd> {
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
@@ -227,7 +227,6 @@ class _GoldAddState extends State<GoldAdd> {
 
     try {
       final response = await client.CreateGold(token, request);
-      print(response);
 
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -239,7 +238,6 @@ class _GoldAddState extends State<GoldAdd> {
 
       // Handle the response data as needed
     } catch (e) {
-      print('Failed to submit data: $e');
       // Handle errors
     }
   }

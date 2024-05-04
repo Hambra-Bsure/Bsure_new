@@ -55,8 +55,6 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
       "ngrok-skip-browser-warning": "69420",
     });
 
-    print(response.body);
-
     if (response.statusCode == 200) {
       final data = BankResponse.fromJson(jsonDecode(response.body));
       if (data.success) {
@@ -127,9 +125,12 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
                                 ),
                               ],
                             ),
-                            Text('Bank Name: ${account.bankName}',),
+                            Text(
+                              'Bank Name: ${account.bankName}',
+                            ),
                             const SizedBox(height: 8.0),
-                            Text('Account Number: ${account.accountNumber ?? ""}'),
+                            Text(
+                                'Account Number: ${account.accountNumber ?? ""}'),
                             const SizedBox(height: 8.0),
                             Text('IFSC Code: ${account.ifscCode ?? ""}'),
                             const SizedBox(height: 8.0),
@@ -269,7 +270,6 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
 
       if (response.statusCode == 200) {
         DisplayUtils.showToast("Asset successfully deleted.");
-
       }
     } catch (e) {
       //DisplayUtils.showToast("API failure");

@@ -47,8 +47,6 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
       "ngrok-skip-browser-warning": "69420",
     });
 
-    print(response.body);
-
     if (response.statusCode == 200) {
       final data = GetNomineeResponse.fromJson(jsonDecode(response.body));
       if (data.success!) {
@@ -81,13 +79,7 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
         },
       );
 
-      print("123");
-      print(res.body);
-
       final x = GetAssetsResponse.fromJson(jsonDecode(res.body));
-
-      print("234");
-      print(x);
 
       setState(() {
         _assetsResponse = x;
@@ -96,14 +88,10 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
       // Print asset labels and values
       if (_assetsResponse != null) {
         for (var asset in _assetsResponse!.assets) {
-          for (var field in asset.assetList) {
-            print("Label: ${field.fieldName}, Value: ${field.fieldValue}");
-          }
+          for (var field in asset.assetList) {}
         }
       }
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   @override
@@ -282,10 +270,6 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
 
   Future<void> submit(
       List<int> selectedAssetIds, List<String> selectedNomineeIds) async {
-    print("ass");
-    print("Selected asset IDs: $selectedAssetIds");
-    print("Selected nominee IDs: $selectedNomineeIds");
-
     try {
       final prefs = await SharedPreferences.getInstance();
       var token = prefs.getString("token");
@@ -323,7 +307,6 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
         final shareResponse = ShareAssetResponse.fromJson(response.data);
 
         // Print the response
-        print(jsonEncode(shareResponse));
 
         if (shareResponse.success == true) {
           DisplayUtils.showToast("Assets shared successfully");

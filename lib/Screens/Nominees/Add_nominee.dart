@@ -533,7 +533,6 @@ class _AddNomineeState extends State<AddNominee> {
       var token = prefs.getString("token");
 
       if (token == null) {
-        print('Token is not available');
         return;
       }
 
@@ -556,12 +555,7 @@ class _AddNomineeState extends State<AddNominee> {
             builder: (context) => const GetNomineeScreen(),
           ),
         );
-        print('Nominee added successfully: ${nomineeResponse.toJson()}');
-      } else {
-        print('Failed to add nominee');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 }

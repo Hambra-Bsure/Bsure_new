@@ -23,7 +23,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJFbWFpbCI6bnVsbCwidXNlck1vYmlsZSI6IjgzMjg1NjQ2ODMiLCJpYXQiOjE3MTI2NjIzNDIsImV4cCI6MTcxMzI2NzE0Mn0.0bfk9q8VBwAbWglJYf9aJpG0mqYNjgiEG1M8hGDzaiw"); // Pass your token here
       return response;
     } catch (e) {
-      print('Error fetching categories: $e');
       throw Exception('Failed to fetch categories');
     }
   }

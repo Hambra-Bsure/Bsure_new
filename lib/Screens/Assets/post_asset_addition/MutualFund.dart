@@ -123,7 +123,6 @@ class _MutualFundAddState extends State<MutualFundAdd> {
   }
 
   void _submitForm() async {
-
     if (!_validateForm()) {
       return;
     }
@@ -135,7 +134,7 @@ class _MutualFundAddState extends State<MutualFundAdd> {
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
@@ -154,7 +153,7 @@ class _MutualFundAddState extends State<MutualFundAdd> {
 
     try {
       final response = await client.CreateMutualFund(token, request);
-      print(response);
+
       // Handle the response data
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -163,9 +162,7 @@ class _MutualFundAddState extends State<MutualFundAdd> {
           builder: (context) => MutualFundScreen(assetType: widget.assetType),
         ),
       );
-    } catch (e) {
-      print('Failed to submit data: $e');
-    }
+    } catch (e) {}
 
     // Clear text fields
     _assetTypeController.clear();
@@ -177,9 +174,9 @@ class _MutualFundAddState extends State<MutualFundAdd> {
     _attachmentController.clear();
   }
 
-
   bool _validateForm() {
-    if (_amcNameController.value.text.isEmpty) { // Check if AMC name is empty
+    if (_amcNameController.value.text.isEmpty) {
+      // Check if AMC name is empty
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('AMC Name is required')),

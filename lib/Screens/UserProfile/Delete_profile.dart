@@ -115,8 +115,8 @@ class AccountDeletionScreen extends StatelessWidget {
     dio.options.headers['Authorization'] = token;
     final client = NodeClient(dio);
     try {
-     // var response = await client.deleteAccount(token.toString());
-     // print(response);
+      // var response = await client.deleteAccount(token.toString());
+      //
       _showDeletionSuccessDialog(context);
     } catch (e) {
       // Handle API failure

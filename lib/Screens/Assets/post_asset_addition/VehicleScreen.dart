@@ -181,13 +181,13 @@ class _VehicleAddState extends State<VehicleAdd> {
           decoration: InputDecoration(
             labelText: labelText, // Update to include labelText as label
             border: const OutlineInputBorder(),
-            contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
     );
   }
-
 
   void _submitForm() async {
     if (!_validateForm()) {
@@ -201,7 +201,7 @@ class _VehicleAddState extends State<VehicleAdd> {
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
@@ -221,7 +221,6 @@ class _VehicleAddState extends State<VehicleAdd> {
 
     try {
       final response = await client.CreateVehicle(token, request);
-      print(response);
 
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -232,7 +231,6 @@ class _VehicleAddState extends State<VehicleAdd> {
       );
       // Handle the response data as needed
     } catch (e) {
-      print('Failed to submit data: $e');
       // Handle errors
     }
   }
@@ -256,6 +254,4 @@ class _VehicleAddState extends State<VehicleAdd> {
     }
     return true;
   }
-
-
 }

@@ -184,7 +184,6 @@ class _NonLifeInsuranceEditState extends State<NonLifeInsuranceEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

@@ -40,12 +40,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Future<void> fetchCategories() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.get("token");
-    print("recent token");
-    print(token);
+
     //Dio dio = HeadersUtils.getHeaders(token);
 
-    final url = Uri.parse(
-        'http://43.205.12.154:8080/v2/asset/categories');
+    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/categories');
     final response = await http.get(url, headers: {
       "Authorization": token.toString(),
       "ngrok-skip-browser-warning": "69420",

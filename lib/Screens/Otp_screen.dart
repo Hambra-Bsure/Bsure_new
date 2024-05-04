@@ -66,10 +66,7 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
   Future<void> _fetchAppSignature() async {
     try {
       final String appSignature = await SmsAutoFill().getAppSignature;
-      print("App Signature: $appSignature");
-    } catch (e) {
-      print("Error fetching app signature: $e");
-    }
+    } catch (e) {}
   }
 
   @override
@@ -319,7 +316,6 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
 
           // Retrieve isNewUser flag from SharedPreferences
           bool isNewUser = prefs.getBool("isNewUser") ?? false;
-          print(isNewUser);
 
           if (verifyResponse.user!.userId != null) {
             if (isNewUser) {
@@ -384,7 +380,7 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
 //       pinCtl.text = otp;
 //     }
 //   } catch (e) {
-//     print("Error fetching OTP: $e");
+//
 //   }
 //
 //   await SmsAutoFill().listenForCode;

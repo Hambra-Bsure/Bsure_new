@@ -192,7 +192,6 @@ class _BondAddState extends State<BondAdd> {
     }
   }
 
-
   // Inside your _submitForm method
   Future<void> _submitForm() async {
     if (!_validateForm()) {
@@ -206,7 +205,7 @@ class _BondAddState extends State<BondAdd> {
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
@@ -221,15 +220,14 @@ class _BondAddState extends State<BondAdd> {
       typeOfBond: _typeOfBondController.text,
       maturityDate: _maturityDateController.text == ""
           ? null
-          : _maturityDateController
-          .text,
+          : _maturityDateController.text,
       comments: _commentsController.text,
       attachment: _attachmentController.text,
     );
 
     try {
       final response = await client.CreateBond(token, request);
-      print(response); // Handle the response data
+      // Handle the response data
 
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -238,10 +236,7 @@ class _BondAddState extends State<BondAdd> {
           builder: (context) => BondScreen(assetType: widget.assetType),
         ),
       );
-
-    } catch (e) {
-      print('Failed to submit data: $e');
-    }
+    } catch (e) {}
   }
 
   bool _validateForm() {
@@ -260,7 +255,8 @@ class _BondAddState extends State<BondAdd> {
         );
       } else if (_authorityController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Authority Who Issued The Bond is required')),
+          const SnackBar(
+              content: Text('Authority Who Issued The Bond is required')),
         );
       } else if (_typeOfBondController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(

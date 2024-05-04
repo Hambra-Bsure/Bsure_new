@@ -163,7 +163,7 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                    EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
               ),
             ),
           ),
@@ -187,8 +187,6 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
     }
   }
 
-
-
   void _submitForm() async {
     if (!_validateForm()) {
       return;
@@ -198,7 +196,6 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
     var token = prefs.getString("token");
 
     if (token == null || token.isEmpty) {
-      print('Token is not available');
       return;
     }
 
@@ -209,11 +206,9 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
       assetType: widget.assetType,
       borrowerName: _borrowerNameController.text,
       loanAmount: int.tryParse(_loanAmountController.text),
-      loanGivenDate:
-      _loanGivenDateController.text == ""
+      loanGivenDate: _loanGivenDateController.text == ""
           ? null
-          :_loanGivenDateController
-          .text,
+          : _loanGivenDateController.text,
       interestRate: _interestRateController.text.isNotEmpty
           ? int.tryParse(_interestRateController.text)
           : null,
@@ -223,7 +218,6 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
 
     try {
       final response = await client.CreateLoanGiven(token, request);
-      print(response);
 
       // Close the current screen
       Navigator.pop(context);
@@ -234,14 +228,14 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
         ),
       );
     } catch (e) {
-      print('Failed to submit data: $e');
       // Handle errors
     }
   }
 
   bool _validateForm() {
     if (_borrowerNameController.value.text.isEmpty ||
-        _loanAmountController.value.text.isEmpty) { // Added closing parenthesis here
+        _loanAmountController.value.text.isEmpty) {
+      // Added closing parenthesis here
       if (_borrowerNameController.value.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Borrower Name is required')),
@@ -255,5 +249,4 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
     }
     return true;
   }
-
 }

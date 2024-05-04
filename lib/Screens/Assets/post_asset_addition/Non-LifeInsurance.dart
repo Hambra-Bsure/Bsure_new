@@ -16,7 +16,8 @@ class NonLifeInsuranceAdd extends StatefulWidget {
 }
 
 class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
-  final TextEditingController _insuranceCompanyNameController = TextEditingController();
+  final TextEditingController _insuranceCompanyNameController =
+      TextEditingController();
   final TextEditingController _policyNameController = TextEditingController();
   final TextEditingController _policyNumberController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
@@ -36,7 +37,8 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Non-Life Insurance', style: TextStyle(color: Colors.white)),
+        title: const Text('Non-Life Insurance',
+            style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -119,7 +121,8 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
           controller: controller,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -172,7 +175,8 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
           ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -188,7 +192,6 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
     var token = prefs.getString("token");
 
     if (token == null || token.isEmpty) {
-      print('Token is not available');
       return;
     }
 
@@ -196,7 +199,8 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
     final client = NodeClient(dio);
 
     try {
-      final response = await client.CreateNonLifeInsurance(token,
+      final response = await client.CreateNonLifeInsurance(
+        token,
         NonLifeInsuranceRequest(
           assetType: widget.assetType,
           insuranceCompanyName: _insuranceCompanyNameController.text,
@@ -208,13 +212,12 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
         ),
       );
 
-      print(response.toJson());
-
       Navigator.pop(context);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => NonLifeInsuranceScreen(assetType: widget.assetType),
+          builder: (context) =>
+              NonLifeInsuranceScreen(assetType: widget.assetType),
         ),
       );
 
@@ -227,9 +230,7 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
       setState(() {
         _selectedDropdownValue = null;
       });
-    } catch (e) {
-      print(e.toString());
-    }
+    } catch (e) {}
   }
 
   bool _validateForm() {
@@ -249,5 +250,4 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
     }
     return true;
   }
-
 }

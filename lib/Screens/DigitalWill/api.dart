@@ -9,7 +9,6 @@ Future<List<Asset>?> getWillAssets() async {
     var token = prefs.getString("token");
 
     if (token == null) {
-      print("Token is null. Using an empty string as a default value.");
       token = "";
     }
 
@@ -21,23 +20,17 @@ Future<List<Asset>?> getWillAssets() async {
       },
     );
 
-    print("Token used: $token");
-
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
       final assets = json["assets"] as List<dynamic>;
-      print("=");
-      print(assets);
 
       Asset myFun(asset) => Asset.fromJson(asset);
 
       return assets.map<Asset>(myFun).toList();
     } else {
-      print("Error: ${response.statusCode}");
       return null;
     }
   } catch (e) {
-    print("Error: $e");
     return null;
   }
 }

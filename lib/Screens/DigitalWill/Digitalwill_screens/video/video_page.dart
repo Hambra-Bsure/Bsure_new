@@ -152,9 +152,6 @@ class _VideoDisplayScreenState extends State<VideoDisplayScreen> {
         'Content-Type': 'multipart/form-data',
       });
 
-      print('=' * 100);
-      print(videoPath);
-
       if (kIsWeb) {
         // For web, use http.MultipartFile.fromBytes
         var fileBytes = await File(videoPath).readAsBytes();
@@ -180,8 +177,6 @@ class _VideoDisplayScreenState extends State<VideoDisplayScreen> {
       // Check if the video was uploaded successfully
       if (jsonResponse['isValid'] == true) {
         DisplayUtils.showToast('Video uploaded successfully');
-        print('Video uploaded successfully');
-        print('Video URL: ${jsonResponse['videoUrl']}');
 
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -190,13 +185,13 @@ class _VideoDisplayScreenState extends State<VideoDisplayScreen> {
         );
       } else {
         // Failed to upload video
-        print('Failed to upload video: ${jsonResponse['message']}');
+
         DisplayUtils.showToast(
             'Failed to upload video: ${jsonResponse['message']}');
       }
     } catch (e) {
       // Handle exceptions
-      print('Error uploading video: $e');
+
       DisplayUtils.showToast('Error uploading video: $e');
     }
   }

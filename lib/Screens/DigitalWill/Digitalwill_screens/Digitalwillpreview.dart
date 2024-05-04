@@ -26,16 +26,14 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
   Future<DigitalwillgetResponse> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
-    print("token is");
-    print(token);
+
     Dio dio = Dio();
     dio.options.headers["Authorization"] = token;
     NodeClient nodeClient = NodeClient(dio);
 
-
     try {
       var response = await nodeClient.digitalWillGetData(token.toString());
-      print(jsonEncode(response));
+
       return response;
     } catch (e) {
       if (e is DioError) {

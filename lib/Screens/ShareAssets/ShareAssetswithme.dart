@@ -40,7 +40,7 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
       setState(() {
         shareAssetsResponse = response;
         isLoading = false;
-        print(jsonEncode(response));
+
         if (response.assetDetailsList != null &&
             response.assetDetailsList!.isNotEmpty) {
           // Set the initial selected user
@@ -48,7 +48,6 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
         }
       });
     } catch (e) {
-      print('Error fetching shared assets: $e');
       setState(() {
         isLoading = false;
       });

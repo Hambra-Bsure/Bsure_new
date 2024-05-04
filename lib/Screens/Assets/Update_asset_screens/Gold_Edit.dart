@@ -98,7 +98,8 @@ class _GoldEditState extends State<GoldEdit> {
               ),
               TextFormField(
                 initialValue: whereItIsKept,
-                decoration: const InputDecoration(labelText: 'Where It Is Kept'),
+                decoration:
+                    const InputDecoration(labelText: 'Where It Is Kept'),
                 onChanged: (value) {
                   setState(() {
                     whereItIsKept = value;
@@ -140,7 +141,7 @@ class _GoldEditState extends State<GoldEdit> {
 
                   // Call API to update gold details
                   final response = await updateGold(updatedGold);
-                  print(response);
+
                   DisplayUtils.showToast('Asset Updated Successfully');
 
                   Navigator.pop(context);
@@ -178,8 +179,8 @@ class _GoldEditState extends State<GoldEdit> {
           items: items,
           decoration: InputDecoration(
             labelText: labelText, // Update to include labelText as label
-           // border: const OutlineInputBorder(),
-           // contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            // border: const OutlineInputBorder(),
+            // contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -201,9 +202,9 @@ class _GoldEditState extends State<GoldEdit> {
         TextFormField(
           controller: controller,
           decoration: const InputDecoration(
-            //border: OutlineInputBorder(),
-            //contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-          ),
+              //border: OutlineInputBorder(),
+              //contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+              ),
         ),
       ],
     );
@@ -224,7 +225,8 @@ class _GoldEditState extends State<GoldEdit> {
     try {
       final response = await dio.put(
         'http://43.205.12.154:8080/v2/asset/${gold.assetId}',
-        data: gold.toJson(), // Convert gold object to JSON and send as request body
+        data: gold
+            .toJson(), // Convert gold object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {
@@ -234,7 +236,6 @@ class _GoldEditState extends State<GoldEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

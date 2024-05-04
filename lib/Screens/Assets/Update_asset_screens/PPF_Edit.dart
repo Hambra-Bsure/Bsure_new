@@ -147,7 +147,6 @@ class _PpfEditState extends State<PpfEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

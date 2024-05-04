@@ -10,10 +10,10 @@ import '../../../Repositary/Models/User_models/Get_user_res.dart';
 import '../../../Utils/DisplayUtils.dart';
 import '../../../Utils/SharedPrefHelper.dart'; // Import the http package
 
-
-
 class CameraExampleHome extends StatefulWidget {
-  const CameraExampleHome({super.key, Key? key});
+  const CameraExampleHome({
+    super.key,
+  });
 
   @override
   State<CameraExampleHome> createState() => _CameraExampleHomeState();
@@ -50,7 +50,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
       final token = sharedPreferences.getString("token");
 
       if (token == null) {
-        print("Token is null. Handle this case appropriately.");
         return;
       }
 
@@ -66,14 +65,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
           isLoaded = true;
         });
       } else {
-        print('Failed to fetch user profile: ${response.statusCode}');
         DisplayUtils.showToast('Failed to fetch user profile');
         setState(() {
           isLoaded = true;
         });
       }
     } catch (error) {
-      print("Error fetching data: $error");
       DisplayUtils.showToast("Error fetching data");
       setState(() {
         isLoaded = true;
@@ -152,13 +149,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
                   text: 'Hi, This is ',
                 ),
                 if (userProfile != null &&
-                    userProfile!.user!.firstName != null) // Accessing directly here
+                    userProfile!.user!.firstName !=
+                        null) // Accessing directly here
                   TextSpan(
                     text: '"${userProfile!.user!.firstName}"',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                if (userProfile == null ||
-                    userProfile!.user!.firstName == null)
+                if (userProfile == null || userProfile!.user!.firstName == null)
                   const TextSpan(
                     text: '"Name"',
                     // Use default "Name" if actual name is not available
@@ -166,7 +163,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
                   ),
                 const TextSpan(
                   text:
-                  '. I am making this will on Bsure Platform without any Instead  on my own will. No one is forcing me to do this will. Today is ',
+                      '. I am making this will on Bsure Platform without any Instead  on my own will. No one is forcing me to do this will. Today is ',
                 ),
                 TextSpan(
                   text: formattedDate,
@@ -174,7 +171,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
                 ),
                 const TextSpan(
                   text:
-                  '. This is my final will and all the nominations and wills prior to making this will are null or void.',
+                      '. This is my final will and all the nominations and wills prior to making this will are null or void.',
                 ),
               ],
             ),
@@ -190,30 +187,30 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
               const SizedBox(width: 16),
               _isRecording
                   ? ElevatedButton(
-                onPressed: onStopButtonPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(
-                      0xff429bb8), // Set background color here
-                ),
-                child: const Text("Stop",
-                    style: TextStyle(color: Colors.white)),
-              )
+                      onPressed: onStopButtonPressed,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(
+                            0xff429bb8), // Set background color here
+                      ),
+                      child: const Text("Stop",
+                          style: TextStyle(color: Colors.white)),
+                    )
                   : ElevatedButton(
-                onPressed: onRecordButtonPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(
-                      0xff429bb8), // Set background color here
-                ),
-                child: const Text("Start recording",
-                    style: TextStyle(color: Colors.white)),
-              ),
+                      onPressed: onRecordButtonPressed,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(
+                            0xff429bb8), // Set background color here
+                      ),
+                      child: const Text("Start recording",
+                          style: TextStyle(color: Colors.white)),
+                    ),
               const SizedBox(width: 16),
               if (_isRecording)
                 ElevatedButton(
                   onPressed: onRestartButtonPressed,
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                    const Color(0xff429bb8), // Set background color here
+                        const Color(0xff429bb8), // Set background color here
                   ),
                   child: const Text("Restart",
                       style: TextStyle(color: Colors.white)),
@@ -310,7 +307,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
 }
 
 class CameraApp extends StatelessWidget {
-  const CameraApp({super.key, Key? key});
+  const CameraApp({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

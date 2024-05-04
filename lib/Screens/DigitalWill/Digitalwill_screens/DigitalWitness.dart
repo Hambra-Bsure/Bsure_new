@@ -154,12 +154,6 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
                 String field6Value = _controller6.text;
 
                 // Example: Print the values to the console
-                print('Field 1: $field1Value');
-                print('Field 2: $field2Value');
-                print('Field 3: $field3Value');
-                print('Field 4: $field4Value');
-                print('Field 5: $field5Value');
-                print('Field 6: $field6Value');
               },
               child: const Text('Submit'),
             ),

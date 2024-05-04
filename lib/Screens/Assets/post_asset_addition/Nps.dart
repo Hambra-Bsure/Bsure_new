@@ -108,7 +108,6 @@ class _NpsAddState extends State<NpsAdd> {
       return;
     }
 
-
     final prefs = await SharedPreferences.getInstance();
     var token =
         prefs.getString("token"); // Retrieve token from SharedPreferences
@@ -116,7 +115,7 @@ class _NpsAddState extends State<NpsAdd> {
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
@@ -132,7 +131,7 @@ class _NpsAddState extends State<NpsAdd> {
 
     try {
       final response = await client.CreateNps(token, request);
-      print(response); // Handle the response data
+      // Handle the response data
 
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -141,21 +140,18 @@ class _NpsAddState extends State<NpsAdd> {
           builder: (context) => NpsScreen(assetType: widget.assetType),
         ),
       );
-
-    } catch (e) {
-      print('Failed to submit data: $e');
-    }
+    } catch (e) {}
   }
 
-    bool _validateForm() {
-      if (_pranNumberController.value.text.isEmpty) { // Check if AMC name is empty
+  bool _validateForm() {
+    if (_pranNumberController.value.text.isEmpty) {
+      // Check if AMC name is empty
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Pran Number is required')),
-        );
-        return false;
-      }
-      return true;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pran Number is required')),
+      );
+      return false;
     }
-
+    return true;
+  }
 }

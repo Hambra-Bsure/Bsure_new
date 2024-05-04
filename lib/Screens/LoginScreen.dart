@@ -96,7 +96,6 @@ class _LoginPageState extends State<LoginPage> {
           onChanged: (value) {
             setState(() {
               _isTermsAccepted = value ?? false;
-              print('_isTermsAccepted: $_isTermsAccepted');
             });
           },
         ),
@@ -249,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
       final loginRequest = LoginRequest2(username: mobileNumber);
       final LoginResponse2 response = await client.login(loginRequest);
 
-      print('Response: $response'); // Print the response for debugging
+      // Print the response for debugging
 
       if (response.success != null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -258,8 +257,6 @@ class _LoginPageState extends State<LoginPage> {
 
         // Save the newUser flag to SharedPreferences
         prefs.setBool("isNewUser", response.newUser ?? false);
-       print(response.newUser);
-
 
         Navigator.push(
           context,
@@ -274,7 +271,7 @@ class _LoginPageState extends State<LoginPage> {
         Fluttertoast.showToast(msg: "Login failed");
       }
     } catch (e) {
-      print('Error: $e'); // Print the error for debugging
+      // Print the error for debugging
       Fluttertoast.showToast(msg: 'Network error: $e');
     }
   }

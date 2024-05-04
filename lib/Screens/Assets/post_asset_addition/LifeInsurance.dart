@@ -200,26 +200,23 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
   }
 
   void _submitForm() async {
-
     if (!_validateForm()) {
       return;
     }
 
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token"); // Retrieve token from SharedPreferences
+    var token =
+        prefs.getString("token"); // Retrieve token from SharedPreferences
 
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
     final dio = Dio();
     final client = NodeClient(dio);
-
-    print("Maturity Date: $maturityDate");
-    print("Maturity Date: ${maturityDate.runtimeType}");
 
     // _maturityDateController.text == ""
     //     ? null
@@ -236,15 +233,13 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
           : null,
       maturityDate: _maturityDateController.text == ""
           ? null
-          : _maturityDateController
-          .text,
+          : _maturityDateController.text,
       comments: _commentsController.text,
       attachment: _attachmentController.text,
     );
 
     try {
       final response = await client.CreateLifeInsurance(token, request);
-      print(response.toJson());
 
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -256,12 +251,12 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
       );
     } catch (e) {
       // Handle errors
-      print(e.toString());
     }
   }
 
   bool _validateForm() {
-    if (_insuranceCompanyNameController.value.text.isEmpty) { // Check if AMC name is empty
+    if (_insuranceCompanyNameController.value.text.isEmpty) {
+      // Check if AMC name is empty
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('InsuranceCompanyName is required')),

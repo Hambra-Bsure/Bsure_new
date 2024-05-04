@@ -31,7 +31,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final token = sharedPreferences.getString("token");
 
       if (token == null) {
-        print("Token is null. Handle this case appropriately.");
         return;
       }
 
@@ -47,14 +46,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           isLoaded = true;
         });
       } else {
-        print('Failed to fetch user profile: ${response.statusCode}');
         DisplayUtils.showToast('Failed to fetch user profile');
         setState(() {
           isLoaded = true;
         });
       }
     } catch (error) {
-      print("Error fetching data: $error");
       DisplayUtils.showToast("Error fetching data");
       setState(() {
         isLoaded = true;

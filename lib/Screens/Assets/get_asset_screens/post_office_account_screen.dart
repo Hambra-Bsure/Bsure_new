@@ -39,7 +39,7 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
     var token = prefs.get("token");
 
     const category = 'PostOfficeAccount'; // Add this line
-    print('Category: $category'); // Print category for debugging
+    // Print category for debugging
 
     final url = Uri.parse(
         'http://43.205.12.154:8080/v2/asset/category/PostOfficeAccount');
@@ -166,12 +166,16 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                                           onPressed: () async {
                                             Navigator.of(context).pop();
                                             deleteAssetStatus(index);
-                                            List<PostOfficeAccount> newpostofficeaccounts =
-                                            <PostOfficeAccount>[];
-                                            newpostofficeaccounts.addAll(PostofficeAccounts);
-                                            newpostofficeaccounts.removeAt(index);
+                                            List<PostOfficeAccount>
+                                                newpostofficeaccounts =
+                                                <PostOfficeAccount>[];
+                                            newpostofficeaccounts
+                                                .addAll(PostofficeAccounts);
+                                            newpostofficeaccounts
+                                                .removeAt(index);
                                             setState(() {
-                                              PostofficeAccounts = newpostofficeaccounts;
+                                              PostofficeAccounts =
+                                                  newpostofficeaccounts;
                                             });
                                           },
                                         ),

@@ -83,132 +83,132 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _firstNameController,
-                decoration: const InputDecoration(labelText: 'First Name'),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            TextFormField(
+              controller: _firstNameController,
+              decoration: const InputDecoration(labelText: 'First Name'),
+            ),
+            const SizedBox(height: 16.0),
+            TextFormField(
+              controller: _lastNameController,
+              decoration: const InputDecoration(labelText: 'Last Name'),
+            ),
+            const SizedBox(height: 16.0),
+            TextFormField(
+              controller: _mobileNumberController,
+              decoration: const InputDecoration(labelText: 'Mobile Number'),
+            ),
+            const SizedBox(height: 16.0),
+            TextFormField(
+              controller: _relationController,
+              decoration: const InputDecoration(labelText: 'Relation'),
+            ),
+            const SizedBox(height: 16.0),
+            TextFormField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
+            ),
+            const SizedBox(height: 16.0),
+            TextFormField(
+              controller: _ageController,
+              decoration: const InputDecoration(
+                labelText: 'Enter Nominee Age',
               ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _lastNameController,
-                decoration: const InputDecoration(labelText: 'Last Name'),
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _mobileNumberController,
-                decoration: const InputDecoration(labelText: 'Mobile Number'),
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _relationController,
-                decoration: const InputDecoration(labelText: 'Relation'),
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _ageController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Nominee Age',
-                ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    age = int.tryParse(value) ?? 0; // Use 0 if parsing fails
-                    updateGuardianVisibility(); // Call the function to update visibility
-                  });
-                },
-              ),
-              const SizedBox(height: 10),
-              Text(result),
-              Visibility(
-                visible: isGuardianVisible,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _guardianNameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Enter Guardian Name',
-                      ),
-                      validator: (value) {
-                        if (isGuardianVisible && value!.isEmpty) {
-                          return 'Please enter the guardian name';
-                        }
-                        return null;
-                      },
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  age = int.tryParse(value) ?? 0; // Use 0 if parsing fails
+                  updateGuardianVisibility(); // Call the function to update visibility
+                });
+              },
+            ),
+            const SizedBox(height: 10),
+            Text(result),
+            Visibility(
+              visible: isGuardianVisible,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _guardianNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter Guardian Name',
                     ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: _guardianMobileNumberController,
-                      decoration: const InputDecoration(
-                        labelText: 'Enter Guardian Mobile No',
-                      ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                        // Only allows numeric input
-                        LengthLimitingTextInputFormatter(10),
-                        // Limits the length to 10 characters
-                      ],
-                      validator: (value) {
-                        if (isGuardianVisible &&
-                            (value == null || value.length != 10)) {
-                          return 'Please enter a valid 10-digit guardian mobile number';
-                        }
-                        return null;
-                      },
-                    )
-                  ],
-                ),
+                    validator: (value) {
+                      if (isGuardianVisible && value!.isEmpty) {
+                        return 'Please enter the guardian name';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _guardianMobileNumberController,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter Guardian Mobile No',
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      // Only allows numeric input
+                      LengthLimitingTextInputFormatter(10),
+                      // Limits the length to 10 characters
+                    ],
+                    validator: (value) {
+                      if (isGuardianVisible &&
+                          (value == null || value.length != 10)) {
+                        return 'Please enter a valid 10-digit guardian mobile number';
+                      }
+                      return null;
+                    },
+                  )
+                ],
               ),
-              TextFormField(
-                controller: _addressController,
-                decoration: const InputDecoration(labelText: 'Address'),
-              ),
-              const SizedBox(height: 16.0),
-              // TextFormField(
-              //   controller: _imageController,
-              //   decoration: const InputDecoration(labelText: 'Image'),
-              // ),
-              const SizedBox(height: 16.0),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final updatedNomineeReq = EditNomineeReq(
-                      nomineeId: widget.nominee.id,
-                      firstName: _firstNameController.text,
-                      lastName: _lastNameController.text,
-                      mobileNumber: _mobileNumberController.text,
-                      relation: _relationController.text,
-                      age: int.parse(_ageController.text),
-                      email: _emailController.text,
-                      //guardianName: _guardianNameController.text,
-                      // guardianMobileNumber: _guardianMobileNumberController.text,
-                      address: _addressController.text,
-                      // image: _imageController.text,
-                    );
+            ),
+            TextFormField(
+              controller: _addressController,
+              decoration: const InputDecoration(labelText: 'Address'),
+            ),
+            const SizedBox(height: 16.0),
+            // TextFormField(
+            //   controller: _imageController,
+            //   decoration: const InputDecoration(labelText: 'Image'),
+            // ),
+            const SizedBox(height: 16.0),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  final updatedNomineeReq = EditNomineeReq(
+                    nomineeId: widget.nominee.id,
+                    firstName: _firstNameController.text,
+                    lastName: _lastNameController.text,
+                    mobileNumber: _mobileNumberController.text,
+                    relation: _relationController.text,
+                    age: int.parse(_ageController.text),
+                    email: _emailController.text,
+                    //guardianName: _guardianNameController.text,
+                    // guardianMobileNumber: _guardianMobileNumberController.text,
+                    address: _addressController.text,
+                    // image: _imageController.text,
+                  );
 
-                    final response = await updateNominee(updatedNomineeReq);
-                    print(response);
-                    DisplayUtils.showToast('Nominee Updated Successfully');
+                  final response = await updateNominee(updatedNomineeReq);
 
-                    // Navigator.pop(context, response); // Pass updated response back
-                    Navigator.pop(context);
-                    Navigator.pushReplacement<void, void>(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) => const GetNomineeScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text('Update'),
-                ),
+                  DisplayUtils.showToast('Nominee Updated Successfully');
+
+                  // Navigator.pop(context, response); // Pass updated response back
+                  Navigator.pop(context);
+                  Navigator.pushReplacement<void, void>(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) =>
+                          const GetNomineeScreen(),
+                    ),
+                  );
+                },
+                child: const Text('Update'),
               ),
+            ),
           ]),
         ),
       ),
@@ -241,7 +241,6 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

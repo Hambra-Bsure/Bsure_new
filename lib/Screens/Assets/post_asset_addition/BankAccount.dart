@@ -37,7 +37,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
 
-   AccountType? _selectedAccountType;
+  AccountType? _selectedAccountType;
 
   File? file;
   String? fileName;
@@ -52,7 +52,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   @override
   void initState() {
     super.initState();
-    print("Asset Type: ${widget.assetType}");
+
     _assetTypeController.text = widget.assetType;
   }
 
@@ -258,13 +258,13 @@ class _BankAccountAddState extends State<BankAccountAdd> {
           ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
     );
   }
-
 
   Future<void> uploadFile() async {
     final result = await FilePicker.platform
@@ -299,80 +299,78 @@ class _BankAccountAddState extends State<BankAccountAdd> {
     return filePath; // Return the saved file path
   }
 
-
   Future<void> _submitForm() async {
     if (!_validateForm()) {
       return;
     }
 
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token"); // Retrieve token from SharedPreferences
+    var token =
+        prefs.getString("token"); // Retrieve token from SharedPreferences
 
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
     //final isFormValid = _validateForm();
 
     //if (isFormValid) {
-      final dio = Dio();
-      final client = NodeClient(dio);
+    final dio = Dio();
+    final client = NodeClient(dio);
 
-      String? fileUrl;
+    String? fileUrl;
 
-      // Check if a file is uploaded and saved locally
-      if (file != null) {
-        // Use the saved file path
-        fileUrl = file!.path;
-      } else {
-        // Get the file URL from the controller
-        fileUrl = _attachmentController.value.text.trim();
-      }
+    // Check if a file is uploaded and saved locally
+    if (file != null) {
+      // Use the saved file path
+      fileUrl = file!.path;
+    } else {
+      // Get the file URL from the controller
+      fileUrl = _attachmentController.value.text.trim();
+    }
 
-      // If no file is uploaded, set fileUrl to an empty string or null
-      if (fileUrl.isEmpty) {
-        fileUrl = ''; // or fileUrl = null;
-      }
+    // If no file is uploaded, set fileUrl to an empty string or null
+    if (fileUrl.isEmpty) {
+      fileUrl = ''; // or fileUrl = null;
+    }
 
     AccountType accountType;
     if (_selectedAccountType != null) {
       accountType = _selectedAccountType!;
     } else {
-      accountType = AccountType.Saving; // Provide a default value when _selectedAccountType is null
+      accountType = AccountType
+          .Saving; // Provide a default value when _selectedAccountType is null
     }
 
-      final req = BankAccountRequest(
-        assetType: widget.assetType,
-        bankName: _bankNameController.value.text,
-        accountNumber: _accountNumberController.value.text,
-        ifscCode: _ifscCodeController.value.text,
-        branchName: _branchNameController.value.text,
-        accountType: accountType,
-        comments: _commentsController.value.text,
-        attachment: fileUrl,
+    final req = BankAccountRequest(
+      assetType: widget.assetType,
+      bankName: _bankNameController.value.text,
+      accountNumber: _accountNumberController.value.text,
+      ifscCode: _ifscCodeController.value.text,
+      branchName: _branchNameController.value.text,
+      accountType: accountType,
+      comments: _commentsController.value.text,
+      attachment: fileUrl,
+    );
+
+    try {
+      final response = await client.CreateBankAccount(token, req);
+      // Handle the response data
+
+      Navigator.pop(context);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BankAccountsScreen(assetType: widget.assetType),
+        ),
       );
-
-      try {
-        final response = await client.CreateBankAccount(token, req);
-        print(response); // Handle the response data
-
-        Navigator.pop(context);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BankAccountsScreen(assetType: widget.assetType),
-          ),
-        );
-      } on DioError catch (e) {
-        if (e.response != null) {
-          print('Failed to submit data: ${e.response?.statusCode}');
-        } else {
-          print('Failed to submit data: ${e.message}');
-        }
-      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+      } else {}
+    }
     //}
   }
 

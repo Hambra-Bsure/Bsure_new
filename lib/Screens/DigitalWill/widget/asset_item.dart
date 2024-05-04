@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -40,7 +39,7 @@ class AssetItemState extends State<AssetItem> {
 
   void printState() {
     for (var controller in nomineeControllers) {
-      //print('nomineeId: ${controller.nomineeId}, share: ${controller.controller.text}');
+      //
     }
   }
 
@@ -105,8 +104,7 @@ class AssetItemState extends State<AssetItem> {
     return BlocBuilder<WillBloc, WillState>(
       builder: (context, state) {
         var asset = state.assets[widget.pageNumber];
-        for (var nominee in asset.nominees) {
-        }
+        for (var nominee in asset.nominees) {}
         return Form(
           key: _formKey,
           child: CustomScrollView(
@@ -153,7 +151,7 @@ class AssetItemState extends State<AssetItem> {
                                         ),
                                       );
                                 } else if (value == false) {
-                                 // print(context.read<WillBloc>().state.sameDistributionCheckbox);
+                                  //
                                   if (context
                                       .read<WillBloc>()
                                       .state

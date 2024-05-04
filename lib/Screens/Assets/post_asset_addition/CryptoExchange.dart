@@ -118,7 +118,6 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
   }
 
   void _submitForm() async {
-
     if (!_validateForm()) {
       return;
     }
@@ -130,7 +129,7 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
@@ -148,25 +147,22 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
 
     try {
       final response = await client.CreateCryptoExchange(token, request);
-      print(response); // Handle the response data
-
+      // Handle the response data
 
       Navigator.pop(context);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => CryptoExchangeScreen(assetType: widget.assetType),
+          builder: (context) =>
+              CryptoExchangeScreen(assetType: widget.assetType),
         ),
       );
-
-
-    } catch (e) {
-      print('Failed to submit data: $e');
-    }
+    } catch (e) {}
   }
 
   bool _validateForm() {
-    if (_exchangeNameController.text.isEmpty || _accountNumberController.text.isEmpty) {
+    if (_exchangeNameController.text.isEmpty ||
+        _accountNumberController.text.isEmpty) {
       if (_exchangeNameController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Exchange Name is required')),
@@ -181,5 +177,4 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
     }
     return true;
   }
-
 }

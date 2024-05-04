@@ -43,20 +43,15 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
         final Map<String, dynamic> data = response.data ?? {};
         myShareAssetsResponse = MyShareAssetsResponse.fromJson(data);
 
-        print("response");
-        print(response.data);
-
         setState(() {
           isLoading = false;
         });
       } else {
-        print('Error fetching shared assets: ${response.statusCode}');
         setState(() {
           isLoading = false;
         });
       }
     } catch (e) {
-      print('Error fetching shared assets: $e');
       setState(() {
         isLoading = false;
       });
@@ -92,7 +87,7 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
       itemCount: myShareAssetsResponse!.assets.length,
       itemBuilder: (context, index) {
         final asset = myShareAssetsResponse!.assets[index];
-        print(asset);
+
         return Card(
           elevation: 3,
           margin: const EdgeInsets.all(8),

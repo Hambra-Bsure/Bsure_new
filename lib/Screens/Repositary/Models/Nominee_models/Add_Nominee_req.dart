@@ -73,9 +73,6 @@ class AddNomineeRequest {
     if (guardianMobileNumber != null && guardianMobileNumber != "") {
       data['guardianMobileNumber'] = guardianMobileNumber;
     }
-    print("="*100);
-    print("nominee payload");
-    print(data);
 
     return data;
   }

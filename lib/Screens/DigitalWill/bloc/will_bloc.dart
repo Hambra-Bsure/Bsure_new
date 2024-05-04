@@ -1,9 +1,7 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'will_events.dart';
 import 'will_state.dart';
-
 
 class WillBloc extends Bloc<WillEvent, WillState> {
   WillBloc(super.state) {
@@ -21,15 +19,14 @@ class WillBloc extends Bloc<WillEvent, WillState> {
   void onChange(Change<WillState> change) {
     // var assets = change.nextState.assets;
     // for (final asset in assets) {
-    //   print("~" * 100);
-    //   print(asset.assetId);
+    //
+    //
     // }
     super.onChange(change);
   }
 
   @override
   void onEvent(WillEvent event) {
-    print(event);
     super.onEvent(event);
   }
 
@@ -85,7 +82,7 @@ class WillBloc extends Bloc<WillEvent, WillState> {
                   )
                 ],
               );
-              // print(x);
+              //
               return x;
             },
           )

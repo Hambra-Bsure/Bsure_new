@@ -10,8 +10,7 @@ class LoanGivenEdit extends StatefulWidget {
   final LoanGiven loan;
   final String assetType;
 
-  const LoanGivenEdit(
-      {super.key, required this.loan, required this.assetType});
+  const LoanGivenEdit({super.key, required this.loan, required this.assetType});
 
   @override
   State<LoanGivenEdit> createState() => _LoanGivenEditState();
@@ -81,8 +80,7 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
               ),
               TextFormField(
                 initialValue: interestRate,
-                decoration:
-                const InputDecoration(labelText: 'Interest Rate'),
+                decoration: const InputDecoration(labelText: 'Interest Rate'),
                 onChanged: (value) {
                   setState(() {
                     interestRate = value;
@@ -124,7 +122,7 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
 
                   // Call API to update real estate details
                   final response = await updateLoan(updatedloan);
-                  print(response);
+
                   DisplayUtils.showToast('Asset Updated Successfully');
 
                   Navigator.pop(context);
@@ -163,8 +161,6 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
     }
   }
 
-
-
   Future<LoanGiven?> updateLoan(LoanGiven loanGiven) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -191,7 +187,6 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

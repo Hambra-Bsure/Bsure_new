@@ -23,13 +23,13 @@ class _RealEstateAddState extends State<RealEstateAdd> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _khataNumberController = TextEditingController();
   final TextEditingController _northOfPropertyController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _southOfPropertyController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _eastOfPropertyController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _westOfPropertyController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _imageController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
@@ -94,7 +94,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding:
-                  EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                      EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                 ),
               ),
               buildTextField(
@@ -187,7 +187,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             contentPadding:
-            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -201,12 +201,12 @@ class _RealEstateAddState extends State<RealEstateAdd> {
 
     final prefs = await SharedPreferences.getInstance();
     var token =
-    prefs.getString("token"); // Retrieve token from SharedPreferences
+        prefs.getString("token"); // Retrieve token from SharedPreferences
 
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
@@ -229,7 +229,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
 
     try {
       final response = await client.CreateRealEstate(token, request);
-      print(response); // Handle the response data
+      // Handle the response data
 
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -238,9 +238,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
           builder: (context) => RealEstateScreen(assetType: widget.assetType),
         ),
       );
-    } catch (e) {
-      print('Failed to submit data: $e');
-    }
+    } catch (e) {}
   }
 
   bool _validateForm() {
@@ -257,5 +255,4 @@ class _RealEstateAddState extends State<RealEstateAdd> {
     }
     return true;
   }
-
 }

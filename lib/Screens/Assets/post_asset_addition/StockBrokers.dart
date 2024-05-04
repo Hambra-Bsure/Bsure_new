@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Retrofit/node_api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class StockBrokerAdd extends StatefulWidget {
   final String assetType;
 
@@ -112,7 +111,6 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
   }
 
   void _submitForm() async {
-
     if (!_validateForm()) {
       return;
     }
@@ -124,7 +122,7 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
@@ -141,7 +139,6 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
 
     try {
       final response = await client.CreateStockBroker(token, request);
-      print(response.toJson());
 
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -150,10 +147,8 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
           builder: (context) => StockBrokerScreen(assetType: widget.assetType),
         ),
       );
-
     } catch (e) {
       // Handle errors
-      print(e.toString());
     }
 
     // Clear text fields
@@ -179,5 +174,4 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
     }
     return true;
   }
-
 }

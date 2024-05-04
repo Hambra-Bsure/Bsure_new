@@ -96,8 +96,7 @@ class _OtherEditState extends State<OtherEdit> {
                   ),
                 );
                 if (response != null) {
-                } else {
-                }
+                } else {}
               },
               child: const Text('Update'),
             ),
@@ -133,7 +132,6 @@ class _OtherEditState extends State<OtherEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

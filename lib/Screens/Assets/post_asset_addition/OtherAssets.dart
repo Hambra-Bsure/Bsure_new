@@ -116,7 +116,7 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
@@ -132,7 +132,6 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
 
     try {
       final response = await client.CreateOtherAsset(token, request);
-      print(response);
 
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -143,14 +142,12 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
       );
       // Handle the response data as needed
     } catch (e) {
-      print('Failed to submit data: $e');
       // Handle errors
     }
   }
 
   bool _validateForm() {
     if (_assetNameController.value.text.isEmpty) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Asset Name is required')),
       );

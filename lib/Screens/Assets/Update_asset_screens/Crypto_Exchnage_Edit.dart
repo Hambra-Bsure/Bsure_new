@@ -10,7 +10,8 @@ class CryptoExchangeEdit extends StatefulWidget {
   final CryptoExchange cryptoexchange;
   final String assetType;
 
-  const CryptoExchangeEdit({super.key, required this.cryptoexchange, required this.assetType});
+  const CryptoExchangeEdit(
+      {super.key, required this.cryptoexchange, required this.assetType});
 
   @override
   State<CryptoExchangeEdit> createState() => _CryptoExchangeEditState();
@@ -39,7 +40,8 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit Crypto Exchange', style: TextStyle(color: Colors.white)),
+        title: const Text('Edit Crypto Exchange',
+            style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -106,7 +108,8 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
                 );
 
                 // Call API to update bank account details
-                final response = await updatecryptoexchange(updatedcryptoexchange);
+                final response =
+                    await updatecryptoexchange(updatedcryptoexchange);
                 DisplayUtils.showToast('Asset Updated Successfully');
 
                 Navigator.pop(context);
@@ -119,20 +122,18 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
                   ),
                 );
                 if (response != null) {
-
-                } else {
-                }
+                } else {}
               },
               child: const Text('Update'),
             ),
-
           ],
         ),
       ),
     );
   }
 
-  Future<CryptoExchange?> updatecryptoexchange(CryptoExchange cryptoExchange) async {
+  Future<CryptoExchange?> updatecryptoexchange(
+      CryptoExchange cryptoExchange) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -147,7 +148,8 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
     try {
       final response = await dio.put(
         'http://43.205.12.154:8080/v2/asset/${cryptoExchange.assetId}',
-        data: cryptoExchange.toJson(), // Convert account object to JSON and send as request body
+        data: cryptoExchange
+            .toJson(), // Convert account object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {
@@ -157,7 +159,6 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

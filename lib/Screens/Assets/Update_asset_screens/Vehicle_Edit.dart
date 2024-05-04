@@ -44,8 +44,8 @@ class _VehicleEditState extends State<VehicleEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit Vehicle',
-            style: TextStyle(color: Colors.white)),
+        title:
+            const Text('Edit Vehicle', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -93,7 +93,7 @@ class _VehicleEditState extends State<VehicleEdit> {
               TextFormField(
                 initialValue: registrationNumber,
                 decoration:
-                const InputDecoration(labelText: ' Registration Number'),
+                    const InputDecoration(labelText: ' Registration Number'),
                 onChanged: (value) {
                   setState(() {
                     registrationNumber = value;
@@ -102,8 +102,7 @@ class _VehicleEditState extends State<VehicleEdit> {
               ),
               TextFormField(
                 initialValue: chassisNumber,
-                decoration:
-                const InputDecoration(labelText: 'Chassis Number'),
+                decoration: const InputDecoration(labelText: 'Chassis Number'),
                 onChanged: (value) {
                   setState(() {
                     chassisNumber = value;
@@ -146,7 +145,7 @@ class _VehicleEditState extends State<VehicleEdit> {
 
                   // Call API to update real estate details
                   final response = await updateVehicle(updatedVehicle);
-                  print(response);
+
                   DisplayUtils.showToast('Asset Updated Successfully');
 
                   Navigator.pop(context);
@@ -194,7 +193,6 @@ class _VehicleEditState extends State<VehicleEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

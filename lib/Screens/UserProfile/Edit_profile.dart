@@ -145,7 +145,6 @@ class _EditUserState extends State<EditUser> {
     final token = prefs.getString('token');
 
     if (token == null) {
-      print('Token is not available');
       return;
     }
 
@@ -183,14 +182,11 @@ class _EditUserState extends State<EditUser> {
         );
         final jsonResponse = json.decode(response.body);
         // Handle successful response
-        print('User updated successfully: $jsonResponse');
       } else {
         // Handle error response
-        print('Failed to update user');
       }
     } catch (e) {
       // Handle network or server errors
-      print('Error: $e');
     }
   }
 

@@ -123,7 +123,7 @@ class _PpfAddState extends State<PpfAdd> {
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-      print('Token is not available');
+
       return;
     }
 
@@ -140,7 +140,7 @@ class _PpfAddState extends State<PpfAdd> {
 
     try {
       final response = await client.CreatePpf(token, request);
-      print(response); // Handle the response data
+      // Handle the response data
 
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -149,14 +149,12 @@ class _PpfAddState extends State<PpfAdd> {
           builder: (context) => PPfScreen(assetType: widget.assetType),
         ),
       );
-
-    } catch (e) {
-      print('Failed to submit data: $e');
-    }
+    } catch (e) {}
   }
 
   bool _validateForm() {
-    if (_ppfAccountNumberController.text.isEmpty || _institutionNameController.text.isEmpty) {
+    if (_ppfAccountNumberController.text.isEmpty ||
+        _institutionNameController.text.isEmpty) {
       if (_ppfAccountNumberController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('PPF Account Number is required')),
@@ -171,5 +169,4 @@ class _PpfAddState extends State<PpfAdd> {
     }
     return true;
   }
-
 }

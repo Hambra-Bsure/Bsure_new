@@ -39,8 +39,6 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
       "ngrok-skip-browser-warning": "69420",
     });
 
-    print(response.body);
-
     if (response.statusCode == 200) {
       final data = GetNomineeResponse.fromJson(jsonDecode(response.body));
       if (data.success!) {

@@ -144,7 +144,6 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
                 try {
                   parsedCoverageAmount = int.parse(coverageAmount);
                 } catch (e) {
-                  print('Invalid coverage amount format: $e');
                   // Handle the parsing error here, such as showing a message to the user
                 }
 
@@ -163,7 +162,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
                 // Call API to update bank account details
                 final response = await updateInsurance(updatedInsurance);
                 DisplayUtils.showToast('Asset Updated Successfully');
-                
+
                 Navigator.pop(context);
                 Navigator.pushReplacement<void, void>(
                   context,
@@ -174,8 +173,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
                 );
                 if (response != null) {
                   // Handle success
-                } else {
-                }
+                } else {}
               },
               child: const Text('Update'),
             ),
@@ -200,7 +198,8 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
     try {
       final response = await dio.put(
         'http://43.205.12.154:8080/v2/asset/${insurance.assetId}',
-        data: insurance.toJson(), // Convert account object to JSON and send as request body
+        data: insurance
+            .toJson(), // Convert account object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {
@@ -210,7 +209,6 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

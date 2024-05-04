@@ -95,8 +95,7 @@ class _NPSEditState extends State<NpsEdit> {
                   ),
                 );
                 if (response != null) {
-                } else {
-                }
+                } else {}
               },
               child: const Text('Update'),
             ),
@@ -132,7 +131,6 @@ class _NPSEditState extends State<NpsEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

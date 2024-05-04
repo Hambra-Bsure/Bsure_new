@@ -13,7 +13,6 @@ enum AccountType {
   Salary,
 }
 
-
 class PostOfficeAccountAdd extends StatefulWidget {
   final String assetType;
 
@@ -38,7 +37,6 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
   //AccountType? _selectedAccount;
 
   AccountType? _selectedAccountType;
-
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +131,8 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
           ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -181,7 +180,6 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
   }
 
   void _submitForm() async {
-
     if (!_validateForm()) {
       return;
     }
@@ -190,7 +188,6 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
     var token = prefs.getString("token");
 
     if (token == null || token.isEmpty) {
-      print('Token is not available');
       return;
     }
 
@@ -200,9 +197,11 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
     String accountTypeString; // Change type to String
 
     if (_selectedAccountType != null) {
-      accountTypeString = accountTypeToString(_selectedAccountType!); // Convert AccountType to String
+      accountTypeString = accountTypeToString(
+          _selectedAccountType!); // Convert AccountType to String
     } else {
-      accountTypeString = accountTypeToString(AccountType.Saving); // Provide a default value
+      accountTypeString =
+          accountTypeToString(AccountType.Saving); // Provide a default value
     }
 
     final request = PostOfficeAccountRequest(
@@ -214,11 +213,8 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
       attachment: _attachmentController.text,
     );
 
-    print(jsonEncode(request));
-
     try {
       final response = await client.CreatePostOfficeAccount(token, request);
-      print(response);
 
       Navigator.pop(context);
       Navigator.pushReplacement(
@@ -228,7 +224,6 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
               PostofficeAccountScreen(assetType: widget.assetType),
         ),
       );
-
     } catch (e) {
       // Handle errors
     }

@@ -10,7 +10,8 @@ class MutualFundEdit extends StatefulWidget {
   final MutualFund fund;
   final String assetType;
 
-  const MutualFundEdit({super.key, required this.assetType, required this.fund});
+  const MutualFundEdit(
+      {super.key, required this.assetType, required this.fund});
 
   @override
   State<MutualFundEdit> createState() => _MutualFundEditState();
@@ -41,7 +42,8 @@ class _MutualFundEditState extends State<MutualFundEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit MutualFund', style: TextStyle(color: Colors.white)),
+        title: const Text('Edit MutualFund',
+            style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -80,7 +82,7 @@ class _MutualFundEditState extends State<MutualFundEdit> {
               decoration: const InputDecoration(labelText: 'Fund Type'),
               onChanged: (value) {
                 setState(() {
-                 fundType = value;
+                  fundType = value;
                 });
               },
             ),
@@ -107,13 +109,14 @@ class _MutualFundEditState extends State<MutualFundEdit> {
               onPressed: () async {
                 // Update the BankAccount object with the new values
                 final updatedFund = MutualFund(
-                  amcName : amcName,
+                  amcName: amcName,
                   schemeName: schemeName,
                   folioNumber: folioNumber,
                   fundType: fundType,
                   comments: comments,
                   attachment: attachment,
-                  category: widget.assetType, assetId: widget.fund.assetId,
+                  category: widget.assetType,
+                  assetId: widget.fund.assetId,
                 );
 
                 // Call API to update bank account details
@@ -130,13 +133,10 @@ class _MutualFundEditState extends State<MutualFundEdit> {
                   ),
                 );
                 if (response != null) {
-
-                } else {
-                }
+                } else {}
               },
               child: const Text('Update'),
             ),
-
           ],
         ),
       ),
@@ -158,7 +158,8 @@ class _MutualFundEditState extends State<MutualFundEdit> {
     try {
       final response = await dio.put(
         'http://43.205.12.154:8080/v2/asset/${fund.assetId}',
-        data: fund.toJson(), // Convert account object to JSON and send as request body
+        data: fund
+            .toJson(), // Convert account object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {
@@ -168,7 +169,6 @@ class _MutualFundEditState extends State<MutualFundEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }

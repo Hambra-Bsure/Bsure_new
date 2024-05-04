@@ -10,8 +10,7 @@ class BondEdit extends StatefulWidget {
   final Bond bond;
   final String assetType;
 
-  const BondEdit(
-      {super.key, required this.bond, required this.assetType});
+  const BondEdit({super.key, required this.bond, required this.assetType});
 
   @override
   State<BondEdit> createState() => _BondEditState();
@@ -44,8 +43,7 @@ class _BondEditState extends State<BondEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit Bond',
-            style: TextStyle(color: Colors.white)),
+        title: const Text('Edit Bond', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -73,7 +71,8 @@ class _BondEditState extends State<BondEdit> {
               ),
               TextFormField(
                 initialValue: authorityWhoIssuedTheBond,
-                decoration: const InputDecoration(labelText: 'Authority Who Issued The Bond'),
+                decoration: const InputDecoration(
+                    labelText: 'Authority Who Issued The Bond'),
                 onChanged: (value) {
                   setState(() {
                     authorityWhoIssuedTheBond = value;
@@ -123,10 +122,10 @@ class _BondEditState extends State<BondEdit> {
                   // Update the RealEstate object with the new values
                   final updatedbond = Bond(
                     bondName: bondName,
-                    bondNumber : bondNumber,
+                    bondNumber: bondNumber,
                     authorityWhoIssuedTheBond: authorityWhoIssuedTheBond,
                     typeOfBond: typeOfBond,
-                    maturityDate : maturityDate,
+                    maturityDate: maturityDate,
                     comments: comments,
                     attachment: attachment,
                     assetId: widget.bond.assetId,
@@ -135,7 +134,6 @@ class _BondEditState extends State<BondEdit> {
 
                   // Call API to update real estate details
                   final response = await updateBond(updatedbond);
-                  print(response);
 
                   DisplayUtils.showToast('Asset Updated Successfully');
 
@@ -175,7 +173,6 @@ class _BondEditState extends State<BondEdit> {
     }
   }
 
-
   Future<Bond?> updateBond(Bond bond) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -202,7 +199,6 @@ class _BondEditState extends State<BondEdit> {
         return null; // Return null if update fails
       }
     } catch (e) {
-      print(e);
       return null; // Return null if an error occurs
     }
   }
