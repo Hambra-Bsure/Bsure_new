@@ -85,6 +85,7 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
                   itemBuilder: (context, index) {
                     final Cryptoexchange = cryptoExchanges[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

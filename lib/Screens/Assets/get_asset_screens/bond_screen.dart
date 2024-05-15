@@ -84,6 +84,7 @@ class _BondScreenState extends State<BondScreen> {
                   itemBuilder: (context, index) {
                     final bonds = bond[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

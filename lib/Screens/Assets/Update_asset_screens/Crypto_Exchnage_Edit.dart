@@ -124,7 +124,10 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
                 if (response != null) {
                 } else {}
               },
-              child: const Text('Update'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor : const Color(0xff429bb8), // Set background color here
+              ),
+              child: const Text('Update',style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

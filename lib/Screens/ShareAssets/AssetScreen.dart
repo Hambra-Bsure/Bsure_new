@@ -45,7 +45,7 @@ class AssetScreen extends StatelessWidget {
                       const Color(0xFF35Adc2), // Set button background color
                 ),
                 child: Text(
-                  'Share Assets',
+                  'Share My Assets',
                   style: TextStyle(
                       fontSize: 18 * scaleFactor, color: Colors.white),
                 ),

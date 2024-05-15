@@ -84,6 +84,7 @@ class _OtherScreenState extends State<OtherScreen> {
                   itemBuilder: (context, index) {
                     final Others = others[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

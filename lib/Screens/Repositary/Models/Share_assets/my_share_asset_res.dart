@@ -1,6 +1,9 @@
+
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:json_annotation/json_annotation.dart';
 part 'my_share_asset_res.freezed.dart';
 part 'my_share_asset_res.g.dart';
+
 
 @freezed
 abstract class MyShareAssetsResponse with _$MyShareAssetsResponse {
@@ -41,6 +44,7 @@ abstract class Nominee with _$Nominee {
     required String? idProof,
     required String? guardianName,
     required String? guardianMobileNumber,
+    required int sharedAssetId,
   }) = _Nominee;
 
   factory Nominee.fromJson(Map<String, dynamic> json) =>
@@ -51,7 +55,7 @@ abstract class Nominee with _$Nominee {
 abstract class Detail with _$Detail {
   factory Detail({
     required String fieldName,
-    required String fieldValue,
+    required String? fieldValue,
   }) = _Detail;
 
   factory Detail.fromJson(Map<String, dynamic> json) => _$DetailFromJson(json);

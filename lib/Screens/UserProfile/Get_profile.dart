@@ -85,15 +85,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ? SingleChildScrollView(
               child: Center(
                 child: Card(
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   elevation: 50,
                   shadowColor: Colors.black,
-                  color: Colors.white,
                   child: SizedBox(
                     width: 500,
-                    height: 550,
+                    height: 600,
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(

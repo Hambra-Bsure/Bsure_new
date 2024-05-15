@@ -86,6 +86,7 @@ class _GoldScreenState extends State<GoldScreen> {
                   itemBuilder: (context, index) {
                     final Gold = gold[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

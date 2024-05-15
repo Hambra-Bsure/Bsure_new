@@ -85,6 +85,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
                   itemBuilder: (context, index) {
                     final vehicle = vehicles[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

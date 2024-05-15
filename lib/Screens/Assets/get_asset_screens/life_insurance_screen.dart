@@ -86,6 +86,7 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                   itemBuilder: (context, index) {
                     final insurance = lifeInsurances[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

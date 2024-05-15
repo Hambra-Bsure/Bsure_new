@@ -171,7 +171,10 @@ class _BankAccountEditState extends State<BankAccountEdit> {
                   // Handle success
                 } else {}
               },
-              child: const Text('Update'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff429bb8), // Set background color here
+              ),
+              child: const Text('Update',style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

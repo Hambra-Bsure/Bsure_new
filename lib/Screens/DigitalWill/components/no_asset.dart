@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-
 import '../../Assets/get_asset_screens/category.dart';
-
-
 
 class NoAsset extends StatelessWidget {
   const NoAsset({super.key});

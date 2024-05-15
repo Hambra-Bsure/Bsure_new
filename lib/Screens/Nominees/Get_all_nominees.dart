@@ -76,6 +76,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                     var age = int.tryParse(nominee.age?.toString() ?? '');
                     var showGuardianInfo = age != null && age < 18;
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
@@ -179,7 +180,10 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                                     },
                                   );
                                 },
-                                child: const Text("Delete"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xff429bb8), // Set background color here
+                                ),
+                                child: const Text("Delete",style: TextStyle(color: Colors.white)),
                               ),
                             ),
                           ],

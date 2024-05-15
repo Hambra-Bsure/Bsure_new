@@ -84,6 +84,7 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
                   itemBuilder: (context, index) {
                     final realestate = realEstates[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

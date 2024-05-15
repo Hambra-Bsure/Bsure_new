@@ -96,6 +96,7 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
                   itemBuilder: (context, index) {
                     final account = bankAccounts[index];
                     return Card(
+                        color: Colors.white,
                         child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(

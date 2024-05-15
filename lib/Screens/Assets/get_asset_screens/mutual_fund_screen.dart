@@ -86,6 +86,7 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
                   itemBuilder: (context, index) {
                     final fund = mutualFunds[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

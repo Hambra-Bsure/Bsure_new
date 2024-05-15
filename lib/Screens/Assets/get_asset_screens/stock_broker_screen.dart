@@ -85,6 +85,7 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                   itemBuilder: (context, index) {
                     final broker = stockbrokers[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

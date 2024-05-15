@@ -54,7 +54,10 @@ class _NpsAddState extends State<NpsAdd> {
                   // Handle submit button press
                   _submitForm();
                 },
-                child: const Text('Submit'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor : const Color(0xff429bb8), // Set background color here
+                ),
+                child: const Text('Submit', style: TextStyle(color: Colors.white)),
               ),
             ),
           ],

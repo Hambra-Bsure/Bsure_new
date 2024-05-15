@@ -83,6 +83,7 @@ class _NpsScreenState extends State<NpsScreen> {
                   itemBuilder: (context, index) {
                     final Nps = nps[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

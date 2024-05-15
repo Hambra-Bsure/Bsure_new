@@ -86,6 +86,7 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
                   itemBuilder: (context, index) {
                     final nonlifeinsurance = nonlifeInsurances[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

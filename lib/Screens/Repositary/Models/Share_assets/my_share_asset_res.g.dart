@@ -57,6 +57,7 @@ _$NomineeImpl _$$NomineeImplFromJson(Map<String, dynamic> json) =>
       idProof: json['idProof'] as String?,
       guardianName: json['guardianName'] as String?,
       guardianMobileNumber: json['guardianMobileNumber'] as String?,
+      sharedAssetId: json['sharedAssetId'] as int,
     );
 
 Map<String, dynamic> _$$NomineeImplToJson(_$NomineeImpl instance) =>
@@ -73,11 +74,12 @@ Map<String, dynamic> _$$NomineeImplToJson(_$NomineeImpl instance) =>
       'idProof': instance.idProof,
       'guardianName': instance.guardianName,
       'guardianMobileNumber': instance.guardianMobileNumber,
+      'sharedAssetId': instance.sharedAssetId,
     };
 
 _$DetailImpl _$$DetailImplFromJson(Map<String, dynamic> json) => _$DetailImpl(
       fieldName: json['fieldName'] as String,
-      fieldValue: json['fieldValue'] as String,
+      fieldValue: json['fieldValue'] as String?,
     );
 
 Map<String, dynamic> _$$DetailImplToJson(_$DetailImpl instance) =>

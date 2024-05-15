@@ -85,6 +85,7 @@ class _PfScreenState extends State<PfScreen> {
                   itemBuilder: (context, index) {
                     final pf = pfs[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

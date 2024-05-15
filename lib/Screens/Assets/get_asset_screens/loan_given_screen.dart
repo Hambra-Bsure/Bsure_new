@@ -84,6 +84,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                   itemBuilder: (context, index) {
                     final loangiven = loanGivens[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

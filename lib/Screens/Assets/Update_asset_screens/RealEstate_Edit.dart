@@ -210,7 +210,10 @@ class _RealEstateEditState extends State<RealEstateEdit> {
                     ),
                   );
                 },
-                child: const Text('Update'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor : const Color(0xff429bb8), // Set background color here
+                ),
+                child: const Text('Update', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),

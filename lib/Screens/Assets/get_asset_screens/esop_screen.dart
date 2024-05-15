@@ -85,6 +85,7 @@ class _EsopScreenState extends State<EsopScreen> {
                   itemBuilder: (context, index) {
                     final esops = esop[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

@@ -110,6 +110,7 @@ class _HomepageState extends State<Homepage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Card(
+                    color: Colors.white, // Change the background color here
                     margin: const EdgeInsets.all(5.0),
                     elevation: 8.0,
                     shape: RoundedRectangleBorder(
@@ -123,32 +124,34 @@ class _HomepageState extends State<Homepage> {
                           const SizedBox(height: 5.0),
                           SingleChildScrollView(
                             child: GridView.count(
-                              crossAxisCount:
-                                  MediaQuery.of(context).size.width > 600
-                                      ? 3
-                                      : 3,
+                              crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 3,
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               children: [
                                 buildGridItem(
-                                    context,
-                                    'Assets',
-                                    'assets/images/img_2.png',
-                                    const CategoriesScreen()),
+                                  context,
+                                  'Assets',
+                                  'assets/images/img_2.png',
+                                  const CategoriesScreen(),
+                                ),
                                 buildGridItem(
-                                    context,
-                                    'Nominee',
-                                    'assets/images/img_7.png',
-                                    const GetNomineeScreen()),
+                                  context,
+                                  'Nominee',
+                                  'assets/images/img_7.png',
+                                  const GetNomineeScreen(),
+                                ),
+                                buildGridItem(
+                                  context,
+                                  'ShareAssets',
+                                  Icons.share,
+                                  const AssetScreen(),
+                                ),
                                 // buildGridItem(
-                                //     context,
-                                //     'Nudge',
-                                //     'assets/images/img_1.png',
-                                //     const NudgeScreen()),
-                                buildGridItem(context, 'ShareAssets',
-                                    Icons.share, const AssetScreen()),
-                                buildGridItem(context, 'Digitalwill',
-                                    Icons.design_services, const WillScreen()),
+                                //   context,
+                                //   'Digitalwill',
+                                //   Icons.design_services,
+                                //   const WillScreen(),
+                                // ),
                               ],
                             ),
                           ),
@@ -156,6 +159,7 @@ class _HomepageState extends State<Homepage> {
                       ),
                     ),
                   ),
+
                   // const SizedBox(height: 16),
                   // const Center(
                   //   child: Padding(
@@ -189,6 +193,7 @@ class _HomepageState extends State<Homepage> {
                     height: 30,
                   ),
                   Card(
+                    color: Colors.white,
                     margin: const EdgeInsets.all(5.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/AssetModels/GetCategoryResponse.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 // Import your NodeClient class
@@ -18,9 +19,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
   final NodeClient nodeClient = NodeClient(Dio()); // Initialize your NodeClient
 
   Future<GetCategoryresponse> fetchCategories() async {
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("token");
+
     try {
       final response = await nodeClient.GetCategoryList(
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJFbWFpbCI6bnVsbCwidXNlck1vYmlsZSI6IjgzMjg1NjQ2ODMiLCJpYXQiOjE3MTI2NjIzNDIsImV4cCI6MTcxMzI2NzE0Mn0.0bfk9q8VBwAbWglJYf9aJpG0mqYNjgiEG1M8hGDzaiw"); // Pass your token here
+          token.toString()); // Pass your token here
       return response;
     } catch (e) {
       throw Exception('Failed to fetch categories');
@@ -68,6 +72,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Card(
+          color: Colors.white,
           child: GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),

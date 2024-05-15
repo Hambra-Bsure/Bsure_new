@@ -435,6 +435,7 @@ mixin _$Nominee {
   String? get idProof => throw _privateConstructorUsedError;
   String? get guardianName => throw _privateConstructorUsedError;
   String? get guardianMobileNumber => throw _privateConstructorUsedError;
+  int get sharedAssetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -458,7 +459,8 @@ abstract class $NomineeCopyWith<$Res> {
       String? image,
       String? idProof,
       String? guardianName,
-      String? guardianMobileNumber});
+      String? guardianMobileNumber,
+      int sharedAssetId});
 }
 
 /// @nodoc
@@ -486,6 +488,7 @@ class _$NomineeCopyWithImpl<$Res, $Val extends Nominee>
     Object? idProof = freezed,
     Object? guardianName = freezed,
     Object? guardianMobileNumber = freezed,
+    Object? sharedAssetId = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -536,6 +539,10 @@ class _$NomineeCopyWithImpl<$Res, $Val extends Nominee>
           ? _value.guardianMobileNumber
           : guardianMobileNumber // ignore: cast_nullable_to_non_nullable
               as String?,
+      sharedAssetId: null == sharedAssetId
+          ? _value.sharedAssetId
+          : sharedAssetId // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -559,7 +566,8 @@ abstract class _$$NomineeImplCopyWith<$Res> implements $NomineeCopyWith<$Res> {
       String? image,
       String? idProof,
       String? guardianName,
-      String? guardianMobileNumber});
+      String? guardianMobileNumber,
+      int sharedAssetId});
 }
 
 /// @nodoc
@@ -585,6 +593,7 @@ class __$$NomineeImplCopyWithImpl<$Res>
     Object? idProof = freezed,
     Object? guardianName = freezed,
     Object? guardianMobileNumber = freezed,
+    Object? sharedAssetId = null,
   }) {
     return _then(_$NomineeImpl(
       id: null == id
@@ -635,6 +644,10 @@ class __$$NomineeImplCopyWithImpl<$Res>
           ? _value.guardianMobileNumber
           : guardianMobileNumber // ignore: cast_nullable_to_non_nullable
               as String?,
+      sharedAssetId: null == sharedAssetId
+          ? _value.sharedAssetId
+          : sharedAssetId // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -654,7 +667,8 @@ class _$NomineeImpl implements _Nominee {
       required this.image,
       required this.idProof,
       required this.guardianName,
-      required this.guardianMobileNumber});
+      required this.guardianMobileNumber,
+      required this.sharedAssetId});
 
   factory _$NomineeImpl.fromJson(Map<String, dynamic> json) =>
       _$$NomineeImplFromJson(json);
@@ -683,10 +697,12 @@ class _$NomineeImpl implements _Nominee {
   final String? guardianName;
   @override
   final String? guardianMobileNumber;
+  @override
+  final int sharedAssetId;
 
   @override
   String toString() {
-    return 'Nominee(id: $id, firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, email: $email, address: $address, relation: $relation, age: $age, image: $image, idProof: $idProof, guardianName: $guardianName, guardianMobileNumber: $guardianMobileNumber)';
+    return 'Nominee(id: $id, firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, email: $email, address: $address, relation: $relation, age: $age, image: $image, idProof: $idProof, guardianName: $guardianName, guardianMobileNumber: $guardianMobileNumber, sharedAssetId: $sharedAssetId)';
   }
 
   @override
@@ -711,7 +727,9 @@ class _$NomineeImpl implements _Nominee {
             (identical(other.guardianName, guardianName) ||
                 other.guardianName == guardianName) &&
             (identical(other.guardianMobileNumber, guardianMobileNumber) ||
-                other.guardianMobileNumber == guardianMobileNumber));
+                other.guardianMobileNumber == guardianMobileNumber) &&
+            (identical(other.sharedAssetId, sharedAssetId) ||
+                other.sharedAssetId == sharedAssetId));
   }
 
   @JsonKey(ignore: true)
@@ -729,7 +747,8 @@ class _$NomineeImpl implements _Nominee {
       image,
       idProof,
       guardianName,
-      guardianMobileNumber);
+      guardianMobileNumber,
+      sharedAssetId);
 
   @JsonKey(ignore: true)
   @override
@@ -758,7 +777,8 @@ abstract class _Nominee implements Nominee {
       required final String? image,
       required final String? idProof,
       required final String? guardianName,
-      required final String? guardianMobileNumber}) = _$NomineeImpl;
+      required final String? guardianMobileNumber,
+      required final int sharedAssetId}) = _$NomineeImpl;
 
   factory _Nominee.fromJson(Map<String, dynamic> json) = _$NomineeImpl.fromJson;
 
@@ -787,6 +807,8 @@ abstract class _Nominee implements Nominee {
   @override
   String? get guardianMobileNumber;
   @override
+  int get sharedAssetId;
+  @override
   @JsonKey(ignore: true)
   _$$NomineeImplCopyWith<_$NomineeImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -799,7 +821,7 @@ Detail _$DetailFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Detail {
   String get fieldName => throw _privateConstructorUsedError;
-  String get fieldValue => throw _privateConstructorUsedError;
+  String? get fieldValue => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -811,7 +833,7 @@ abstract class $DetailCopyWith<$Res> {
   factory $DetailCopyWith(Detail value, $Res Function(Detail) then) =
       _$DetailCopyWithImpl<$Res, Detail>;
   @useResult
-  $Res call({String fieldName, String fieldValue});
+  $Res call({String fieldName, String? fieldValue});
 }
 
 /// @nodoc
@@ -828,17 +850,17 @@ class _$DetailCopyWithImpl<$Res, $Val extends Detail>
   @override
   $Res call({
     Object? fieldName = null,
-    Object? fieldValue = null,
+    Object? fieldValue = freezed,
   }) {
     return _then(_value.copyWith(
       fieldName: null == fieldName
           ? _value.fieldName
           : fieldName // ignore: cast_nullable_to_non_nullable
               as String,
-      fieldValue: null == fieldValue
+      fieldValue: freezed == fieldValue
           ? _value.fieldValue
           : fieldValue // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -850,7 +872,7 @@ abstract class _$$DetailImplCopyWith<$Res> implements $DetailCopyWith<$Res> {
       __$$DetailImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String fieldName, String fieldValue});
+  $Res call({String fieldName, String? fieldValue});
 }
 
 /// @nodoc
@@ -865,17 +887,17 @@ class __$$DetailImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? fieldName = null,
-    Object? fieldValue = null,
+    Object? fieldValue = freezed,
   }) {
     return _then(_$DetailImpl(
       fieldName: null == fieldName
           ? _value.fieldName
           : fieldName // ignore: cast_nullable_to_non_nullable
               as String,
-      fieldValue: null == fieldValue
+      fieldValue: freezed == fieldValue
           ? _value.fieldValue
           : fieldValue // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -891,7 +913,7 @@ class _$DetailImpl implements _Detail {
   @override
   final String fieldName;
   @override
-  final String fieldValue;
+  final String? fieldValue;
 
   @override
   String toString() {
@@ -930,14 +952,14 @@ class _$DetailImpl implements _Detail {
 abstract class _Detail implements Detail {
   factory _Detail(
       {required final String fieldName,
-      required final String fieldValue}) = _$DetailImpl;
+      required final String? fieldValue}) = _$DetailImpl;
 
   factory _Detail.fromJson(Map<String, dynamic> json) = _$DetailImpl.fromJson;
 
   @override
   String get fieldName;
   @override
-  String get fieldValue;
+  String? get fieldValue;
   @override
   @JsonKey(ignore: true)
   _$$DetailImplCopyWith<_$DetailImpl> get copyWith =>

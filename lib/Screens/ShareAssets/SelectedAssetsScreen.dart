@@ -60,7 +60,7 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Failed to fetch bank accounts'),
+          content: Text('Failed to fetch Nominees'),
           duration: Duration(seconds: 3),
         ),
       );
@@ -97,6 +97,7 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title: const Text(
@@ -334,73 +335,25 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
 
 class AssetCard extends StatefulWidget {
   final Asset asset;
-  final bool isSelected; // Define isSelected parameter here
+  final bool isSelected;
   final ValueChanged<bool> onSelected;
 
   const AssetCard({
-    super.key,
+    Key? key,
     required this.asset,
-    required this.isSelected, // Include isSelected parameter here
+    required this.isSelected,
     required this.onSelected,
-  });
+  }) : super(key: key);
 
   @override
   _AssetCardState createState() => _AssetCardState();
 }
 
 class _AssetCardState extends State<AssetCard> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          widget.onSelected(!widget.isSelected); // Notify parent widget
-        });
-      },
-      child: Card(
-        elevation: 20,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: Container(
-          alignment: Alignment.topLeft,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (var i = 0; i < widget.asset.assetList.length; i++)
-                      Text(
-                        '${widget.asset.assetList[i].fieldName}: ${_getDisplayValue(widget.asset.assetList[i].fieldValue)}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                  ],
-                ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Checkbox(
-                    activeColor: const Color(0xff429bb8),
-                    value: widget.isSelected,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        widget
-                            .onSelected(value ?? false); // Notify parent widget
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  String _capitalize(String s) {
+    return s[0].toUpperCase() + s.substring(1);
   }
 
-  // Helper function to get the display value of fieldValue
   String _getDisplayValue(dynamic value) {
     if (value == null) {
       return 'N/A';
@@ -409,5 +362,54 @@ class _AssetCardState extends State<AssetCard> {
     } else {
       return value.toString();
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          widget.onSelected(!widget.isSelected);
+        });
+      },
+      child: Card(
+        elevation: 20,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: Container(
+          // color: widget.isSelected ? Colors.lightBlue : Colors.white, // Set background color based on selection
+          color: Colors.white,
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var i = 0; i < widget.asset.assetList.length; i++)
+                    Text(
+                      '${_capitalize(widget.asset.assetList[i].fieldName)}: ${_getDisplayValue(widget.asset.assetList[i].fieldValue)}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                ],
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Checkbox(
+                  activeColor: const Color(0xff429bb8),
+                  value: widget.isSelected,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      widget.onSelected(value ?? false);
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

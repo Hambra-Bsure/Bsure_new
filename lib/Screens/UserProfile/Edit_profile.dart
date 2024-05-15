@@ -128,7 +128,16 @@ class _EditUserState extends State<EditUser> {
               onPressed: () {
                 submitForm();
               },
-              child: const Text('Update'),
+
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                backgroundColor: const Color(0xff429bb8),
+              ),
+              child: const Text(
+                'Update',
+                style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
           ],
         ),

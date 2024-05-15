@@ -90,6 +90,7 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                   itemBuilder: (context, index) {
                     final postoffice = PostofficeAccounts[index];
                     return Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(

@@ -1,13 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Repositary/Models/Share_assets/Shareasset_withme_res.dart';
+import '../Repositary/Models/Share_assets/share_asset_withme_res.dart';
 import '../Repositary/Retrofit/node_api_client.dart';
 
 class Shareassetwithme extends StatefulWidget {
-  const Shareassetwithme({super.key});
+  const Shareassetwithme({Key? key}) : super(key: key);
 
   @override
   _ShareassetwithmeState createState() => _ShareassetwithmeState();
@@ -17,40 +15,57 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
   late NodeClient nodeClient;
   late ShareAssetswithmeResponse shareAssetsResponse;
   bool isLoading = true;
-  String? selectedUserName;
   var height = 0.0;
   var width = 0.0;
 
   @override
   void initState() {
     super.initState();
-    Dio dio = Dio();
-    nodeClient = NodeClient(dio);
+    nodeClient = NodeClient(Dio());
     shareAssetsResponse = ShareAssetswithmeResponse(
-        assetDetailsList: []); // Initialize with an empty list
+      success: false,
+      message: '',
+      data: [],
+    );
     _getSharedAssets();
   }
 
   Future<void> _getSharedAssets() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      var token = prefs.getString("token");
-      ShareAssetswithmeResponse response =
-          await nodeClient.getSharedAssetswithme(token!);
-      setState(() {
-        shareAssetsResponse = response;
-        isLoading = false;
+      final token = prefs.getString("token");
 
-        if (response.assetDetailsList != null &&
-            response.assetDetailsList!.isNotEmpty) {
-          // Set the initial selected user
-          selectedUserName = response.assetDetailsList![0].userName;
-        }
-      });
+      if (token != null) {
+        final dio = Dio();
+        dio.options.headers["Authorization"] = token;
+        const url = 'http://43.205.12.154:8080/v2/share/with-me';
+
+        final response = await dio.get(
+          url,
+          options: Options(
+            headers: {
+              "ngrok-skip-browser-warning": "69420",
+            },
+          ),
+        );
+
+        print(response.data); // Print the response data
+
+        setState(() {
+          shareAssetsResponse =
+              ShareAssetswithmeResponse.fromJson(response.data);
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
     } catch (e) {
       setState(() {
         isLoading = false;
       });
+      print('Error fetching shared assets: $e');
     }
   }
 
@@ -67,155 +82,131 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
           style: TextStyle(color: Colors.white),
         ),
       ),
+      backgroundColor: Colors.grey[200],
+      // Background color for the whole screen
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
           : shareAssetsResponse.success == true
-              ? Column(
-                  children: [
-                    // Dropdown for selecting usernames
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButton<String>(
-                        value: selectedUserName,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedUserName = newValue;
-                          });
-                        },
-                        items: shareAssetsResponse.assetDetailsList!
-                            .map((assetDetails) {
-                          return DropdownMenuItem<String>(
-                            value: assetDetails.userName,
-                            child: Text(assetDetails.userName ?? 'N/A'),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    // Display assets based on the selected user
-                    _buildAssetList(selectedUserName),
-                  ],
+              ? Card(
+                  child: ListView.builder(
+                    itemCount: shareAssetsResponse.data.length,
+                    itemBuilder: (context, index) {
+                      final userData = shareAssetsResponse.data[index];
+                      return Card(
+                        color: Colors.lightBlue,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Card(
+                              color: Colors.white,
+                              margin: const EdgeInsets.all(8),
+                              child: ListTile(
+                                title: Center(
+                                  child: Text(
+                                    '${userData.firstName ?? ''} ${userData.lastName ?? ''}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                subtitle: Center(
+                                  child: Text(
+                                    userData.mobileNumber,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      // FontWeight.bold for bold text
+                                      fontSize:
+                                          16, // Example font size, adjust as needed
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            for (var asset in userData.assets)
+                              Column(
+                                children: [
+                                  if (userData.assets.indexOf(asset) != 0)
+                                    const Divider(),
+                                  Card(
+                                    color: Colors.white,
+                                    margin: const EdgeInsets.all(8),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0, vertical: 8.0),
+                                          child: Center(
+                                            child: Text(
+                                              asset.category,
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18),
+                                            ),
+                                          ),
+                                        ),
+                                        ...asset.details
+                                            .map(
+                                              (detail) => Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0, bottom: 8.0),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      // Wrap the Row widget with Expanded
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Expanded(
+                                                            // Wrap the Text widget with Expanded
+                                                            child: Text(
+                                                              '${detail.fieldName.replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'), (match) => ' ${match.group(0)!}').trim()}:',
+                                                              // Convert camelCase to words
+                                                              style: const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              overflow: TextOverflow
+                                                                  .ellipsis, // Add this line to handle overflow
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            // Wrap the Text widget with Expanded
+                                                            child: Text(
+                                                              detail.fieldValue ??
+                                                                  '',
+                                                              // Use an empty string as the default value if detail.fieldValue is null
+                                                              overflow: TextOverflow
+                                                                  .ellipsis, // Add this line to handle overflow
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 )
               : const Center(
-                  child: Text('Failed to fetch shared assets'),
+                  child: Text('No one has shared assets with you'),
                 ),
-    );
-  }
-
-  Widget _buildAssetList(String? userName) {
-    if (userName == null) {
-      return const Center(
-          child: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text('No user selected.please select user in dropdown'),
-      ));
-    }
-
-    List<AssetDetails> selectedUserAssets = shareAssetsResponse
-        .assetDetailsList!
-        .where((asset) => asset.userName == userName)
-        .toList();
-
-    return selectedUserAssets.isEmpty
-        ? const Center(
-            child: Text('No assets shared for the selected user.'),
-          )
-        : Expanded(
-            child: ListView.builder(
-              itemCount: selectedUserAssets.length,
-              itemBuilder: (context, index) {
-                AssetDetails assets = selectedUserAssets[index];
-                return Column(
-                  children: [
-                    Container(
-                      width: width,
-                      margin: const EdgeInsets.all(8),
-                      color: const Color(0xff429bb8),
-                      child: Column(
-                        children: [
-                          Text(
-                            'User Name: ${assets.userName ?? 'N/A'}',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.white),
-                          ),
-                          Text(
-                            'User Mobile: ${assets.mobileNumber ?? 'N/A'}',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(),
-                    _buildAssetCard(assets.assetDataList!),
-                    const SizedBox(height: 16),
-                  ],
-                );
-              },
-            ),
-          );
-  }
-
-  Widget _buildAssetCard(List<Map<String, dynamic>> assetData) {
-    List<Widget> children = [];
-    for (var entry in assetData) {
-      List<Widget> entryWidgets = []; // Initialize an empty list for each entry
-
-      if (entry['uaiValue'] != null) {
-        var value = entry['uaiValue'];
-        for (var entry1 in value) {
-          entryWidgets.add(Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Text(
-                  '${entry1['displayName']}:',
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  '${entry1['uaiValue']}',
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ],
-          ));
-        }
-      }
-
-      children.add(
-        Card(
-          elevation: 3,
-          margin: const EdgeInsets.all(8),
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: entryWidgets, // Use the entryWidgets list here
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      children: children,
     );
   }
 }

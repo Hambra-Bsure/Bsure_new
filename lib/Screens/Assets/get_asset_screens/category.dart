@@ -202,6 +202,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               }
             },
             child: Card(
+              color: Colors.white,
               elevation: 4.0,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

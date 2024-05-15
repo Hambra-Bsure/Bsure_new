@@ -56,8 +56,6 @@ import '../Models/Share_assets/Delete_share_res.dart';
 import '../Models/Share_assets/my_share_asset_res.dart';
 import '../Models/Share_assets/Share_asset_req.dart';
 import '../Models/Share_assets/Share_asset_res.dart';
-import '../Models/Share_assets/Shareasset_withme_res.dart';
-
 part 'node_api_client.g.dart';
 
 //@RestApi(baseUrl: 'https://api.bsure.live')
@@ -220,9 +218,9 @@ abstract class NodeClient {
   Future<MyShareAssetsResponse> getSharedAssets(
       @Header('Authorization') String token);
 
-  @GET("/shareAsset/share-with-me")
-  Future<ShareAssetswithmeResponse> getSharedAssetswithme(
-      @Header('Authorization') String token);
+  // @GET("/shareAsset/share-with-me")
+  // Future<ShareAssetswithmeResponse> getSharedAssetswithme(
+  //     @Header('Authorization') String token);
 
   @DELETE("/v2/share/{id}") // Assuming 'id' is a path parameter
   Future<Deleteshareresponse> deleteShareAsset(
