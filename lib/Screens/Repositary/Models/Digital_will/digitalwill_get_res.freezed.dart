@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'my_share_asset_res.dart';
+part of 'digitalwill_get_res.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,36 +14,37 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-MyShareAssetsResponse _$MyShareAssetsResponseFromJson(
+DigitalwillgetResponse _$DigitalwillgetResponseFromJson(
     Map<String, dynamic> json) {
-  return _MyShareAssetsResponse.fromJson(json);
+  return _DigitalwillgetResponse.fromJson(json);
 }
 
 /// @nodoc
-mixin _$MyShareAssetsResponse {
-  bool get success => throw _privateConstructorUsedError;
+mixin _$DigitalwillgetResponse {
+  bool? get success => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
   List<Asset> get assets => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $MyShareAssetsResponseCopyWith<MyShareAssetsResponse> get copyWith =>
+  $DigitalwillgetResponseCopyWith<DigitalwillgetResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $MyShareAssetsResponseCopyWith<$Res> {
-  factory $MyShareAssetsResponseCopyWith(MyShareAssetsResponse value,
-          $Res Function(MyShareAssetsResponse) then) =
-      _$MyShareAssetsResponseCopyWithImpl<$Res, MyShareAssetsResponse>;
+abstract class $DigitalwillgetResponseCopyWith<$Res> {
+  factory $DigitalwillgetResponseCopyWith(DigitalwillgetResponse value,
+          $Res Function(DigitalwillgetResponse) then) =
+      _$DigitalwillgetResponseCopyWithImpl<$Res, DigitalwillgetResponse>;
   @useResult
-  $Res call({bool success, List<Asset> assets});
+  $Res call({bool? success, String? message, List<Asset> assets});
 }
 
 /// @nodoc
-class _$MyShareAssetsResponseCopyWithImpl<$Res,
-        $Val extends MyShareAssetsResponse>
-    implements $MyShareAssetsResponseCopyWith<$Res> {
-  _$MyShareAssetsResponseCopyWithImpl(this._value, this._then);
+class _$DigitalwillgetResponseCopyWithImpl<$Res,
+        $Val extends DigitalwillgetResponse>
+    implements $DigitalwillgetResponseCopyWith<$Res> {
+  _$DigitalwillgetResponseCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -53,14 +54,19 @@ class _$MyShareAssetsResponseCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? success = null,
+    Object? success = freezed,
+    Object? message = freezed,
     Object? assets = null,
   }) {
     return _then(_value.copyWith(
-      success: null == success
+      success: freezed == success
           ? _value.success
           : success // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as bool?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
       assets: null == assets
           ? _value.assets
           : assets // ignore: cast_nullable_to_non_nullable
@@ -70,37 +76,43 @@ class _$MyShareAssetsResponseCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$MyShareAssetsResponseImplCopyWith<$Res>
-    implements $MyShareAssetsResponseCopyWith<$Res> {
-  factory _$$MyShareAssetsResponseImplCopyWith(
-          _$MyShareAssetsResponseImpl value,
-          $Res Function(_$MyShareAssetsResponseImpl) then) =
-      __$$MyShareAssetsResponseImplCopyWithImpl<$Res>;
+abstract class _$$DigitalwillgetResponseImplCopyWith<$Res>
+    implements $DigitalwillgetResponseCopyWith<$Res> {
+  factory _$$DigitalwillgetResponseImplCopyWith(
+          _$DigitalwillgetResponseImpl value,
+          $Res Function(_$DigitalwillgetResponseImpl) then) =
+      __$$DigitalwillgetResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool success, List<Asset> assets});
+  $Res call({bool? success, String? message, List<Asset> assets});
 }
 
 /// @nodoc
-class __$$MyShareAssetsResponseImplCopyWithImpl<$Res>
-    extends _$MyShareAssetsResponseCopyWithImpl<$Res,
-        _$MyShareAssetsResponseImpl>
-    implements _$$MyShareAssetsResponseImplCopyWith<$Res> {
-  __$$MyShareAssetsResponseImplCopyWithImpl(_$MyShareAssetsResponseImpl _value,
-      $Res Function(_$MyShareAssetsResponseImpl) _then)
+class __$$DigitalwillgetResponseImplCopyWithImpl<$Res>
+    extends _$DigitalwillgetResponseCopyWithImpl<$Res,
+        _$DigitalwillgetResponseImpl>
+    implements _$$DigitalwillgetResponseImplCopyWith<$Res> {
+  __$$DigitalwillgetResponseImplCopyWithImpl(
+      _$DigitalwillgetResponseImpl _value,
+      $Res Function(_$DigitalwillgetResponseImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? success = null,
+    Object? success = freezed,
+    Object? message = freezed,
     Object? assets = null,
   }) {
-    return _then(_$MyShareAssetsResponseImpl(
-      success: null == success
+    return _then(_$DigitalwillgetResponseImpl(
+      success: freezed == success
           ? _value.success
           : success // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as bool?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
       assets: null == assets
           ? _value._assets
           : assets // ignore: cast_nullable_to_non_nullable
@@ -111,16 +123,18 @@ class __$$MyShareAssetsResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$MyShareAssetsResponseImpl implements _MyShareAssetsResponse {
-  _$MyShareAssetsResponseImpl(
-      {required this.success, required final List<Asset> assets})
+class _$DigitalwillgetResponseImpl implements _DigitalwillgetResponse {
+  _$DigitalwillgetResponseImpl(
+      {this.success, this.message, required final List<Asset> assets})
       : _assets = assets;
 
-  factory _$MyShareAssetsResponseImpl.fromJson(Map<String, dynamic> json) =>
-      _$$MyShareAssetsResponseImplFromJson(json);
+  factory _$DigitalwillgetResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DigitalwillgetResponseImplFromJson(json);
 
   @override
-  final bool success;
+  final bool? success;
+  @override
+  final String? message;
   final List<Asset> _assets;
   @override
   List<Asset> get assets {
@@ -131,53 +145,57 @@ class _$MyShareAssetsResponseImpl implements _MyShareAssetsResponse {
 
   @override
   String toString() {
-    return 'MyShareAssetsResponse(success: $success, assets: $assets)';
+    return 'DigitalwillgetResponse(success: $success, message: $message, assets: $assets)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$MyShareAssetsResponseImpl &&
+            other is _$DigitalwillgetResponseImpl &&
             (identical(other.success, success) || other.success == success) &&
+            (identical(other.message, message) || other.message == message) &&
             const DeepCollectionEquality().equals(other._assets, _assets));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, success, const DeepCollectionEquality().hash(_assets));
+  int get hashCode => Object.hash(runtimeType, success, message,
+      const DeepCollectionEquality().hash(_assets));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$MyShareAssetsResponseImplCopyWith<_$MyShareAssetsResponseImpl>
-      get copyWith => __$$MyShareAssetsResponseImplCopyWithImpl<
-          _$MyShareAssetsResponseImpl>(this, _$identity);
+  _$$DigitalwillgetResponseImplCopyWith<_$DigitalwillgetResponseImpl>
+      get copyWith => __$$DigitalwillgetResponseImplCopyWithImpl<
+          _$DigitalwillgetResponseImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$MyShareAssetsResponseImplToJson(
+    return _$$DigitalwillgetResponseImplToJson(
       this,
     );
   }
 }
 
-abstract class _MyShareAssetsResponse implements MyShareAssetsResponse {
-  factory _MyShareAssetsResponse(
-      {required final bool success,
-      required final List<Asset> assets}) = _$MyShareAssetsResponseImpl;
+abstract class _DigitalwillgetResponse implements DigitalwillgetResponse {
+  factory _DigitalwillgetResponse(
+      {final bool? success,
+      final String? message,
+      required final List<Asset> assets}) = _$DigitalwillgetResponseImpl;
 
-  factory _MyShareAssetsResponse.fromJson(Map<String, dynamic> json) =
-      _$MyShareAssetsResponseImpl.fromJson;
+  factory _DigitalwillgetResponse.fromJson(Map<String, dynamic> json) =
+      _$DigitalwillgetResponseImpl.fromJson;
 
   @override
-  bool get success;
+  bool? get success;
+  @override
+  String? get message;
   @override
   List<Asset> get assets;
   @override
   @JsonKey(ignore: true)
-  _$$MyShareAssetsResponseImplCopyWith<_$MyShareAssetsResponseImpl>
+  _$$DigitalwillgetResponseImplCopyWith<_$DigitalwillgetResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -187,9 +205,8 @@ Asset _$AssetFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Asset {
-  int get id => throw _privateConstructorUsedError;
-  int get userId => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
+  int? get assetId => throw _privateConstructorUsedError;
+  String? get category => throw _privateConstructorUsedError;
   List<Nominee> get nominees => throw _privateConstructorUsedError;
   List<Detail> get details => throw _privateConstructorUsedError;
 
@@ -204,9 +221,8 @@ abstract class $AssetCopyWith<$Res> {
       _$AssetCopyWithImpl<$Res, Asset>;
   @useResult
   $Res call(
-      {int id,
-      int userId,
-      String category,
+      {int? assetId,
+      String? category,
       List<Nominee> nominees,
       List<Detail> details});
 }
@@ -224,25 +240,20 @@ class _$AssetCopyWithImpl<$Res, $Val extends Asset>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? userId = null,
-    Object? category = null,
+    Object? assetId = freezed,
+    Object? category = freezed,
     Object? nominees = null,
     Object? details = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as int,
-      category: null == category
+      assetId: freezed == assetId
+          ? _value.assetId
+          : assetId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       nominees: null == nominees
           ? _value.nominees
           : nominees // ignore: cast_nullable_to_non_nullable
@@ -263,9 +274,8 @@ abstract class _$$AssetImplCopyWith<$Res> implements $AssetCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int id,
-      int userId,
-      String category,
+      {int? assetId,
+      String? category,
       List<Nominee> nominees,
       List<Detail> details});
 }
@@ -281,25 +291,20 @@ class __$$AssetImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? userId = null,
-    Object? category = null,
+    Object? assetId = freezed,
+    Object? category = freezed,
     Object? nominees = null,
     Object? details = null,
   }) {
     return _then(_$AssetImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as int,
-      category: null == category
+      assetId: freezed == assetId
+          ? _value.assetId
+          : assetId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       nominees: null == nominees
           ? _value._nominees
           : nominees // ignore: cast_nullable_to_non_nullable
@@ -316,9 +321,8 @@ class __$$AssetImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AssetImpl implements _Asset {
   _$AssetImpl(
-      {required this.id,
-      required this.userId,
-      required this.category,
+      {this.assetId,
+      this.category,
       required final List<Nominee> nominees,
       required final List<Detail> details})
       : _nominees = nominees,
@@ -328,11 +332,9 @@ class _$AssetImpl implements _Asset {
       _$$AssetImplFromJson(json);
 
   @override
-  final int id;
+  final int? assetId;
   @override
-  final int userId;
-  @override
-  final String category;
+  final String? category;
   final List<Nominee> _nominees;
   @override
   List<Nominee> get nominees {
@@ -351,7 +353,7 @@ class _$AssetImpl implements _Asset {
 
   @override
   String toString() {
-    return 'Asset(id: $id, userId: $userId, category: $category, nominees: $nominees, details: $details)';
+    return 'Asset(assetId: $assetId, category: $category, nominees: $nominees, details: $details)';
   }
 
   @override
@@ -359,8 +361,7 @@ class _$AssetImpl implements _Asset {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AssetImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.assetId, assetId) || other.assetId == assetId) &&
             (identical(other.category, category) ||
                 other.category == category) &&
             const DeepCollectionEquality().equals(other._nominees, _nominees) &&
@@ -371,8 +372,7 @@ class _$AssetImpl implements _Asset {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      id,
-      userId,
+      assetId,
       category,
       const DeepCollectionEquality().hash(_nominees),
       const DeepCollectionEquality().hash(_details));
@@ -393,20 +393,17 @@ class _$AssetImpl implements _Asset {
 
 abstract class _Asset implements Asset {
   factory _Asset(
-      {required final int id,
-      required final int userId,
-      required final String category,
+      {final int? assetId,
+      final String? category,
       required final List<Nominee> nominees,
       required final List<Detail> details}) = _$AssetImpl;
 
   factory _Asset.fromJson(Map<String, dynamic> json) = _$AssetImpl.fromJson;
 
   @override
-  int get id;
+  int? get assetId;
   @override
-  int get userId;
-  @override
-  String get category;
+  String? get category;
   @override
   List<Nominee> get nominees;
   @override
@@ -424,18 +421,10 @@ Nominee _$NomineeFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Nominee {
   int get id => throw _privateConstructorUsedError;
-  String get firstName => throw _privateConstructorUsedError;
-  String get lastName => throw _privateConstructorUsedError;
-  String? get mobileNumber => throw _privateConstructorUsedError;
-  String? get email => throw _privateConstructorUsedError;
-  String get address => throw _privateConstructorUsedError;
+  String? get mobile => throw _privateConstructorUsedError;
   String get relation => throw _privateConstructorUsedError;
-  int get age => throw _privateConstructorUsedError;
-  String? get image => throw _privateConstructorUsedError;
-  String? get idProof => throw _privateConstructorUsedError;
-  String? get guardianName => throw _privateConstructorUsedError;
-  String? get guardianMobileNumber => throw _privateConstructorUsedError;
-  int get sharedAssetId => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  double get share => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -448,19 +437,7 @@ abstract class $NomineeCopyWith<$Res> {
       _$NomineeCopyWithImpl<$Res, Nominee>;
   @useResult
   $Res call(
-      {int id,
-      String firstName,
-      String lastName,
-      String? mobileNumber,
-      String? email,
-      String address,
-      String relation,
-      int age,
-      String? image,
-      String? idProof,
-      String? guardianName,
-      String? guardianMobileNumber,
-      int sharedAssetId});
+      {int id, String? mobile, String relation, String name, double share});
 }
 
 /// @nodoc
@@ -477,72 +454,32 @@ class _$NomineeCopyWithImpl<$Res, $Val extends Nominee>
   @override
   $Res call({
     Object? id = null,
-    Object? firstName = null,
-    Object? lastName = null,
-    Object? mobileNumber = freezed,
-    Object? email = freezed,
-    Object? address = null,
+    Object? mobile = freezed,
     Object? relation = null,
-    Object? age = null,
-    Object? image = freezed,
-    Object? idProof = freezed,
-    Object? guardianName = freezed,
-    Object? guardianMobileNumber = freezed,
-    Object? sharedAssetId = null,
+    Object? name = null,
+    Object? share = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      firstName: null == firstName
-          ? _value.firstName
-          : firstName // ignore: cast_nullable_to_non_nullable
-              as String,
-      lastName: null == lastName
-          ? _value.lastName
-          : lastName // ignore: cast_nullable_to_non_nullable
-              as String,
-      mobileNumber: freezed == mobileNumber
-          ? _value.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
+      mobile: freezed == mobile
+          ? _value.mobile
+          : mobile // ignore: cast_nullable_to_non_nullable
               as String?,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      address: null == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String,
       relation: null == relation
           ? _value.relation
           : relation // ignore: cast_nullable_to_non_nullable
               as String,
-      age: null == age
-          ? _value.age
-          : age // ignore: cast_nullable_to_non_nullable
-              as int,
-      image: freezed == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
-              as String?,
-      idProof: freezed == idProof
-          ? _value.idProof
-          : idProof // ignore: cast_nullable_to_non_nullable
-              as String?,
-      guardianName: freezed == guardianName
-          ? _value.guardianName
-          : guardianName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      guardianMobileNumber: freezed == guardianMobileNumber
-          ? _value.guardianMobileNumber
-          : guardianMobileNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sharedAssetId: null == sharedAssetId
-          ? _value.sharedAssetId
-          : sharedAssetId // ignore: cast_nullable_to_non_nullable
-              as int,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      share: null == share
+          ? _value.share
+          : share // ignore: cast_nullable_to_non_nullable
+              as double,
     ) as $Val);
   }
 }
@@ -555,19 +492,7 @@ abstract class _$$NomineeImplCopyWith<$Res> implements $NomineeCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int id,
-      String firstName,
-      String lastName,
-      String? mobileNumber,
-      String? email,
-      String address,
-      String relation,
-      int age,
-      String? image,
-      String? idProof,
-      String? guardianName,
-      String? guardianMobileNumber,
-      int sharedAssetId});
+      {int id, String? mobile, String relation, String name, double share});
 }
 
 /// @nodoc
@@ -582,72 +507,32 @@ class __$$NomineeImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? firstName = null,
-    Object? lastName = null,
-    Object? mobileNumber = freezed,
-    Object? email = freezed,
-    Object? address = null,
+    Object? mobile = freezed,
     Object? relation = null,
-    Object? age = null,
-    Object? image = freezed,
-    Object? idProof = freezed,
-    Object? guardianName = freezed,
-    Object? guardianMobileNumber = freezed,
-    Object? sharedAssetId = null,
+    Object? name = null,
+    Object? share = null,
   }) {
     return _then(_$NomineeImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      firstName: null == firstName
-          ? _value.firstName
-          : firstName // ignore: cast_nullable_to_non_nullable
-              as String,
-      lastName: null == lastName
-          ? _value.lastName
-          : lastName // ignore: cast_nullable_to_non_nullable
-              as String,
-      mobileNumber: freezed == mobileNumber
-          ? _value.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
+      mobile: freezed == mobile
+          ? _value.mobile
+          : mobile // ignore: cast_nullable_to_non_nullable
               as String?,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      address: null == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String,
       relation: null == relation
           ? _value.relation
           : relation // ignore: cast_nullable_to_non_nullable
               as String,
-      age: null == age
-          ? _value.age
-          : age // ignore: cast_nullable_to_non_nullable
-              as int,
-      image: freezed == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
-              as String?,
-      idProof: freezed == idProof
-          ? _value.idProof
-          : idProof // ignore: cast_nullable_to_non_nullable
-              as String?,
-      guardianName: freezed == guardianName
-          ? _value.guardianName
-          : guardianName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      guardianMobileNumber: freezed == guardianMobileNumber
-          ? _value.guardianMobileNumber
-          : guardianMobileNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sharedAssetId: null == sharedAssetId
-          ? _value.sharedAssetId
-          : sharedAssetId // ignore: cast_nullable_to_non_nullable
-              as int,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      share: null == share
+          ? _value.share
+          : share // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
@@ -657,18 +542,10 @@ class __$$NomineeImplCopyWithImpl<$Res>
 class _$NomineeImpl implements _Nominee {
   _$NomineeImpl(
       {required this.id,
-      required this.firstName,
-      required this.lastName,
-      required this.mobileNumber,
-      required this.email,
-      required this.address,
+      required this.mobile,
       required this.relation,
-      required this.age,
-      required this.image,
-      required this.idProof,
-      required this.guardianName,
-      required this.guardianMobileNumber,
-      required this.sharedAssetId});
+      required this.name,
+      required this.share});
 
   factory _$NomineeImpl.fromJson(Map<String, dynamic> json) =>
       _$$NomineeImplFromJson(json);
@@ -676,33 +553,17 @@ class _$NomineeImpl implements _Nominee {
   @override
   final int id;
   @override
-  final String firstName;
-  @override
-  final String lastName;
-  @override
-  final String? mobileNumber;
-  @override
-  final String? email;
-  @override
-  final String address;
+  final String? mobile;
   @override
   final String relation;
   @override
-  final int age;
+  final String name;
   @override
-  final String? image;
-  @override
-  final String? idProof;
-  @override
-  final String? guardianName;
-  @override
-  final String? guardianMobileNumber;
-  @override
-  final int sharedAssetId;
+  final double share;
 
   @override
   String toString() {
-    return 'Nominee(id: $id, firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, email: $email, address: $address, relation: $relation, age: $age, image: $image, idProof: $idProof, guardianName: $guardianName, guardianMobileNumber: $guardianMobileNumber, sharedAssetId: $sharedAssetId)';
+    return 'Nominee(id: $id, mobile: $mobile, relation: $relation, name: $name, share: $share)';
   }
 
   @override
@@ -711,44 +572,17 @@ class _$NomineeImpl implements _Nominee {
         (other.runtimeType == runtimeType &&
             other is _$NomineeImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.firstName, firstName) ||
-                other.firstName == firstName) &&
-            (identical(other.lastName, lastName) ||
-                other.lastName == lastName) &&
-            (identical(other.mobileNumber, mobileNumber) ||
-                other.mobileNumber == mobileNumber) &&
-            (identical(other.email, email) || other.email == email) &&
-            (identical(other.address, address) || other.address == address) &&
+            (identical(other.mobile, mobile) || other.mobile == mobile) &&
             (identical(other.relation, relation) ||
                 other.relation == relation) &&
-            (identical(other.age, age) || other.age == age) &&
-            (identical(other.image, image) || other.image == image) &&
-            (identical(other.idProof, idProof) || other.idProof == idProof) &&
-            (identical(other.guardianName, guardianName) ||
-                other.guardianName == guardianName) &&
-            (identical(other.guardianMobileNumber, guardianMobileNumber) ||
-                other.guardianMobileNumber == guardianMobileNumber) &&
-            (identical(other.sharedAssetId, sharedAssetId) ||
-                other.sharedAssetId == sharedAssetId));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.share, share) || other.share == share));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      firstName,
-      lastName,
-      mobileNumber,
-      email,
-      address,
-      relation,
-      age,
-      image,
-      idProof,
-      guardianName,
-      guardianMobileNumber,
-      sharedAssetId);
+  int get hashCode =>
+      Object.hash(runtimeType, id, mobile, relation, name, share);
 
   @JsonKey(ignore: true)
   @override
@@ -767,47 +601,23 @@ class _$NomineeImpl implements _Nominee {
 abstract class _Nominee implements Nominee {
   factory _Nominee(
       {required final int id,
-      required final String firstName,
-      required final String lastName,
-      required final String? mobileNumber,
-      required final String? email,
-      required final String address,
+      required final String? mobile,
       required final String relation,
-      required final int age,
-      required final String? image,
-      required final String? idProof,
-      required final String? guardianName,
-      required final String? guardianMobileNumber,
-      required final int sharedAssetId}) = _$NomineeImpl;
+      required final String name,
+      required final double share}) = _$NomineeImpl;
 
   factory _Nominee.fromJson(Map<String, dynamic> json) = _$NomineeImpl.fromJson;
 
   @override
   int get id;
   @override
-  String get firstName;
-  @override
-  String get lastName;
-  @override
-  String? get mobileNumber;
-  @override
-  String? get email;
-  @override
-  String get address;
+  String? get mobile;
   @override
   String get relation;
   @override
-  int get age;
+  String get name;
   @override
-  String? get image;
-  @override
-  String? get idProof;
-  @override
-  String? get guardianName;
-  @override
-  String? get guardianMobileNumber;
-  @override
-  int get sharedAssetId;
+  double get share;
   @override
   @JsonKey(ignore: true)
   _$$NomineeImplCopyWith<_$NomineeImpl> get copyWith =>
@@ -905,7 +715,7 @@ class __$$DetailImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$DetailImpl implements _Detail {
-  _$DetailImpl({required this.fieldName, required this.fieldValue});
+  const _$DetailImpl({required this.fieldName, required this.fieldValue});
 
   factory _$DetailImpl.fromJson(Map<String, dynamic> json) =>
       _$$DetailImplFromJson(json);
@@ -950,7 +760,7 @@ class _$DetailImpl implements _Detail {
 }
 
 abstract class _Detail implements Detail {
-  factory _Detail(
+  const factory _Detail(
       {required final String fieldName,
       required final String? fieldValue}) = _$DetailImpl;
 

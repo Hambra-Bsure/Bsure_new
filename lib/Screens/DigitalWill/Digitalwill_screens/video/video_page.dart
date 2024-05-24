@@ -145,7 +145,7 @@ class _VideoDisplayScreenState extends State<VideoDisplayScreen> {
     final token = prefs.getString("token"); // Use getString instead of get
 
     try {
-      var uri = Uri.parse('http://35.154.102.222/node/api/will/video');
+      var uri = Uri.parse('http://43.205.12.154:8080/v2/will/video');
       var request = http.MultipartRequest('POST', uri);
       request.headers.addAll({
         'Authorization': token.toString(),

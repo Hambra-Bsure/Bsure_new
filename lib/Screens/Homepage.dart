@@ -146,12 +146,12 @@ class _HomepageState extends State<Homepage> {
                                   Icons.share,
                                   const AssetScreen(),
                                 ),
-                                // buildGridItem(
-                                //   context,
-                                //   'Digitalwill',
-                                //   Icons.design_services,
-                                //   const WillScreen(),
-                                // ),
+                                buildGridItem(
+                                  context,
+                                  'Digitalwill',
+                                  Icons.design_services,
+                                  const WillScreen(),
+                                ),
                               ],
                             ),
                           ),

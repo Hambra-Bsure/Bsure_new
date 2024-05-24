@@ -757,7 +757,7 @@ class _NodeClient implements NodeClient {
     )
             .compose(
               _dio.options,
-              '/will/assets',
+              '/v2/will/assets',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -785,7 +785,7 @@ class _NodeClient implements NodeClient {
     )
             .compose(
               _dio.options,
-              '/will/assets',
+              '/v2/will/assets',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -813,7 +813,7 @@ class _NodeClient implements NodeClient {
     )
             .compose(
               _dio.options,
-              '/will/confirmation',
+              '/v2/will/confirmation',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -845,7 +845,7 @@ class _NodeClient implements NodeClient {
     )
             .compose(
               _dio.options,
-              '/will/verify',
+              '/v2/will/verify',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -877,7 +877,7 @@ class _NodeClient implements NodeClient {
     )
             .compose(
               _dio.options,
-              '/will/video',
+              '/v2/will/video',
               queryParameters: queryParameters,
               data: _data,
             )

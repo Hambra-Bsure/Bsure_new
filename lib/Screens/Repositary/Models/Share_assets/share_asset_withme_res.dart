@@ -6,7 +6,7 @@ part 'share_asset_withme_res.g.dart';
 class ShareAssetswithmeResponse with _$ShareAssetswithmeResponse {
   factory ShareAssetswithmeResponse({
     required bool success,
-    required String message,
+    required String? message, // Make message nullable
     required List<UserData> data,
   }) = _ShareAssetswithmeResponse;
 
@@ -44,7 +44,7 @@ class Asset with _$Asset {
 class Detail with _$Detail {
   factory Detail({
     required String fieldName,
-    required String fieldValue,
+    required String? fieldValue,
   }) = _Detail;
 
   factory Detail.fromJson(Map<String, dynamic> json) => _$DetailFromJson(json);

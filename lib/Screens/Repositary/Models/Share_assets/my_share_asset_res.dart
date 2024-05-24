@@ -1,62 +1,74 @@
+class MyShareAssetsResponse {
+  bool? success;
+  List<Asset>? assets;
 
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
-part 'my_share_asset_res.freezed.dart';
-part 'my_share_asset_res.g.dart';
+  MyShareAssetsResponse({this.success, this.assets});
 
-
-@freezed
-abstract class MyShareAssetsResponse with _$MyShareAssetsResponse {
-  factory MyShareAssetsResponse({
-    required bool success,
-    required List<Asset> assets,
-  }) = _MyShareAssetsResponse;
-
-  factory MyShareAssetsResponse.fromJson(Map<String, dynamic> json) =>
-      _$MyShareAssetsResponseFromJson(json);
+  factory MyShareAssetsResponse.fromJson(Map<String, dynamic> json) {
+    return MyShareAssetsResponse(
+      success: json['success'] as bool?,
+      assets: (json['assets'] as List<dynamic>?)
+          ?.map((item) => Asset.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [], // default to an empty list if null
+    );
+  }
 }
 
-@freezed
-abstract class Asset with _$Asset {
-  factory Asset({
-    required int id,
-    required int userId,
-    required String category,
-    required List<Nominee> nominees,
-    required List<Detail> details,
-  }) = _Asset;
 
-  factory Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);
+class Asset {
+  int id;
+  String category;
+  List<Detail>? details;
+  List<Nominee>? nominees;
+
+  Asset({
+    required this.id,
+    required this.category,
+    this.details,
+    this.nominees,
+  });
+
+  factory Asset.fromJson(Map<String, dynamic> json) {
+    return Asset(
+      id: json['id'] as int,
+      category: json['category'] as String,
+      details: (json['details'] as List<dynamic>?)
+          ?.map((item) => Detail.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [], // default to an empty list if null
+      nominees: (json['nominees'] as List<dynamic>?)
+          ?.map((item) => Nominee.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [], // default to an empty list if null
+    );
+  }
 }
 
-@freezed
-abstract class Nominee with _$Nominee {
-  factory Nominee({
-    required int id,
-    required String firstName,
-    required String lastName,
-    required String? mobileNumber,
-    required String? email,
-    required String address,
-    required String relation,
-    required int age,
-    required String? image,
-    required String? idProof,
-    required String? guardianName,
-    required String? guardianMobileNumber,
-    required int sharedAssetId,
-  }) = _Nominee;
+class Detail {
+  String fieldName;
+  String? fieldValue;
 
-  factory Nominee.fromJson(Map<String, dynamic> json) =>
-      _$NomineeFromJson(json);
+  Detail({required this.fieldName, this.fieldValue});
+
+  factory Detail.fromJson(Map<String, dynamic> json) {
+    return Detail(
+      fieldName: json['fieldName'] as String,
+      fieldValue: json['fieldValue'] != null ? json['fieldValue'].toString() : null,
+      // Convert fieldValue to a string using toString(), or handle null case appropriately
+    );
+  }
 }
 
-@freezed
-abstract class Detail with _$Detail {
-  factory Detail({
-    required String fieldName,
-    required String? fieldValue,
-  }) = _Detail;
+class Nominee {
+  String firstName;
+  String lastName;
+  int sharedAssetId;
 
-  factory Detail.fromJson(Map<String, dynamic> json) => _$DetailFromJson(json);
+  Nominee({required this.firstName, required this.lastName, required this.sharedAssetId});
+
+  factory Nominee.fromJson(Map<String, dynamic> json) {
+    return Nominee(
+      firstName: json['firstName'] as String,
+      lastName: json['lastName'] as String,
+      sharedAssetId: json['sharedAssetId'] as int,
+    );
+  }
 }

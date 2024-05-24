@@ -152,7 +152,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
                     userProfile!.user!.firstName !=
                         null) // Accessing directly here
                   TextSpan(
-                    text: '"${userProfile!.user!.firstName}"',
+                    text: '${userProfile!.user!.firstName ?? ''} ${userProfile!.user!.lastName ?? ''}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 if (userProfile == null || userProfile!.user!.firstName == null)

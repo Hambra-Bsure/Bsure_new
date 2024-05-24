@@ -108,7 +108,7 @@ class __$$WillStateImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$WillStateImpl implements _WillState {
   const _$WillStateImpl(
-      {required final List<Asset> assets,
+      {final List<Asset> assets = const <Asset>[],
       this.sameDistributionCheckbox = false})
       : _assets = assets;
 
@@ -117,6 +117,7 @@ class _$WillStateImpl implements _WillState {
 
   final List<Asset> _assets;
   @override
+  @JsonKey()
   List<Asset> get assets {
     if (_assets is EqualUnmodifiableListView) return _assets;
     // ignore: implicit_dynamic_type
@@ -164,7 +165,7 @@ class _$WillStateImpl implements _WillState {
 
 abstract class _WillState implements WillState {
   const factory _WillState(
-      {required final List<Asset> assets,
+      {final List<Asset> assets,
       final bool sameDistributionCheckbox}) = _$WillStateImpl;
 
   factory _WillState.fromJson(Map<String, dynamic> json) =
@@ -187,11 +188,10 @@ Asset _$AssetFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Asset {
   int get assetId => throw _privateConstructorUsedError;
-  String get assetName => throw _privateConstructorUsedError;
-  String? get assetIdentity => throw _privateConstructorUsedError;
-  int get categoryId => throw _privateConstructorUsedError;
+  String get category => throw _privateConstructorUsedError;
   bool get equalDistributionCheckbox => throw _privateConstructorUsedError;
   List<Nominee> get nominees => throw _privateConstructorUsedError;
+  List<Detail> get details => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -205,11 +205,10 @@ abstract class $AssetCopyWith<$Res> {
   @useResult
   $Res call(
       {int assetId,
-      String assetName,
-      String? assetIdentity,
-      int categoryId,
+      String category,
       bool equalDistributionCheckbox,
-      List<Nominee> nominees});
+      List<Nominee> nominees,
+      List<Detail> details});
 }
 
 /// @nodoc
@@ -226,29 +225,20 @@ class _$AssetCopyWithImpl<$Res, $Val extends Asset>
   @override
   $Res call({
     Object? assetId = null,
-    Object? assetName = null,
-    Object? assetIdentity = freezed,
-    Object? categoryId = null,
+    Object? category = null,
     Object? equalDistributionCheckbox = null,
     Object? nominees = null,
+    Object? details = null,
   }) {
     return _then(_value.copyWith(
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
               as int,
-      assetName: null == assetName
-          ? _value.assetName
-          : assetName // ignore: cast_nullable_to_non_nullable
+      category: null == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
               as String,
-      assetIdentity: freezed == assetIdentity
-          ? _value.assetIdentity
-          : assetIdentity // ignore: cast_nullable_to_non_nullable
-              as String?,
-      categoryId: null == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
-              as int,
       equalDistributionCheckbox: null == equalDistributionCheckbox
           ? _value.equalDistributionCheckbox
           : equalDistributionCheckbox // ignore: cast_nullable_to_non_nullable
@@ -257,6 +247,10 @@ class _$AssetCopyWithImpl<$Res, $Val extends Asset>
           ? _value.nominees
           : nominees // ignore: cast_nullable_to_non_nullable
               as List<Nominee>,
+      details: null == details
+          ? _value.details
+          : details // ignore: cast_nullable_to_non_nullable
+              as List<Detail>,
     ) as $Val);
   }
 }
@@ -270,11 +264,10 @@ abstract class _$$AssetImplCopyWith<$Res> implements $AssetCopyWith<$Res> {
   @useResult
   $Res call(
       {int assetId,
-      String assetName,
-      String? assetIdentity,
-      int categoryId,
+      String category,
       bool equalDistributionCheckbox,
-      List<Nominee> nominees});
+      List<Nominee> nominees,
+      List<Detail> details});
 }
 
 /// @nodoc
@@ -289,29 +282,20 @@ class __$$AssetImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? assetId = null,
-    Object? assetName = null,
-    Object? assetIdentity = freezed,
-    Object? categoryId = null,
+    Object? category = null,
     Object? equalDistributionCheckbox = null,
     Object? nominees = null,
+    Object? details = null,
   }) {
     return _then(_$AssetImpl(
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
               as int,
-      assetName: null == assetName
-          ? _value.assetName
-          : assetName // ignore: cast_nullable_to_non_nullable
+      category: null == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
               as String,
-      assetIdentity: freezed == assetIdentity
-          ? _value.assetIdentity
-          : assetIdentity // ignore: cast_nullable_to_non_nullable
-              as String?,
-      categoryId: null == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
-              as int,
       equalDistributionCheckbox: null == equalDistributionCheckbox
           ? _value.equalDistributionCheckbox
           : equalDistributionCheckbox // ignore: cast_nullable_to_non_nullable
@@ -320,6 +304,10 @@ class __$$AssetImplCopyWithImpl<$Res>
           ? _value._nominees
           : nominees // ignore: cast_nullable_to_non_nullable
               as List<Nominee>,
+      details: null == details
+          ? _value._details
+          : details // ignore: cast_nullable_to_non_nullable
+              as List<Detail>,
     ));
   }
 }
@@ -329,12 +317,12 @@ class __$$AssetImplCopyWithImpl<$Res>
 class _$AssetImpl implements _Asset {
   const _$AssetImpl(
       {required this.assetId,
-      required this.assetName,
-      required this.assetIdentity,
-      required this.categoryId,
+      required this.category,
       this.equalDistributionCheckbox = false,
-      required final List<Nominee> nominees})
-      : _nominees = nominees;
+      final List<Nominee> nominees = const <Nominee>[],
+      final List<Detail> details = const <Detail>[]})
+      : _nominees = nominees,
+        _details = details;
 
   factory _$AssetImpl.fromJson(Map<String, dynamic> json) =>
       _$$AssetImplFromJson(json);
@@ -342,25 +330,31 @@ class _$AssetImpl implements _Asset {
   @override
   final int assetId;
   @override
-  final String assetName;
-  @override
-  final String? assetIdentity;
-  @override
-  final int categoryId;
+  final String category;
   @override
   @JsonKey()
   final bool equalDistributionCheckbox;
   final List<Nominee> _nominees;
   @override
+  @JsonKey()
   List<Nominee> get nominees {
     if (_nominees is EqualUnmodifiableListView) return _nominees;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_nominees);
   }
 
+  final List<Detail> _details;
+  @override
+  @JsonKey()
+  List<Detail> get details {
+    if (_details is EqualUnmodifiableListView) return _details;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_details);
+  }
+
   @override
   String toString() {
-    return 'Asset(assetId: $assetId, assetName: $assetName, assetIdentity: $assetIdentity, categoryId: $categoryId, equalDistributionCheckbox: $equalDistributionCheckbox, nominees: $nominees)';
+    return 'Asset(assetId: $assetId, category: $category, equalDistributionCheckbox: $equalDistributionCheckbox, nominees: $nominees, details: $details)';
   }
 
   @override
@@ -369,16 +363,13 @@ class _$AssetImpl implements _Asset {
         (other.runtimeType == runtimeType &&
             other is _$AssetImpl &&
             (identical(other.assetId, assetId) || other.assetId == assetId) &&
-            (identical(other.assetName, assetName) ||
-                other.assetName == assetName) &&
-            (identical(other.assetIdentity, assetIdentity) ||
-                other.assetIdentity == assetIdentity) &&
-            (identical(other.categoryId, categoryId) ||
-                other.categoryId == categoryId) &&
+            (identical(other.category, category) ||
+                other.category == category) &&
             (identical(other.equalDistributionCheckbox,
                     equalDistributionCheckbox) ||
                 other.equalDistributionCheckbox == equalDistributionCheckbox) &&
-            const DeepCollectionEquality().equals(other._nominees, _nominees));
+            const DeepCollectionEquality().equals(other._nominees, _nominees) &&
+            const DeepCollectionEquality().equals(other._details, _details));
   }
 
   @JsonKey(ignore: true)
@@ -386,11 +377,10 @@ class _$AssetImpl implements _Asset {
   int get hashCode => Object.hash(
       runtimeType,
       assetId,
-      assetName,
-      assetIdentity,
-      categoryId,
+      category,
       equalDistributionCheckbox,
-      const DeepCollectionEquality().hash(_nominees));
+      const DeepCollectionEquality().hash(_nominees),
+      const DeepCollectionEquality().hash(_details));
 
   @JsonKey(ignore: true)
   @override
@@ -409,26 +399,23 @@ class _$AssetImpl implements _Asset {
 abstract class _Asset implements Asset {
   const factory _Asset(
       {required final int assetId,
-      required final String assetName,
-      required final String? assetIdentity,
-      required final int categoryId,
+      required final String category,
       final bool equalDistributionCheckbox,
-      required final List<Nominee> nominees}) = _$AssetImpl;
+      final List<Nominee> nominees,
+      final List<Detail> details}) = _$AssetImpl;
 
   factory _Asset.fromJson(Map<String, dynamic> json) = _$AssetImpl.fromJson;
 
   @override
   int get assetId;
   @override
-  String get assetName;
-  @override
-  String? get assetIdentity;
-  @override
-  int get categoryId;
+  String get category;
   @override
   bool get equalDistributionCheckbox;
   @override
   List<Nominee> get nominees;
+  @override
+  List<Detail> get details;
   @override
   @JsonKey(ignore: true)
   _$$AssetImplCopyWith<_$AssetImpl> get copyWith =>
@@ -442,11 +429,11 @@ Nominee _$NomineeFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Nominee {
   int get id => throw _privateConstructorUsedError;
-  String get mobile => throw _privateConstructorUsedError;
+  String? get mobile => throw _privateConstructorUsedError;
   String get relation => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   double get share => throw _privateConstructorUsedError;
-  dynamic get equalShareCheckbox => throw _privateConstructorUsedError;
+  bool get equalShareCheckbox => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -460,11 +447,11 @@ abstract class $NomineeCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      String mobile,
+      String? mobile,
       String relation,
       String name,
       double share,
-      dynamic equalShareCheckbox});
+      bool equalShareCheckbox});
 }
 
 /// @nodoc
@@ -481,21 +468,21 @@ class _$NomineeCopyWithImpl<$Res, $Val extends Nominee>
   @override
   $Res call({
     Object? id = null,
-    Object? mobile = null,
+    Object? mobile = freezed,
     Object? relation = null,
     Object? name = null,
     Object? share = null,
-    Object? equalShareCheckbox = freezed,
+    Object? equalShareCheckbox = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      mobile: null == mobile
+      mobile: freezed == mobile
           ? _value.mobile
           : mobile // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       relation: null == relation
           ? _value.relation
           : relation // ignore: cast_nullable_to_non_nullable
@@ -508,10 +495,10 @@ class _$NomineeCopyWithImpl<$Res, $Val extends Nominee>
           ? _value.share
           : share // ignore: cast_nullable_to_non_nullable
               as double,
-      equalShareCheckbox: freezed == equalShareCheckbox
+      equalShareCheckbox: null == equalShareCheckbox
           ? _value.equalShareCheckbox
           : equalShareCheckbox // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as bool,
     ) as $Val);
   }
 }
@@ -525,11 +512,11 @@ abstract class _$$NomineeImplCopyWith<$Res> implements $NomineeCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      String mobile,
+      String? mobile,
       String relation,
       String name,
       double share,
-      dynamic equalShareCheckbox});
+      bool equalShareCheckbox});
 }
 
 /// @nodoc
@@ -544,21 +531,21 @@ class __$$NomineeImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? mobile = null,
+    Object? mobile = freezed,
     Object? relation = null,
     Object? name = null,
     Object? share = null,
-    Object? equalShareCheckbox = freezed,
+    Object? equalShareCheckbox = null,
   }) {
     return _then(_$NomineeImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      mobile: null == mobile
+      mobile: freezed == mobile
           ? _value.mobile
           : mobile // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       relation: null == relation
           ? _value.relation
           : relation // ignore: cast_nullable_to_non_nullable
@@ -571,9 +558,10 @@ class __$$NomineeImplCopyWithImpl<$Res>
           ? _value.share
           : share // ignore: cast_nullable_to_non_nullable
               as double,
-      equalShareCheckbox: freezed == equalShareCheckbox
-          ? _value.equalShareCheckbox!
-          : equalShareCheckbox,
+      equalShareCheckbox: null == equalShareCheckbox
+          ? _value.equalShareCheckbox
+          : equalShareCheckbox // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -595,7 +583,7 @@ class _$NomineeImpl implements _Nominee {
   @override
   final int id;
   @override
-  final String mobile;
+  final String? mobile;
   @override
   final String relation;
   @override
@@ -604,7 +592,7 @@ class _$NomineeImpl implements _Nominee {
   final double share;
   @override
   @JsonKey()
-  final dynamic equalShareCheckbox;
+  final bool equalShareCheckbox;
 
   @override
   String toString() {
@@ -622,14 +610,14 @@ class _$NomineeImpl implements _Nominee {
                 other.relation == relation) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.share, share) || other.share == share) &&
-            const DeepCollectionEquality()
-                .equals(other.equalShareCheckbox, equalShareCheckbox));
+            (identical(other.equalShareCheckbox, equalShareCheckbox) ||
+                other.equalShareCheckbox == equalShareCheckbox));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, mobile, relation, name,
-      share, const DeepCollectionEquality().hash(equalShareCheckbox));
+  int get hashCode => Object.hash(
+      runtimeType, id, mobile, relation, name, share, equalShareCheckbox);
 
   @JsonKey(ignore: true)
   @override
@@ -648,18 +636,18 @@ class _$NomineeImpl implements _Nominee {
 abstract class _Nominee implements Nominee {
   const factory _Nominee(
       {required final int id,
-      required final String mobile,
+      required final String? mobile,
       required final String relation,
       required final String name,
       required final double share,
-      final dynamic equalShareCheckbox}) = _$NomineeImpl;
+      final bool equalShareCheckbox}) = _$NomineeImpl;
 
   factory _Nominee.fromJson(Map<String, dynamic> json) = _$NomineeImpl.fromJson;
 
   @override
   int get id;
   @override
-  String get mobile;
+  String? get mobile;
   @override
   String get relation;
   @override
@@ -667,9 +655,161 @@ abstract class _Nominee implements Nominee {
   @override
   double get share;
   @override
-  dynamic get equalShareCheckbox;
+  bool get equalShareCheckbox;
   @override
   @JsonKey(ignore: true)
   _$$NomineeImplCopyWith<_$NomineeImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Detail _$DetailFromJson(Map<String, dynamic> json) {
+  return _Detail.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Detail {
+  String get fieldName => throw _privateConstructorUsedError;
+  String? get fieldValue => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DetailCopyWith<Detail> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DetailCopyWith<$Res> {
+  factory $DetailCopyWith(Detail value, $Res Function(Detail) then) =
+      _$DetailCopyWithImpl<$Res, Detail>;
+  @useResult
+  $Res call({String fieldName, String? fieldValue});
+}
+
+/// @nodoc
+class _$DetailCopyWithImpl<$Res, $Val extends Detail>
+    implements $DetailCopyWith<$Res> {
+  _$DetailCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? fieldName = null,
+    Object? fieldValue = freezed,
+  }) {
+    return _then(_value.copyWith(
+      fieldName: null == fieldName
+          ? _value.fieldName
+          : fieldName // ignore: cast_nullable_to_non_nullable
+              as String,
+      fieldValue: freezed == fieldValue
+          ? _value.fieldValue
+          : fieldValue // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DetailImplCopyWith<$Res> implements $DetailCopyWith<$Res> {
+  factory _$$DetailImplCopyWith(
+          _$DetailImpl value, $Res Function(_$DetailImpl) then) =
+      __$$DetailImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String fieldName, String? fieldValue});
+}
+
+/// @nodoc
+class __$$DetailImplCopyWithImpl<$Res>
+    extends _$DetailCopyWithImpl<$Res, _$DetailImpl>
+    implements _$$DetailImplCopyWith<$Res> {
+  __$$DetailImplCopyWithImpl(
+      _$DetailImpl _value, $Res Function(_$DetailImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? fieldName = null,
+    Object? fieldValue = freezed,
+  }) {
+    return _then(_$DetailImpl(
+      fieldName: null == fieldName
+          ? _value.fieldName
+          : fieldName // ignore: cast_nullable_to_non_nullable
+              as String,
+      fieldValue: freezed == fieldValue
+          ? _value.fieldValue
+          : fieldValue // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DetailImpl implements _Detail {
+  const _$DetailImpl({required this.fieldName, required this.fieldValue});
+
+  factory _$DetailImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DetailImplFromJson(json);
+
+  @override
+  final String fieldName;
+  @override
+  final String? fieldValue;
+
+  @override
+  String toString() {
+    return 'Detail(fieldName: $fieldName, fieldValue: $fieldValue)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DetailImpl &&
+            (identical(other.fieldName, fieldName) ||
+                other.fieldName == fieldName) &&
+            (identical(other.fieldValue, fieldValue) ||
+                other.fieldValue == fieldValue));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, fieldName, fieldValue);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DetailImplCopyWith<_$DetailImpl> get copyWith =>
+      __$$DetailImplCopyWithImpl<_$DetailImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DetailImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Detail implements Detail {
+  const factory _Detail(
+      {required final String fieldName,
+      required final String? fieldValue}) = _$DetailImpl;
+
+  factory _Detail.fromJson(Map<String, dynamic> json) = _$DetailImpl.fromJson;
+
+  @override
+  String get fieldName;
+  @override
+  String? get fieldValue;
+  @override
+  @JsonKey(ignore: true)
+  _$$DetailImplCopyWith<_$DetailImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

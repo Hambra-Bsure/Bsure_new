@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sms_autofill/sms_autofill.dart';
+import 'Screens/DigitalWill/Digitalwill_screens/witness_screens/DigitalWitness1.dart';
 import 'Screens/Homepage.dart';
 import 'Screens/Tutorial.dart';
 import 'Screens/Utils/SharedPrefHelper.dart';
@@ -21,14 +22,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Bsure',
       // theme: ThemeData(
       //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
       //   useMaterial3: true,
       // ),
-      home: const SplashScreen(),
+      home: SplashScreen(),
     );
   }
 }

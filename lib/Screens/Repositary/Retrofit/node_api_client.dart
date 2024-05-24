@@ -42,7 +42,7 @@ import '../Models/AssetModels/NonLifeInsuranceRequest.dart';
 import '../Models/AssetModels/NonLifeInsuranceResponse.dart';
 import '../Models/AssetModels/GetbankResponse.dart';
 import '../Models/Digital_will/Confirmation_otp_res.dart';
-import '../Models/Digital_will/Digitalwill_get_res.dart';
+import '../Models/Digital_will/digitalwill_get_res.dart';
 import '../Models/Digital_will/Digitalwill_save_res.dart';
 import '../Models/Digital_will/Digitalwill_verifyotp_req.dart';
 import '../Models/Digital_will/Digitalwill_verifyotp_res.dart';
@@ -184,26 +184,26 @@ abstract class NodeClient {
   // Future<Response> fetchGetAllAssets(
   //     @Header('Authorization') String token);
 
-  @POST("/will/assets")
+  @POST("/v2/will/assets")
   Future<Digitalwillsaveresponse> digitalWillSave({
     @Header('Authorization') String? token,
     @Body() List<AssetReq>? request,
   });
 
-  @GET("/will/assets")
+  @GET("/v2/will/assets")
   Future<DigitalwillgetResponse> digitalWillGetData(
       @Header('Authorization') String token);
 
-  @POST("/will/confirmation")
+  @POST("/v2/will/confirmation")
   Future<confirmationotpresponse> confirmOtp(
       @Header('Authorization') String token);
 
-  @POST("/will/verify")
+  @POST("/v2/will/verify")
   Future<digitalwillverifyotpresponse> digitalwillVerifyOtp(
       @Header('Authorization') String token,
       @Body() digitalverifyotprequest req);
 
-  @POST("/will/video")
+  @POST("/v2/will/video")
   Future<Digitalwill_video_request> digitalwillVideo(
       @Header('Authorization') String token,
       @Body() Digitalwillvideo_response req);

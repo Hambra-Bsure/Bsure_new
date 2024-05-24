@@ -1,17 +1,20 @@
 import 'package:Bsure_devapp/Screens/DigitalWill/widget/asset_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'api.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'bloc/will_bloc.dart';
 import 'bloc/will_state.dart';
+import 'api.dart';
 import 'components/loading.dart';
 import 'components/no_asset.dart';
-import 'components/no_nominee.dart';
+import 'components/no_nominee.dart'; // Import your API file containing getWillAssets function
 
 const Color darkBlue = Color.fromARGB(255, 18, 32, 47);
 
 class AppWidget extends StatefulWidget {
-  const AppWidget({super.key});
+  const AppWidget({Key? key}) : super(key: key);
 
   @override
   State<AppWidget> createState() => _AppWidgetState();
@@ -57,7 +60,7 @@ class _AppWidgetState extends State<AppWidget> {
                     } else {
                       // Check if there are no nominees
                       bool noNominees =
-                          assets.every((asset) => asset.nominees.isEmpty);
+                      assets.every((asset) => asset.nominees.isEmpty);
                       if (noNominees) {
                         // If there are no nominees, show the NoNominee screen
                         return const NoNominee();

@@ -10,7 +10,7 @@ _$ShareAssetswithmeResponseImpl _$$ShareAssetswithmeResponseImplFromJson(
         Map<String, dynamic> json) =>
     _$ShareAssetswithmeResponseImpl(
       success: json['success'] as bool,
-      message: json['message'] as String,
+      message: json['message'] as String?,
       data: (json['data'] as List<dynamic>)
           .map((e) => UserData.fromJson(e as Map<String, dynamic>))
           .toList(),

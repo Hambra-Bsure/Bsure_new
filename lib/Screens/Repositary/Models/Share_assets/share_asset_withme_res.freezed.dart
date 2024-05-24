@@ -22,7 +22,8 @@ ShareAssetswithmeResponse _$ShareAssetswithmeResponseFromJson(
 /// @nodoc
 mixin _$ShareAssetswithmeResponse {
   bool get success => throw _privateConstructorUsedError;
-  String get message => throw _privateConstructorUsedError;
+  String? get message =>
+      throw _privateConstructorUsedError; // Make message nullable
   List<UserData> get data => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -37,7 +38,7 @@ abstract class $ShareAssetswithmeResponseCopyWith<$Res> {
           $Res Function(ShareAssetswithmeResponse) then) =
       _$ShareAssetswithmeResponseCopyWithImpl<$Res, ShareAssetswithmeResponse>;
   @useResult
-  $Res call({bool success, String message, List<UserData> data});
+  $Res call({bool success, String? message, List<UserData> data});
 }
 
 /// @nodoc
@@ -55,7 +56,7 @@ class _$ShareAssetswithmeResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? success = null,
-    Object? message = null,
+    Object? message = freezed,
     Object? data = null,
   }) {
     return _then(_value.copyWith(
@@ -63,10 +64,10 @@ class _$ShareAssetswithmeResponseCopyWithImpl<$Res,
           ? _value.success
           : success // ignore: cast_nullable_to_non_nullable
               as bool,
-      message: null == message
+      message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       data: null == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -84,7 +85,7 @@ abstract class _$$ShareAssetswithmeResponseImplCopyWith<$Res>
       __$$ShareAssetswithmeResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool success, String message, List<UserData> data});
+  $Res call({bool success, String? message, List<UserData> data});
 }
 
 /// @nodoc
@@ -101,7 +102,7 @@ class __$$ShareAssetswithmeResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? success = null,
-    Object? message = null,
+    Object? message = freezed,
     Object? data = null,
   }) {
     return _then(_$ShareAssetswithmeResponseImpl(
@@ -109,10 +110,10 @@ class __$$ShareAssetswithmeResponseImplCopyWithImpl<$Res>
           ? _value.success
           : success // ignore: cast_nullable_to_non_nullable
               as bool,
-      message: null == message
+      message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       data: null == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
@@ -136,8 +137,10 @@ class _$ShareAssetswithmeResponseImpl implements _ShareAssetswithmeResponse {
   @override
   final bool success;
   @override
-  final String message;
+  final String? message;
+// Make message nullable
   final List<UserData> _data;
+// Make message nullable
   @override
   List<UserData> get data {
     if (_data is EqualUnmodifiableListView) return _data;
@@ -183,7 +186,7 @@ class _$ShareAssetswithmeResponseImpl implements _ShareAssetswithmeResponse {
 abstract class _ShareAssetswithmeResponse implements ShareAssetswithmeResponse {
   factory _ShareAssetswithmeResponse(
       {required final bool success,
-      required final String message,
+      required final String? message,
       required final List<UserData> data}) = _$ShareAssetswithmeResponseImpl;
 
   factory _ShareAssetswithmeResponse.fromJson(Map<String, dynamic> json) =
@@ -192,8 +195,8 @@ abstract class _ShareAssetswithmeResponse implements ShareAssetswithmeResponse {
   @override
   bool get success;
   @override
-  String get message;
-  @override
+  String? get message;
+  @override // Make message nullable
   List<UserData> get data;
   @override
   @JsonKey(ignore: true)

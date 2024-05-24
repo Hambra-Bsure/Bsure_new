@@ -1,11 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'will_state.freezed.dart';
 part 'will_state.g.dart';
 
 @freezed
 class WillState with _$WillState {
   const factory WillState({
-    required List<Asset> assets,
+    @Default(<Asset>[]) List<Asset> assets,
     @Default(false) bool sameDistributionCheckbox,
   }) = _WillState;
 
@@ -17,11 +18,10 @@ class WillState with _$WillState {
 class Asset with _$Asset {
   const factory Asset({
     required int assetId,
-    required String assetName,
-    required String? assetIdentity,
-    required int categoryId,
+    required String category,
     @Default(false) bool equalDistributionCheckbox,
-    required List<Nominee> nominees,
+    @Default(<Nominee>[]) List<Nominee> nominees,
+    @Default(<Detail>[]) List<Detail> details,
   }) = _Asset;
 
   factory Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);
@@ -31,13 +31,27 @@ class Asset with _$Asset {
 class Nominee with _$Nominee {
   const factory Nominee({
     required int id,
-    required String mobile,
+    required String? mobile,
     required String relation,
     required String name,
     required double share,
-    @Default(false) equalShareCheckbox,
+    @Default(false) bool equalShareCheckbox,
   }) = _Nominee;
 
   factory Nominee.fromJson(Map<String, dynamic> json) =>
       _$NomineeFromJson(json);
 }
+
+@freezed
+class Detail with _$Detail {
+  const factory Detail({
+    required String fieldName,
+    required String? fieldValue,
+  }) = _Detail;
+
+  factory Detail.fromJson(Map<String, dynamic> json) => Detail(
+    fieldName: json['fieldName'] as String,
+    fieldValue: json['fieldValue']?.toString(), // Convert to String
+  );
+}
+
