@@ -1,4 +1,3 @@
-import 'dart:js_util';
 
 class Witness1Req {
   late String firstName;

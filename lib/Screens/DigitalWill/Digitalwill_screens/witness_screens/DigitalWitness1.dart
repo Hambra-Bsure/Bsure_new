@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Repositary/Models/Digital_will/Witness1Res.dart';
 import '../../../Repositary/Models/Digital_will/witness1_req.dart';
 import 'DigitalwillWitness2.dart';
-import 'witness1_verify_otp.dart';
 
 class DigitalWitnessScreen extends StatefulWidget {
   const DigitalWitnessScreen({Key? key}) : super(key: key);
@@ -60,9 +59,8 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     if (_formKey.currentState!.validate()) {
       _saveDataLocally();
 
-      const token =
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJNb2JpbGUiOiI4MzI4NTY0Njgz"
-          "IiwiaWF0IjoxNzE1OTU1MzE1LCJleHAiOjE3MTY1NjAxMTV9.zExYXFhKZ3b5ZJWdvgM_zqLCpdjUMZQ4IK2QzJZiEy0";
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token");
 
       String firstName = _controller1.text;
       String lastName = _controller2.text;
@@ -89,7 +87,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
         body: jsonEncode(body),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': token,
+          'Authorization': token.toString(),
         },
       );
 
@@ -115,9 +113,9 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     String otp = _otpController.text.trim();
     if (otp.length == 5) {
       try {
+
         final prefs = await SharedPreferences.getInstance();
-        const token =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsInVzZXJNb2JpbGUiOiI3MDkzMDY2NTAyIiwiaWF0IjoxNzE1OTM2NTQ4LCJleHAiOjE3MTY1NDEzNDh9.X5SmgjJbIM4rUuRDg8aGKoi290cKAuR2Gt8_SppK7Dg";
+        final token = prefs.getString("token");
 
         final dio = Dio();
         dio.options.headers["Authorization"] = token;
