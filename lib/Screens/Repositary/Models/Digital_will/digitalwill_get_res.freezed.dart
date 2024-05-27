@@ -23,6 +23,7 @@ DigitalwillgetResponse _$DigitalwillgetResponseFromJson(
 mixin _$DigitalwillgetResponse {
   bool? get success => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
+  List<Witness> get witness => throw _privateConstructorUsedError;
   List<Asset> get assets => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -37,7 +38,11 @@ abstract class $DigitalwillgetResponseCopyWith<$Res> {
           $Res Function(DigitalwillgetResponse) then) =
       _$DigitalwillgetResponseCopyWithImpl<$Res, DigitalwillgetResponse>;
   @useResult
-  $Res call({bool? success, String? message, List<Asset> assets});
+  $Res call(
+      {bool? success,
+      String? message,
+      List<Witness> witness,
+      List<Asset> assets});
 }
 
 /// @nodoc
@@ -56,6 +61,7 @@ class _$DigitalwillgetResponseCopyWithImpl<$Res,
   $Res call({
     Object? success = freezed,
     Object? message = freezed,
+    Object? witness = null,
     Object? assets = null,
   }) {
     return _then(_value.copyWith(
@@ -67,6 +73,10 @@ class _$DigitalwillgetResponseCopyWithImpl<$Res,
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
+      witness: null == witness
+          ? _value.witness
+          : witness // ignore: cast_nullable_to_non_nullable
+              as List<Witness>,
       assets: null == assets
           ? _value.assets
           : assets // ignore: cast_nullable_to_non_nullable
@@ -84,7 +94,11 @@ abstract class _$$DigitalwillgetResponseImplCopyWith<$Res>
       __$$DigitalwillgetResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool? success, String? message, List<Asset> assets});
+  $Res call(
+      {bool? success,
+      String? message,
+      List<Witness> witness,
+      List<Asset> assets});
 }
 
 /// @nodoc
@@ -102,6 +116,7 @@ class __$$DigitalwillgetResponseImplCopyWithImpl<$Res>
   $Res call({
     Object? success = freezed,
     Object? message = freezed,
+    Object? witness = null,
     Object? assets = null,
   }) {
     return _then(_$DigitalwillgetResponseImpl(
@@ -113,6 +128,10 @@ class __$$DigitalwillgetResponseImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
+      witness: null == witness
+          ? _value._witness
+          : witness // ignore: cast_nullable_to_non_nullable
+              as List<Witness>,
       assets: null == assets
           ? _value._assets
           : assets // ignore: cast_nullable_to_non_nullable
@@ -125,8 +144,12 @@ class __$$DigitalwillgetResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DigitalwillgetResponseImpl implements _DigitalwillgetResponse {
   _$DigitalwillgetResponseImpl(
-      {this.success, this.message, required final List<Asset> assets})
-      : _assets = assets;
+      {this.success,
+      this.message,
+      required final List<Witness> witness,
+      required final List<Asset> assets})
+      : _witness = witness,
+        _assets = assets;
 
   factory _$DigitalwillgetResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$DigitalwillgetResponseImplFromJson(json);
@@ -135,6 +158,14 @@ class _$DigitalwillgetResponseImpl implements _DigitalwillgetResponse {
   final bool? success;
   @override
   final String? message;
+  final List<Witness> _witness;
+  @override
+  List<Witness> get witness {
+    if (_witness is EqualUnmodifiableListView) return _witness;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_witness);
+  }
+
   final List<Asset> _assets;
   @override
   List<Asset> get assets {
@@ -145,7 +176,7 @@ class _$DigitalwillgetResponseImpl implements _DigitalwillgetResponse {
 
   @override
   String toString() {
-    return 'DigitalwillgetResponse(success: $success, message: $message, assets: $assets)';
+    return 'DigitalwillgetResponse(success: $success, message: $message, witness: $witness, assets: $assets)';
   }
 
   @override
@@ -155,12 +186,17 @@ class _$DigitalwillgetResponseImpl implements _DigitalwillgetResponse {
             other is _$DigitalwillgetResponseImpl &&
             (identical(other.success, success) || other.success == success) &&
             (identical(other.message, message) || other.message == message) &&
+            const DeepCollectionEquality().equals(other._witness, _witness) &&
             const DeepCollectionEquality().equals(other._assets, _assets));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, success, message,
+  int get hashCode => Object.hash(
+      runtimeType,
+      success,
+      message,
+      const DeepCollectionEquality().hash(_witness),
       const DeepCollectionEquality().hash(_assets));
 
   @JsonKey(ignore: true)
@@ -182,6 +218,7 @@ abstract class _DigitalwillgetResponse implements DigitalwillgetResponse {
   factory _DigitalwillgetResponse(
       {final bool? success,
       final String? message,
+      required final List<Witness> witness,
       required final List<Asset> assets}) = _$DigitalwillgetResponseImpl;
 
   factory _DigitalwillgetResponse.fromJson(Map<String, dynamic> json) =
@@ -192,11 +229,228 @@ abstract class _DigitalwillgetResponse implements DigitalwillgetResponse {
   @override
   String? get message;
   @override
+  List<Witness> get witness;
+  @override
   List<Asset> get assets;
   @override
   @JsonKey(ignore: true)
   _$$DigitalwillgetResponseImplCopyWith<_$DigitalwillgetResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+Witness _$WitnessFromJson(Map<String, dynamic> json) {
+  return _Witness.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Witness {
+  int? get id => throw _privateConstructorUsedError;
+  String? get firstName => throw _privateConstructorUsedError;
+  String? get lastName => throw _privateConstructorUsedError;
+  String? get mobile => throw _privateConstructorUsedError;
+  String? get address => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $WitnessCopyWith<Witness> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $WitnessCopyWith<$Res> {
+  factory $WitnessCopyWith(Witness value, $Res Function(Witness) then) =
+      _$WitnessCopyWithImpl<$Res, Witness>;
+  @useResult
+  $Res call(
+      {int? id,
+      String? firstName,
+      String? lastName,
+      String? mobile,
+      String? address});
+}
+
+/// @nodoc
+class _$WitnessCopyWithImpl<$Res, $Val extends Witness>
+    implements $WitnessCopyWith<$Res> {
+  _$WitnessCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? firstName = freezed,
+    Object? lastName = freezed,
+    Object? mobile = freezed,
+    Object? address = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      firstName: freezed == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastName: freezed == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mobile: freezed == mobile
+          ? _value.mobile
+          : mobile // ignore: cast_nullable_to_non_nullable
+              as String?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$WitnessImplCopyWith<$Res> implements $WitnessCopyWith<$Res> {
+  factory _$$WitnessImplCopyWith(
+          _$WitnessImpl value, $Res Function(_$WitnessImpl) then) =
+      __$$WitnessImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int? id,
+      String? firstName,
+      String? lastName,
+      String? mobile,
+      String? address});
+}
+
+/// @nodoc
+class __$$WitnessImplCopyWithImpl<$Res>
+    extends _$WitnessCopyWithImpl<$Res, _$WitnessImpl>
+    implements _$$WitnessImplCopyWith<$Res> {
+  __$$WitnessImplCopyWithImpl(
+      _$WitnessImpl _value, $Res Function(_$WitnessImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? firstName = freezed,
+    Object? lastName = freezed,
+    Object? mobile = freezed,
+    Object? address = freezed,
+  }) {
+    return _then(_$WitnessImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      firstName: freezed == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastName: freezed == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mobile: freezed == mobile
+          ? _value.mobile
+          : mobile // ignore: cast_nullable_to_non_nullable
+              as String?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$WitnessImpl implements _Witness {
+  _$WitnessImpl(
+      {this.id, this.firstName, this.lastName, this.mobile, this.address});
+
+  factory _$WitnessImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WitnessImplFromJson(json);
+
+  @override
+  final int? id;
+  @override
+  final String? firstName;
+  @override
+  final String? lastName;
+  @override
+  final String? mobile;
+  @override
+  final String? address;
+
+  @override
+  String toString() {
+    return 'Witness(id: $id, firstName: $firstName, lastName: $lastName, mobile: $mobile, address: $address)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WitnessImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.firstName, firstName) ||
+                other.firstName == firstName) &&
+            (identical(other.lastName, lastName) ||
+                other.lastName == lastName) &&
+            (identical(other.mobile, mobile) || other.mobile == mobile) &&
+            (identical(other.address, address) || other.address == address));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, firstName, lastName, mobile, address);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WitnessImplCopyWith<_$WitnessImpl> get copyWith =>
+      __$$WitnessImplCopyWithImpl<_$WitnessImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$WitnessImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Witness implements Witness {
+  factory _Witness(
+      {final int? id,
+      final String? firstName,
+      final String? lastName,
+      final String? mobile,
+      final String? address}) = _$WitnessImpl;
+
+  factory _Witness.fromJson(Map<String, dynamic> json) = _$WitnessImpl.fromJson;
+
+  @override
+  int? get id;
+  @override
+  String? get firstName;
+  @override
+  String? get lastName;
+  @override
+  String? get mobile;
+  @override
+  String? get address;
+  @override
+  @JsonKey(ignore: true)
+  _$$WitnessImplCopyWith<_$WitnessImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 Asset _$AssetFromJson(Map<String, dynamic> json) {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Bsure_devapp/Screens/DigitalWill/Digitalwill_screens/witness_screens/get_witness_list.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'witness_screens/DigitalWitness1.dart';
@@ -90,7 +91,7 @@ class _Nomineeforallassets3State extends State<Nomineeforallassets4> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              const DigitalWitnessScreen()), // Replace NextScreen with your desired screen
+                               DigitalWillGetWitness()), // Replace NextScreen with your desired screen
                     );
                   },
                   backgroundColor: Colors.white,

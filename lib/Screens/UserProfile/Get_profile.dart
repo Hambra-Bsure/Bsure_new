@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Repositary/Models/User_models/Get_user_res.dart';
 import '../Utils/DisplayUtils.dart';
 import '../homepage.dart';
+import 'Create_profile.dart';
 import 'Edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -133,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildText('Name:', '${user.firstName ?? ''} ${user.lastName ?? ''}'),
           _buildText('Gender:', user.gender ?? ''),
           _buildText('Whatsapp no:', user.whatsappNumber ?? ''),
-          if (user.secondaryNumber != null)
+          if (user.secondaryNumber != null && user.secondaryNumber != '0' && user.secondaryNumber!.isNotEmpty) // Check if secondaryNumber is not null, not '0', and not empty
             _buildText('Secondary no:', user.secondaryNumber),
           if (user.age != null) _buildText('Age:', user.age),
           if (user.email != null) _buildText('Email id:', user.email),
@@ -145,6 +146,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return const SizedBox(); // Return an empty SizedBox if userProfile is null
     }
   }
+
+
 
   Widget _buildText(String label, dynamic value) {
     String displayValue = value.toString(); // Convert value to String
@@ -173,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => EditUser(userProfile: userProfile),
+                builder: (context) => EditProfile(userProfile: userProfile),
               ),
             );
           },

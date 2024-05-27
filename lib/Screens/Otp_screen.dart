@@ -162,7 +162,8 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
             style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
-                overflow: TextOverflow.ellipsis),
+               // overflow: TextOverflow.ellipsis
+            ),
           ),
           const SizedBox(height: 5),
           _buildMobileNumberRow(),

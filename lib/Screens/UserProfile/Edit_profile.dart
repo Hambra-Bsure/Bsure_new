@@ -162,11 +162,11 @@ class _EditUserState extends State<EditUser> {
       lastName: _lastNameController.text,
       email: _emailController.text.isEmpty ? null : _emailController.text,
       whatsappNumber: _whatsappController.text,
-      secondaryNumber:
-          _secondaryController.text.isEmpty ? null : _secondaryController.text,
+      secondaryNumber: _secondaryController.text.isEmpty
+          ? null // If secondary number is empty, set to null in the request
+          : _secondaryController.text,
       address: _addressController.text.isEmpty ? null : _addressController.text,
-      panNumber:
-          _panNumberController.text.isEmpty ? null : _panNumberController.text,
+      panNumber: _panNumberController.text.isEmpty ? null : _panNumberController.text,
       age: int.tryParse(_ageController.text) ?? 0,
       gender: _gender,
     );
@@ -198,6 +198,7 @@ class _EditUserState extends State<EditUser> {
       // Handle network or server errors
     }
   }
+
 
   bool validateForm(BuildContext context) {
     if (_firstNameController.text.isEmpty ||

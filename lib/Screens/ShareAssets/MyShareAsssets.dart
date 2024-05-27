@@ -41,9 +41,6 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
       );
 
       if (response.statusCode == 200) {
-        print("reddy");
-        print(response.data);
-
         final Map<String, dynamic> data = response.data as Map<String, dynamic>;
         myShareAssetsResponse = MyShareAssetsResponse.fromJson(data);
 
@@ -52,9 +49,9 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
           for (var asset in myShareAssetsResponse!.assets!) {
             selectedNomineesMap[asset.id] = asset.nominees != null
                 ? asset.nominees!
-                    .map(
-                        (nominee) => '${nominee.firstName} ${nominee.lastName}')
-                    .toList()
+                .map(
+                    (nominee) => '${nominee.firstName} ${nominee.lastName}')
+                .toList()
                 : [];
           }
         }
@@ -89,12 +86,11 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : myShareAssetsResponse != null &&
-                  myShareAssetsResponse!.success == true
-              ? _buildAssetsList()
-              : const Center(
-                  child: Text('Failed to fetch shared assets'),
-                ),
+          : (myShareAssetsResponse != null &&
+          myShareAssetsResponse!.assets != null &&
+          myShareAssetsResponse!.assets!.isNotEmpty)
+          ? _buildAssetsList()
+          : _buildNoAssetsMessage(),
     );
   }
 
@@ -142,7 +138,8 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
                         onChanged: (bool? value) {
                           if (value != null) {
                             if (!value) {
-                              _confirmUnshareNominee(asset.id, nominee, nominee.sharedAssetId);
+                              _confirmUnshareNominee(
+                                  asset.id, nominee, nominee.sharedAssetId);
                             } else {
                               setState(() {
                                 selectedNomineesMap[asset.id]!.remove(
@@ -158,6 +155,21 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildNoAssetsMessage() {
+    return Center(
+      child: Container(
+        color: Colors.white,
+        child: const Text(
+          'I have not shared the assets with anyone',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.black,
+          ),
+        ),
       ),
     );
   }

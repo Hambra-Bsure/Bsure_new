@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Repositary/Models/Digital_will/Witness1Res.dart';
 import '../../../Repositary/Models/Digital_will/witness1_req.dart';
-import 'DigitalwillWitness2.dart';
+import 'get_witness_list.dart';
 
 class DigitalWitnessScreen extends StatefulWidget {
   const DigitalWitnessScreen({Key? key}) : super(key: key);
@@ -98,14 +98,37 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
         Witness1Res witness1Res = Witness1Res.fromJson(jsonDecode(response.body));
         if (witness1Res.witness != null && witness1Res.witness!.isNotEmpty) {
           setState(() {
-            _isOtpFieldVisible = true;
             _witnessId = witness1Res.witness!.first.id.toString();
           });
-          print('OTP sent successfully');
+          await _sendOtp(_witnessId!);
         } else {
           print('Witness data is empty or null');
         }
+      } else {
+        print('Failed to submit witness data');
       }
+    }
+  }
+
+  Future<void> _sendOtp(String witnessId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await Dio().post(
+      'http://43.205.12.154:8080/v2/will/witness/otp',
+      data: {"witnessId": int.parse(witnessId)},
+      options: Options(
+        headers: {'Authorization': token},
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _isOtpFieldVisible = true;
+      });
+      print('OTP sent successfully');
+    } else {
+      print('Failed to send OTP');
     }
   }
 
@@ -113,7 +136,6 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     String otp = _otpController.text.trim();
     if (otp.length == 5) {
       try {
-
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString("token");
 
@@ -136,7 +158,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const DigitalWitness2(),
+              builder: (context) =>  DigitalWillGetWitness(),
             ),
           );
           print("OTP verified successfully");
@@ -277,7 +299,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
                 _buildTextField(
                   controller: _controller5,
                   labelText: 'Email id',
-                 // validator: _validateEmail,
+                  // validator: _validateEmail,
                 ),
                 const SizedBox(height: 15),
                 _buildTextField(

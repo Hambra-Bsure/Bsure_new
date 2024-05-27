@@ -7,11 +7,25 @@ class DigitalwillgetResponse with _$DigitalwillgetResponse {
   factory DigitalwillgetResponse({
     bool? success,
     String? message,
+    required List<Witness>witness,
     required List<Asset> assets,
   }) = _DigitalwillgetResponse;
 
   factory DigitalwillgetResponse.fromJson(Map<String, dynamic> json) =>
       _$DigitalwillgetResponseFromJson(json);
+}
+
+@freezed
+class Witness with _$Witness {
+  factory Witness({
+    int? id,
+    String? firstName,
+    String? lastName,
+    String? mobile,
+    String? address,
+  }) = _Witness;
+
+  factory Witness.fromJson(Map<String, dynamic> json) => _$WitnessFromJson(json);
 }
 
 @freezed

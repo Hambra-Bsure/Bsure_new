@@ -32,6 +32,7 @@ class Witness {
   String? firstName;
   String? lastName;
   String? mobile;
+  String? address;
   bool? verified;
   int? otp;
   String? otpExpiry;
@@ -42,6 +43,7 @@ class Witness {
     this.firstName,
     this.lastName,
     this.mobile,
+    this.address,
     this.verified,
     this.otp,
     this.otpExpiry,
@@ -53,6 +55,7 @@ class Witness {
     firstName = json['firstName'];
     lastName = json['lastName'];
     mobile = json['mobile'];
+    address = json['address'];
     verified = json['verified'];
     otp = json['otp'];
     otpExpiry = json['otp_expiry'];
@@ -66,6 +69,7 @@ class Witness {
     data['firstName'] = firstName;
     data['lastName'] = lastName;
     data['mobile'] = mobile;
+    data['address'] = address;
     data['verified'] = verified;
     data['otp'] = otp;
     data['otp_expiry'] = otpExpiry;

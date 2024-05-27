@@ -74,7 +74,8 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Digital Will Screen', style: TextStyle(color: Colors.white)),
+        title: const Text('Digital Will Screen',
+            style: TextStyle(color: Colors.white)),
       ),
       body: Center(
         child: FutureBuilder<DigitalwillgetResponse>(
@@ -116,13 +117,16 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
                                 ),
                                 const SizedBox(height: 5),
                                 ...asset.nominees.map((nominee) {
-                                  TextEditingController controller = TextEditingController(
+                                  TextEditingController controller =
+                                      TextEditingController(
                                     text: nominee.share.toString(),
                                   );
                                   return Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0, vertical: 4.0),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           nominee.name,
@@ -137,17 +141,23 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
                                               width: 100,
                                               child: TextFormField(
                                                 controller: controller,
-                                                keyboardType: TextInputType.number,
-                                                decoration: const InputDecoration(
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                decoration:
+                                                    const InputDecoration(
                                                   labelText: 'Share',
                                                   border: OutlineInputBorder(),
                                                 ),
                                                 enabled: false,
                                                 onChanged: (value) {
                                                   setState(() {
-                                                    int index = asset.nominees.indexOf(nominee);
-                                                    asset.nominees[index] = nominee.copyWith(
-                                                      share: double.tryParse(value) ?? nominee.share,
+                                                    int index = asset.nominees
+                                                        .indexOf(nominee);
+                                                    asset.nominees[index] =
+                                                        nominee.copyWith(
+                                                      share: double.tryParse(
+                                                              value) ??
+                                                          nominee.share,
                                                     );
                                                   });
                                                 },
@@ -199,7 +209,6 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
       ),
     );
   }
-
 
   void saveNomineeShares(List<Nominee> nominees) {
     // Implement save functionality

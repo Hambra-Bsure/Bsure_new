@@ -11,6 +11,9 @@ _$DigitalwillgetResponseImpl _$$DigitalwillgetResponseImplFromJson(
     _$DigitalwillgetResponseImpl(
       success: json['success'] as bool?,
       message: json['message'] as String?,
+      witness: (json['witness'] as List<dynamic>)
+          .map((e) => Witness.fromJson(e as Map<String, dynamic>))
+          .toList(),
       assets: (json['assets'] as List<dynamic>)
           .map((e) => Asset.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -21,7 +24,26 @@ Map<String, dynamic> _$$DigitalwillgetResponseImplToJson(
     <String, dynamic>{
       'success': instance.success,
       'message': instance.message,
+      'witness': instance.witness,
       'assets': instance.assets,
+    };
+
+_$WitnessImpl _$$WitnessImplFromJson(Map<String, dynamic> json) =>
+    _$WitnessImpl(
+      id: json['id'] as int?,
+      firstName: json['firstName'] as String?,
+      lastName: json['lastName'] as String?,
+      mobile: json['mobile'] as String?,
+      address: json['address'] as String?,
+    );
+
+Map<String, dynamic> _$$WitnessImplToJson(_$WitnessImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
+      'mobile': instance.mobile,
+      'address': instance.address,
     };
 
 _$AssetImpl _$$AssetImplFromJson(Map<String, dynamic> json) => _$AssetImpl(
