@@ -30,7 +30,7 @@ _$AssetImpl _$$AssetImplFromJson(Map<String, dynamic> json) => _$AssetImpl(
           .map((e) => AssetList.fromJson(e as Map<String, dynamic>))
           .toList(),
       isSelected: json['isSelected'] as bool?,
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$AssetImplToJson(_$AssetImpl instance) =>

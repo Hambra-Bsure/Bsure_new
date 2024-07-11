@@ -34,7 +34,7 @@ _$NonLifeInsuranceImpl _$$NonLifeInsuranceImplFromJson(
       policyNumber: json['policyNumber'] as String,
       comments: json['comments'] as String,
       attachment: json['attachment'] as String,
-      assetId: json['assetId'] as int,
+      assetId: (json['assetId'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$NonLifeInsuranceImplToJson(

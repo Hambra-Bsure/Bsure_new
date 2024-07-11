@@ -214,14 +214,14 @@ MutualFund _$MutualFundFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MutualFund {
-  String get category => throw _privateConstructorUsedError;
+  String? get category => throw _privateConstructorUsedError;
   String? get amcName => throw _privateConstructorUsedError;
   String? get schemeName => throw _privateConstructorUsedError;
   String? get folioNumber => throw _privateConstructorUsedError;
   String? get fundType => throw _privateConstructorUsedError;
   String? get attachment => throw _privateConstructorUsedError;
   String? get comments => throw _privateConstructorUsedError;
-  int get assetId => throw _privateConstructorUsedError;
+  int? get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -236,14 +236,14 @@ abstract class $MutualFundCopyWith<$Res> {
       _$MutualFundCopyWithImpl<$Res, MutualFund>;
   @useResult
   $Res call(
-      {String category,
+      {String? category,
       String? amcName,
       String? schemeName,
       String? folioNumber,
       String? fundType,
       String? attachment,
       String? comments,
-      int assetId});
+      int? assetId});
 }
 
 /// @nodoc
@@ -259,20 +259,20 @@ class _$MutualFundCopyWithImpl<$Res, $Val extends MutualFund>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? category = null,
+    Object? category = freezed,
     Object? amcName = freezed,
     Object? schemeName = freezed,
     Object? folioNumber = freezed,
     Object? fundType = freezed,
     Object? attachment = freezed,
     Object? comments = freezed,
-    Object? assetId = null,
+    Object? assetId = freezed,
   }) {
     return _then(_value.copyWith(
-      category: null == category
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       amcName: freezed == amcName
           ? _value.amcName
           : amcName // ignore: cast_nullable_to_non_nullable
@@ -297,10 +297,10 @@ class _$MutualFundCopyWithImpl<$Res, $Val extends MutualFund>
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
               as String?,
-      assetId: null == assetId
+      assetId: freezed == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ) as $Val);
   }
 }
@@ -314,14 +314,14 @@ abstract class _$$MutualFundImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String category,
+      {String? category,
       String? amcName,
       String? schemeName,
       String? folioNumber,
       String? fundType,
       String? attachment,
       String? comments,
-      int assetId});
+      int? assetId});
 }
 
 /// @nodoc
@@ -335,20 +335,20 @@ class __$$MutualFundImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? category = null,
+    Object? category = freezed,
     Object? amcName = freezed,
     Object? schemeName = freezed,
     Object? folioNumber = freezed,
     Object? fundType = freezed,
     Object? attachment = freezed,
     Object? comments = freezed,
-    Object? assetId = null,
+    Object? assetId = freezed,
   }) {
     return _then(_$MutualFundImpl(
-      category: null == category
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       amcName: freezed == amcName
           ? _value.amcName
           : amcName // ignore: cast_nullable_to_non_nullable
@@ -373,10 +373,10 @@ class __$$MutualFundImplCopyWithImpl<$Res>
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
               as String?,
-      assetId: null == assetId
+      assetId: freezed == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ));
   }
 }
@@ -386,19 +386,19 @@ class __$$MutualFundImplCopyWithImpl<$Res>
 class _$MutualFundImpl with DiagnosticableTreeMixin implements _MutualFund {
   _$MutualFundImpl(
       {required this.category,
-      this.amcName,
-      this.schemeName,
-      this.folioNumber,
-      this.fundType,
-      this.attachment,
-      this.comments,
+      required this.amcName,
+      required this.schemeName,
+      required this.folioNumber,
+      required this.fundType,
+      required this.attachment,
+      required this.comments,
       required this.assetId});
 
   factory _$MutualFundImpl.fromJson(Map<String, dynamic> json) =>
       _$$MutualFundImplFromJson(json);
 
   @override
-  final String category;
+  final String? category;
   @override
   final String? amcName;
   @override
@@ -412,7 +412,7 @@ class _$MutualFundImpl with DiagnosticableTreeMixin implements _MutualFund {
   @override
   final String? comments;
   @override
-  final int assetId;
+  final int? assetId;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -476,20 +476,20 @@ class _$MutualFundImpl with DiagnosticableTreeMixin implements _MutualFund {
 
 abstract class _MutualFund implements MutualFund {
   factory _MutualFund(
-      {required final String category,
-      final String? amcName,
-      final String? schemeName,
-      final String? folioNumber,
-      final String? fundType,
-      final String? attachment,
-      final String? comments,
-      required final int assetId}) = _$MutualFundImpl;
+      {required final String? category,
+      required final String? amcName,
+      required final String? schemeName,
+      required final String? folioNumber,
+      required final String? fundType,
+      required final String? attachment,
+      required final String? comments,
+      required final int? assetId}) = _$MutualFundImpl;
 
   factory _MutualFund.fromJson(Map<String, dynamic> json) =
       _$MutualFundImpl.fromJson;
 
   @override
-  String get category;
+  String? get category;
   @override
   String? get amcName;
   @override
@@ -503,7 +503,7 @@ abstract class _MutualFund implements MutualFund {
   @override
   String? get comments;
   @override
-  int get assetId;
+  int? get assetId;
   @override
   @JsonKey(ignore: true)
   _$$MutualFundImplCopyWith<_$MutualFundImpl> get copyWith =>

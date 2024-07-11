@@ -18,48 +18,16 @@ class MutualFundResponse with _$MutualFundResponse {
 @freezed
 class MutualFund with _$MutualFund {
   factory MutualFund({
-    required String category,
-    String? amcName,
-    String? schemeName,
-    String? folioNumber,
-    String? fundType,
-    String? attachment,
-    String? comments,
-    required int assetId,
+    required String? category,
+    required String? amcName,
+    required String? schemeName,
+    required String? folioNumber,
+    required String? fundType,
+    required String? attachment,
+    required String? comments,
+    required int? assetId,
   }) = _MutualFund;
 
   factory MutualFund.fromJson(Map<String, dynamic> json) =>
       _$MutualFundFromJson(json);
 }
-
-
-/* 
-
-{
-    "success": true,
-    "message": "Assets fetched successfully",
-    "assets": [
-        {
-            "category": "MutualFund",
-            "amcName": "",
-            "schemeName": "",
-            "folioNumber": "",
-            "fundType": "",
-            "comments": "",
-            "attachment": "",
-            "assetId": 65
-        },
-        {
-            "category": "MutualFund",
-            "amcName": "1",
-            "schemeName": "2",
-            "folioNumber": "3",
-            "fundType": "4",
-            "comments": "5",
-            "attachment": "5",
-            "assetId": 66
-        }
-    ]
-}
-
- */

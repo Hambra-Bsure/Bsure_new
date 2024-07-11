@@ -23,7 +23,7 @@ Map<String, dynamic> _$$WillStateImplToJson(_$WillStateImpl instance) =>
     };
 
 _$AssetImpl _$$AssetImplFromJson(Map<String, dynamic> json) => _$AssetImpl(
-      assetId: json['assetId'] as int,
+      assetId: (json['assetId'] as num).toInt(),
       category: json['category'] as String,
       equalDistributionCheckbox:
           json['equalDistributionCheckbox'] as bool? ?? false,
@@ -48,7 +48,7 @@ Map<String, dynamic> _$$AssetImplToJson(_$AssetImpl instance) =>
 
 _$NomineeImpl _$$NomineeImplFromJson(Map<String, dynamic> json) =>
     _$NomineeImpl(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       mobile: json['mobile'] as String?,
       relation: json['relation'] as String,
       name: json['name'] as String,

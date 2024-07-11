@@ -61,7 +61,7 @@ class _Nomineeforallassets3State extends State<Nomineeforallassets4> {
                   const Color(0xFF8c52ff),
                   () {
                     // Handle OTP verification logic here
-                    showToast("OTP verification message");
+                    showToast("Otp verification message");
                   },
                 ),
                 const SizedBox(height: 20),

@@ -37,7 +37,7 @@ _$RealEstateImpl _$$RealEstateImplFromJson(Map<String, dynamic> json) =>
       image: json['image'] as String?,
       comments: json['comments'] as String?,
       attachment: json['attachment'] as String?,
-      assetId: json['assetId'] as int,
+      assetId: (json['assetId'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$RealEstateImplToJson(_$RealEstateImpl instance) =>

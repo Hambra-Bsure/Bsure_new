@@ -64,7 +64,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Nominee', style: TextStyle(color: Colors.white)),
+        title: const Text('Nominee details', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -88,7 +88,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   onPressed: () async {
-                                    final Updatednominee = await Navigator.push(
+                                    final updatedNominee = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => NomineeEditScreen(
@@ -96,9 +96,9 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                                         ),
                                       ),
                                     );
-                                    if (Updatednominee != null) {
+                                    if (updatedNominee != null) {
                                       setState(() {
-                                        nominees[index] = Updatednominee;
+                                        nominees[index] = updatedNominee;
                                       });
                                     }
                                   },
@@ -131,7 +131,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                             Text('Relation: ${nominee.relation ?? ""}'),
                             const SizedBox(height: 8.0),
                             Text('Address: ${nominee.address ?? ""}'),
-                            // const SizedBox(height: 8.0),
+                            // SizedBox(height: 8.0),
                             // Text('Image: ${nominee.image ?? ""}'),
                             const SizedBox(height: 8.0),
                             Center(
@@ -166,13 +166,6 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                                             onPressed: () async {
                                               Navigator.of(context).pop();
                                               deleteNominee(index);
-                                              List<Nominees> newnominee =
-                                                  <Nominees>[];
-                                              newnominee.addAll(nominees);
-                                              newnominee.removeAt(index);
-                                              setState(() {
-                                                nominees = newnominee;
-                                              });
                                             },
                                           ),
                                         ],
@@ -181,9 +174,12 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xff429bb8), // Set background color here
+                                  backgroundColor: const Color(0xff429bb8),
                                 ),
-                                child: const Text("Delete",style: TextStyle(color: Colors.white)),
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
                           ],
@@ -205,8 +201,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
             MaterialPageRoute(
               builder: (context) => const AddNominee(),
             ),
-          );
-          getData();
+          ).then((_) => getData()); // Refresh data after adding nominee
         },
         label: const Text(
           'Add New',
@@ -249,8 +244,13 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
       );
 
       if (response.statusCode == 200) {
-        DisplayUtils.showToast("Nominee successfully deleted.");
+        DisplayUtils.showToast("Nominee deleted successfully");
+        setState(() {
+          nominees.removeAt(index);
+        });
       }
-    } catch (e) {}
+    } catch (e) {
+      DisplayUtils.showToast("Failed to delete nominee. Please try again.");
+    }
   }
 }

@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../Repositary/Models/Digital_will/digitalwill_get_res.dart';
+import '../../../Repositary/Models/Digital_will/witness_get_res.dart';
 import 'get_witness_list.dart';
 
 
@@ -19,7 +19,9 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _mobileController;
+  late TextEditingController _ageController;
   late TextEditingController _addressController;
+  late TextEditingController _emailController;
 
   @override
   void initState() {
@@ -42,8 +44,7 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      var token =
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJNb2JpbGUiOiI4MzI4NTY0NjgzIiwiaWF0IjoxNzE2NjM1NzI4LCJleHAiOjE3MTcyNDA1Mjh9.qvdxr2kZ1T8793C-4l48UlAbq_mrD6x5ovMXafFIXAs";
+      final token = prefs.get("token");
 
       Response response =
       await Dio().put('http://43.205.12.154:8080/v2/will/witness',
@@ -82,28 +83,44 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title:
-        const Text('Edit Witness', style: TextStyle(color: Colors.white)),
+        const Text('Edit witness', style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
+            buildTextField(
               controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'First Name'),
+              labelText: 'First name',
+              mandatory: true,
             ),
-            TextField(
+            buildTextField(
               controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Last Name'),
+              labelText: 'Last name',
+              mandatory: true,
             ),
-            TextField(
+            buildTextField(
+              controller: _ageController,
+              labelText: 'Age',
+              mandatory: false,
+              isNumeric: true
+            ),
+            buildTextField(
               controller: _mobileController,
-              decoration: const InputDecoration(labelText: 'Mobile'),
+              labelText: 'Mobile',
+              mandatory: true,
+              isNumeric: true
             ),
-            TextField(
+            buildTextField(
+              controller: _emailController,
+              labelText: 'Email id',
+              mandatory: false,
+            ),
+            buildTextField(
               controller: _addressController,
-              decoration: const InputDecoration(labelText: 'Address'),
+              labelText: 'Address',
+              mandatory: true,
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
@@ -119,5 +136,67 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
         ),
       ),
     );
+  }
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    bool mandatory = false,
+    bool isNumeric = false,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              labelText,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (mandatory)
+              const Text(
+                ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          validator: validator,
+          inputFormatters: isNumeric
+              ? [
+            FilteringTextInputFormatter.digitsOnly,
+            NoLeadingSpaceFormatter(),
+          ]
+              : [NoLeadingSpaceFormatter()],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+          keyboardType:
+          isNumeric ? TextInputType.number : TextInputType.text,
+        ),
+      ],
+    );
+  }
+}
+
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

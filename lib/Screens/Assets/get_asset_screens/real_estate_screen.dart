@@ -35,12 +35,19 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.get("token");
+    var token = prefs.getString("token");
 
-    final url =
-        Uri.parse('http://43.205.12.154:8080/v2/asset/category/RealEstate');
+    if (token == null) {
+      setState(() {
+        isLoading = false;
+      });
+      DisplayUtils.showToast("Token not found. Please login again.");
+      return;
+    }
+
+    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/RealEstate');
     final response = await http.get(url, headers: {
-      "Authorization": token.toString(),
+      "Authorization": token,
       "ngrok-skip-browser-warning": "69420",
     });
 
@@ -52,6 +59,9 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
           isLoading = false;
         });
       } else {
+        setState(() {
+          isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(data.message),
@@ -60,12 +70,45 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
         );
       }
     } else {
+      setState(() {
+        isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Failed to fetch realEstate details'),
+          content: Text('Failed to fetch real estate details'),
           duration: Duration(seconds: 3),
         ),
       );
+    }
+  }
+
+  Future<void> deleteAssetStatus(int index) async {
+    final realEstate = realEstates[index];
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null) {
+      DisplayUtils.showToast("Token not found. Please login again.");
+      return;
+    }
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      final response = await dio.delete(
+        'http://43.205.12.154:8080/v2/asset/${realEstate.assetId}',
+      );
+
+      if (response.statusCode == 200) {
+        DisplayUtils.showToast("RealEstate successfully deleted.");
+        setState(() {
+          realEstates.removeAt(index);
+          getData(); // Refresh data after deletion
+        });
+      }
+    } catch (e) {
+    //  DisplayUtils.showToast("Failed to delete real estate.");
     }
   }
 
@@ -73,173 +116,138 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xff4229bb8),
-        title: const Text('RealEstate', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xff429bb8),
+        title: const Text('Real estate', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: Text("No Assets found"))
-          : realEstates.isNotEmpty
-              ? ListView.builder(
-                  itemCount: realEstates.length,
-                  itemBuilder: (context, index) {
-                    final realestate = realEstates[index];
-                    return Card(
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () async {
-                                    final updatedrealestate =
-                                        await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => RealEstateEdit(
-                                          realestate: realestate,
-                                          // Pass the CryptoExchange object
-                                          assetType: category,
-                                        ),
-                                      ),
-                                    );
-                                    if (updatedrealestate != null) {
-                                      setState(() {
-                                        realEstates[index] = updatedrealestate;
-                                      });
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                            Text(
-                                'Type Of Property: ${realestate.typeOfProperty}'),
-                            const SizedBox(height: 8.0),
-                            Text('Address: ${realestate.address}'),
-                            const SizedBox(height: 8.0),
-                            Text('Khata Number: ${realestate.khataNumber}'),
-                            const SizedBox(height: 8.0),
-                            Text(
-                                'North Of Property: ${realestate.northOfProperty}'),
-                            const SizedBox(height: 8.0),
-                            Text(
-                                'South Of Property: ${realestate.southOfProperty}'),
-                            const SizedBox(height: 8.0),
-                            Text(
-                                'East Of Property: ${realestate.eastOfProperty}'),
-                            const SizedBox(height: 8.0),
-                            Text(
-                                'West Of Property: ${realestate.westOfProperty}'),
-                            const SizedBox(height: 8.0),
-                            Text('Image: ${realestate.image}'),
-                            const SizedBox(height: 8.0),
-                            Text('Comments: ${realestate.comments}'),
-                            const SizedBox(height: 8.0),
-                            Text('Attachment: ${realestate.attachment}'),
-                            const SizedBox(height: 8.0),
-                            ElevatedButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Delete Asset?"),
-                                      content: const Text(
-                                          "Are you sure you want to delete this Asset?"),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: const Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                              color: Color(0xff429bb8),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: const Text(
-                                            "Confirm",
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                            deleteAssetStatus(index);
-                                            List<RealEstate> newrealestate =
-                                                <RealEstate>[];
-                                            newrealestate.addAll(realEstates);
-                                            newrealestate.removeAt(index);
-                                            setState(() {
-                                              realEstates = newrealestate;
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                backgroundColor: const Color(0xff429bb8),
-                              ),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.delete, color: Colors.white),
-                                  SizedBox(width: 5),
-                                  Text("Delete",
-                                      style: TextStyle(color: Colors.white)),
-                                ],
+          ? const Center(child: CircularProgressIndicator())
+          : realEstates.isEmpty
+          ? const Center(child: Text("No assets found", style: TextStyle(fontSize: 20.0)))
+          : ListView.builder(
+        itemCount: realEstates.length,
+        itemBuilder: (context, index) {
+          final realEstate = realEstates[index];
+          return Card(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Color(0xff429bb8)),
+                        onPressed: () async {
+                          final updatedRealEstate = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RealEstateEdit(
+                                realestate: realEstate,
+                                assetType: category,
                               ),
                             ),
-                          ],
-                        ),
+                          );
+                          if (updatedRealEstate != null) {
+                            setState(() {
+                              realEstates[index] = updatedRealEstate;
+                            });
+                          }
+                        },
                       ),
-                    );
-                  },
-                )
-              : const Center(
-                  child: Text(
-                    'No data found',
-                    style: TextStyle(
-                      fontSize: 20.0,
+                    ],
+                  ),
+                  buildInfoRow('Address:', realEstate.address),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Type of property:', realEstate.typeOfProperty),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Khata number:', realEstate.khataNumber),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('North of property:', realEstate.northOfProperty),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('South of property:', realEstate.southOfProperty),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('East of property:', realEstate.eastOfProperty),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('West of property:', realEstate.westOfProperty),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Image:', realEstate.image),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Comments:', realEstate.comments),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Attachment:', realEstate.attachment),
+                  const SizedBox(height: 8.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Delete asset?"),
+                            content: const Text("Are you sure you want to delete this Asset?"),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text("Cancel", style: TextStyle(color: Color(0xff429bb8))),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text("Confirm", style: TextStyle(color: Colors.red)),
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                  deleteAssetStatus(index);
+                                  List<RealEstate> newRealEstates =
+                                  <RealEstate>[];
+                                  newRealEstates
+                                      .addAll(realEstates);
+                                  newRealEstates.removeAt(index);
+                                  setState(() {
+                                    realEstates = newRealEstates;
+                                  });
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      backgroundColor: const Color(0xff429bb8),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delete, color: Colors.white),
+                        SizedBox(width: 5),
+                        Text("Delete", style: TextStyle(color: Colors.white)),
+                      ],
                     ),
                   ),
-                ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => RealEstateAdd(
-                assetType: category,
-              ),
+              builder: (context) => RealEstateAdd(assetType: category),
             ),
           );
         },
         label: const Text(
           'Add New',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        icon: const Icon(
-          Icons.add,
-          size: 24,
-          color: Colors.white,
-        ),
+        icon: const Icon(Icons.add, size: 24, color: Colors.white),
         backgroundColor: const Color(0xff429bb8),
         elevation: 4,
         shape: RoundedRectangleBorder(
@@ -249,27 +257,36 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index) async {
-    final mutualFund = realEstates[index];
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    if (token == null) {
-      // Handle token absence or expiration here
-      return;
-    }
-
-    final dio = Dio();
-    dio.options.headers["Authorization"] = token;
-
-    try {
-      final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${mutualFund.assetId}',
-      );
-
-      if (response.statusCode == 200) {
-        DisplayUtils.showToast(" RealEstate successfully deleted.");
-      }
-    } catch (e) {}
+  Widget buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            flex: 7,
+            child: Text(
+              value ?? '',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -27,7 +27,7 @@ _$OtherImpl _$$OtherImplFromJson(Map<String, dynamic> json) => _$OtherImpl(
       assetName: json['assetName'] as String,
       comments: json['comments'] as String,
       attachment: json['attachment'] as String,
-      assetId: json['assetId'] as int,
+      assetId: (json['assetId'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$OtherImplToJson(_$OtherImpl instance) =>

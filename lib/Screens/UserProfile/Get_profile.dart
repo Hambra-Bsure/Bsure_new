@@ -8,7 +8,7 @@ import 'Create_profile.dart';
 import 'Edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({Key? key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -69,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title: const Text(
-          "Profile",
+          "Profile details",
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
         leading: IconButton(
@@ -77,50 +77,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const Homepage()),
-              (route) => false,
+                  (route) => false,
             );
           },
         ),
       ),
       body: isLoaded
           ? SingleChildScrollView(
-              child: Center(
-                child: Card(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 50,
-                  shadowColor: Colors.black,
-                  child: SizedBox(
-                    width: 500,
-                    height: 600,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Center(
-                            child: CircleAvatar(
-                              backgroundColor: Color(0xff429bb8),
-                              radius: 50,
-                              child: Icon(
-                                Icons.account_circle,
-                                size: 100,
-                              ),
+        child: Center(
+          child: Card(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            elevation: 5,
+            shadowColor: Colors.black,
+            child: SizedBox(
+              width: width * 0.9, // Responsive width
+              height: height * 0.75, // Responsive height
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Center(
+                          child: CircleAvatar(
+                            backgroundColor: Color(0xff429bb8),
+                            radius: 50,
+                            child: Icon(
+                              Icons.account_circle,
+                              size: 100,
                             ),
                           ),
-                          const SizedBox(height: 30),
-                          Expanded(child: _buildUserDetails()),
-                          const SizedBox(height: 30),
-                          _buildEditButton(),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 30),
+                        Expanded(child: _buildUserDetails()),
+                        const SizedBox(height: 30),
+                        _buildCreateButton(),
+                      ],
                     ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: const Icon(Icons.edit, color: Color(0xff429bb8)),
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => EditUser(userProfile: userProfile),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            )
+            ),
+          ),
+        ),
+      )
           : const Center(child: CircularProgressIndicator()),
     );
   }
@@ -128,39 +145,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildUserDetails() {
     if (userProfile != null && userProfile!.user != null) {
       final user = userProfile!.user!;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildText('Name:', '${user.firstName ?? ''} ${user.lastName ?? ''}'),
-          _buildText('Gender:', user.gender ?? ''),
-          _buildText('Whatsapp no:', user.whatsappNumber ?? ''),
-          if (user.secondaryNumber != null && user.secondaryNumber != '0' && user.secondaryNumber!.isNotEmpty) // Check if secondaryNumber is not null, not '0', and not empty
-            _buildText('Secondary no:', user.secondaryNumber),
-          if (user.age != null) _buildText('Age:', user.age),
-          if (user.email != null) _buildText('Email id:', user.email),
-          if (user.address != null) _buildText('Address:', user.address),
-          if (user.panNumber != null) _buildText('PanNumber:', user.panNumber),
-        ],
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildText(
+                'Name:', '${user.firstName ?? ''} ${user.lastName ?? ''}'),
+            _buildText('Gender:', user.gender ?? ''),
+            _buildText('Whatsapp no:', user.whatsappNumber ?? ''),
+            if (user.secondaryNumber != null &&
+                user.secondaryNumber != '0' &&
+                user.secondaryNumber!.isNotEmpty)
+              _buildText('Secondary no:', user.secondaryNumber!),
+            if (user.age != null) _buildText('Age:', user.age.toString()),
+            if (user.email != null) _buildText('Email id:', user.email!),
+            if (user.address != null) _buildText('Address:', user.address!),
+            if (user.panNumber != null && user.panNumber!.isNotEmpty)
+              _buildText('PanNumber:', user.panNumber!),
+          ],
+        ),
       );
     } else {
       return const SizedBox(); // Return an empty SizedBox if userProfile is null
     }
   }
 
-
-
-  Widget _buildText(String label, dynamic value) {
-    String displayValue = value.toString(); // Convert value to String
+  Widget _buildText(String label, String value) {
+    if (value.isEmpty) {
+      return const SizedBox();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$label $displayValue',
+          '$label $value',
           style: const TextStyle(
-            fontSize: 20,
+            fontSize: 18,
             color: Colors.black,
             fontWeight: FontWeight.w500,
-            overflow: TextOverflow.ellipsis,
           ),
         ),
         const SizedBox(height: 10),
@@ -168,13 +190,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildEditButton() {
+  Widget _buildCreateButton() {
     return Center(
       child: SizedBox(
         width: 150,
         child: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).push(
+          onPressed: () async {
+            await Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => EditProfile(userProfile: userProfile),
               ),
@@ -182,18 +204,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all(const Color(0xff429bb8)),
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            )),
           ),
-          child: const Row(
-            children: [
-              Flexible(
-                child: Center(
-                  child: Text(
-                    'Edit profile',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
+          child: const Text(
+            'Create profile',
+            style: TextStyle(fontSize: 16, color: Colors.white),
           ),
         ),
       ),

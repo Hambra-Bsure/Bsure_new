@@ -33,7 +33,7 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
     }
 
     Dio dio = Dio();
-    dio.options.headers["Authorization"] = token; // Ensure Bearer token format
+    dio.options.headers["Authorization"] = 'Bearer $token'; // Ensure Bearer token format
 
     NodeClient nodeClient = NodeClient(dio);
 
@@ -69,12 +69,13 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Digital Will Screen',
+        title: const Text('Digital will screen',
             style: TextStyle(color: Colors.white)),
       ),
       body: Center(

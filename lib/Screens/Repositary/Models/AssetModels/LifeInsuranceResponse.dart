@@ -33,11 +33,12 @@ class Asset {
   Asset.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['userId'];
-    category = json['category'];
+    category = json['category'] ?? '';
     lifeInsurance = json['LifeInsurance'] != null
         ? LifeInsurance.fromJson(json['LifeInsurance'])
         : null;
   }
+
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -57,7 +58,7 @@ class LifeInsurance {
   String? policyName;
   String? policyNumber;
   int? coverageAmount;
-  Null maturityDate;
+  String? maturityDate;
   String? comments;
   String? attachment;
   int? assetId;
@@ -75,15 +76,16 @@ class LifeInsurance {
 
   LifeInsurance.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    insuranceCompanyName = json['insuranceCompanyName'];
-    policyName = json['policyName'];
-    policyNumber = json['policyNumber'];
+    insuranceCompanyName = json['insuranceCompanyName'] ?? '';
+    policyName = json['policyName'] ?? '';
+    policyNumber = json['policyNumber'] ?? '';
     coverageAmount = json['coverageAmount'];
-    maturityDate = json['maturityDate'];
-    comments = json['comments'];
-    attachment = json['attachment'];
+    maturityDate = json['maturityDate'] ?? '';
+    comments = json['comments'] ?? '';
+    attachment = json['attachment'] ?? '';
     assetId = json['assetId'];
   }
+
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};

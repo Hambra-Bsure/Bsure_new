@@ -49,9 +49,9 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
           for (var asset in myShareAssetsResponse!.assets!) {
             selectedNomineesMap[asset.id] = asset.nominees != null
                 ? asset.nominees!
-                .map(
-                    (nominee) => '${nominee.firstName} ${nominee.lastName}')
-                .toList()
+                    .map(
+                        (nominee) => '${nominee.firstName} ${nominee.lastName}')
+                    .toList()
                 : [];
           }
         }
@@ -80,21 +80,34 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title: const Text(
-          'My Shared Assets',
+          'My shared assets',
           style: TextStyle(color: Colors.white),
         ),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : (myShareAssetsResponse != null &&
-          myShareAssetsResponse!.assets != null &&
-          myShareAssetsResponse!.assets!.isNotEmpty)
-          ? _buildAssetsList()
-          : _buildNoAssetsMessage(),
+                  myShareAssetsResponse!.assets != null &&
+                  myShareAssetsResponse!.assets!.isNotEmpty)
+              ? _buildAssetsList()
+              : _buildNoAssetsMessage(),
     );
   }
 
   Widget _buildAssetsList() {
+    bool hasSelectedNominee = false;
+
+    for (var asset in myShareAssetsResponse!.assets!) {
+      if (selectedNomineesMap[asset.id]!.isNotEmpty) {
+        hasSelectedNominee = true;
+        break;
+      }
+    }
+
+    if (!hasSelectedNominee) {
+      return _buildNoNomineesMessage();
+    }
+
     return Card(
       color: Colors.lightBlue,
       child: ListView.builder(
@@ -102,6 +115,8 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
         itemBuilder: (context, index) {
           final asset = myShareAssetsResponse!.assets![index];
           selectedNomineesMap.putIfAbsent(asset.id, () => []);
+
+          bool anyNomineeSelected = selectedNomineesMap[asset.id]!.isNotEmpty;
 
           return Visibility(
             visible: !_checkAssetDeleted(asset.id),
@@ -125,7 +140,17 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    ..._buildDetailsList(asset.details ?? []),
+                    if (anyNomineeSelected)
+                      ..._buildDetailsList(asset.details ?? []),
+                    if (!anyNomineeSelected)
+                      const Text(
+                        'No one any shared assets',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.red,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     const Divider(),
                     for (var nominee in asset.nominees ?? [])
                       CheckboxListTile(
@@ -136,16 +161,12 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
                         value: selectedNomineesMap[asset.id]!.contains(
                             '${nominee.firstName} ${nominee.lastName}'),
                         onChanged: (bool? value) {
-                          if (value != null) {
-                            if (!value) {
-                              _confirmUnshareNominee(
-                                  asset.id, nominee, nominee.sharedAssetId);
-                            } else {
-                              setState(() {
-                                selectedNomineesMap[asset.id]!.remove(
-                                    '${nominee.firstName} ${nominee.lastName}');
-                              });
-                            }
+                          if (value != null && value) {
+                            selectedNomineesMap[asset.id]!.add(
+                                '${nominee.firstName} ${nominee.lastName}');
+                          } else {
+                            _confirmUnshareNominee(
+                                asset.id, nominee, nominee.sharedAssetId);
                           }
                         },
                       ),
@@ -174,12 +195,27 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
     );
   }
 
+  Widget _buildNoNomineesMessage() {
+    return Center(
+      child: Container(
+        color: Colors.white,
+        child: const Text(
+          'No one any shared assets',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.blue,
+          ),
+        ),
+      ),
+    );
+  }
+
   void _confirmUnshareNominee(int assetId, Nominee nominee, int sharedAssetId) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Unshare Nominee?"),
+          title: const Text("Unshare nominee?"),
           content: const Text("Are you sure you want to unshare this nominee?"),
           actions: <Widget>[
             TextButton(

@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../main.dart';
 import '../Repositary/Retrofit/node_api_client.dart';
 import '../Utils/SharedPrefHelper.dart';
+import '../../main.dart';
 
-class AccountDeletionScreen extends StatelessWidget {
-  const AccountDeletionScreen({super.key});
+class AccountDeletion extends StatelessWidget {
+  const AccountDeletion({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +14,12 @@ class AccountDeletionScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title: const Text(
-          'Account Deletion',
+          'Account deletion',
           style: TextStyle(color: Colors.white),
         ),
       ),
       body: SingleChildScrollView(
-        primary: false, // Set primary to false to avoid unnecessary padding
+        primary: false,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -35,11 +35,10 @@ class AccountDeletionScreen extends StatelessWidget {
               const SizedBox(height: 20),
               ElevatedButton.icon(
                 onPressed: () {
-                  // Show confirmation dialog
                   _showConfirmationDialog(context);
                 },
                 icon: const Icon(Icons.delete),
-                label: const Text('Delete Account'),
+                label: const Text('Delete account'),
               ),
             ],
           ),
@@ -49,30 +48,14 @@ class AccountDeletionScreen extends StatelessWidget {
   }
 
   Future<void> _showConfirmationDialog(BuildContext context) async {
-    String deletionReason = '';
-
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(
-            'Confirm Account Deletion !',
+            'Confirm account deletion!',
             style: TextStyle(fontSize: 20),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                const SizedBox(height: 5),
-                TextField(
-                  decoration:
-                      const InputDecoration(labelText: 'Reason for deletion'),
-                  onChanged: (value) {
-                    deletionReason = value;
-                  },
-                ),
-              ],
-            ),
           ),
           actions: <Widget>[
             TextButton(
@@ -87,18 +70,7 @@ class AccountDeletionScreen extends StatelessWidget {
               ),
               child: const Text('Yes', style: TextStyle(color: Colors.white)),
               onPressed: () {
-                if (deletionReason.isNotEmpty) {
-                  // Perform the account deletion logic
-                  _deleteAccount(context, deletionReason);
-                } else {
-                  // Show error or request a reason
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content:
-                          Text('Please provide a reason for Account deletion.'),
-                    ),
-                  );
-                }
+                _deleteAccount(context);
               },
             ),
           ],
@@ -107,20 +79,33 @@ class AccountDeletionScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _deleteAccount(
-      BuildContext context, String deletionReason) async {
+  Future<void> _deleteAccount(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.get("token");
-    Dio dio = Dio(); // Create a Dio instance
+    var token = prefs.getString("token");
+
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User is not authenticated.'),
+        ),
+      );
+      return;
+    }
+
+    Dio dio = Dio();
     dio.options.headers['Authorization'] = token;
     final client = NodeClient(dio);
+
     try {
-      // var response = await client.deleteAccount(token.toString());
-      //
+      await client.deleteAccount(token);
       _showDeletionSuccessDialog(context);
     } catch (e) {
-      // Handle API failure
-      // DisplayUtils.showToast("API failure");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to delete the account. Error: $e'),
+        ),
+      );
     }
   }
 
@@ -129,20 +114,21 @@ class AccountDeletionScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Account Deleted'),
+          title: const Text('Account deleted'),
           content: const Text('Your account has been successfully deleted.'),
           actions: <Widget>[
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Change button color to blue
+                backgroundColor: Colors.blue,
               ),
               child: const Text('OK'),
               onPressed: () {
                 SharedPrefHelper.logout();
-                Navigator.of(context).push(
+                Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => const SplashScreen(),
                   ),
+                      (Route<dynamic> route) => false,
                 );
               },
             ),

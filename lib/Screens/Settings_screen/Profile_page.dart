@@ -1,11 +1,12 @@
 // ignore_for_file: file_names
 
+import 'package:Bsure_devapp/Screens/UserProfile/Get_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../main.dart';
+import '../UserProfile/Delete_profile.dart';
 import '../Utils/SharedPrefHelper.dart';
 import 'About_us.dart';
-import 'AccountDeleteScreen.dart';
 import 'Contact_Us_screen.dart';
 import 'FAQ.dart';
 import 'Privacy_policy.dart';
@@ -27,11 +28,11 @@ class ProfilePage extends StatelessWidget {
               icon: Icons.share,
               title: 'Share',
               onTap: () => Share.share('https://com.bsure/')),
-          // _buildMenuItem(
-          //     icon: Icons.person,
-          //     title: 'Edit Profile',
-          //     onTap: () => _navigateTo(context,
-          //         const ProfileScreen())),
+          _buildMenuItem(
+              icon: Icons.person,
+              title: 'Edit Profile',
+              onTap: () => _navigateTo(context,
+                  const ProfileScreen())),
           _buildMenuItem(
             icon: Icons.account_circle,
             title: 'About Us',
@@ -84,7 +85,7 @@ class ProfilePage extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => const AccountDeletionScreen()),
+                    builder: (context) => const AccountDeletion()),
               );
             },
           ),

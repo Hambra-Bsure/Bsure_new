@@ -23,7 +23,7 @@ Map<String, dynamic> _$$GetUserResponseImplToJson(
     };
 
 _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
       email: json['email'] as String?,
@@ -32,7 +32,7 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       secondaryNumber: json['secondaryNumber'] as String?,
       address: json['address'] as String?,
       panNumber: json['panNumber'] as String?,
-      age: json['age'] as int?,
+      age: (json['age'] as num?)?.toInt(),
       gender: json['gender'] as String?,
       photo: json['photo'] as String?,
     );

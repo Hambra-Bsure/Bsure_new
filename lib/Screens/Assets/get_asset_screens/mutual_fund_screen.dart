@@ -22,8 +22,7 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
   bool isLoading = false;
 
   // Define a variable to hold the category name
-  final String category =
-      'MutualFund'; // Assuming the category is 'BankAccount'
+  final String category = 'MutualFund';
 
   @override
   void initState() {
@@ -37,12 +36,11 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.get("token");
+    var token = prefs.getString("token");
 
-    final url =
-        Uri.parse('http://43.205.12.154:8080/v2/asset/category/MutualFund');
+    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/MutualFund');
     final response = await http.get(url, headers: {
-      "Authorization": token.toString(),
+      "Authorization": token ?? '',
       "ngrok-skip-browser-warning": "69420",
     });
 
@@ -50,7 +48,7 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
       final data = MutualFundResponse.fromJson(jsonDecode(response.body));
       if (data.success) {
         setState(() {
-          mutualFunds = data.assets;
+          mutualFunds = List.from(data.assets); // Ensure a mutable copy
           isLoading = false;
         });
       } else {
@@ -69,6 +67,10 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
         ),
       );
     }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -79,166 +81,180 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
         title: const Text('Mutual Fund', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: Text("No Assets found"))
-          : mutualFunds.isNotEmpty == true
-              ? ListView.builder(
-                  itemCount: mutualFunds.length,
-                  itemBuilder: (context, index) {
-                    final fund = mutualFunds[index];
-                    return Card(
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () async {
-                                    final updatedFund = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => MutualFundEdit(
-                                          fund: fund,
-                                          assetType: widget.assetType,
-                                        ),
-                                      ),
-                                    );
-                                    if (updatedFund != null) {
-                                      setState(() {
-                                        // Update the corresponding Mutual Fund item in the list
-                                        final index = mutualFunds.indexWhere(
-                                            (element) =>
-                                                element.assetId ==
-                                                updatedFund.assetId);
-                                        if (index != -1) {
-                                          mutualFunds[index] = updatedFund;
-                                        }
-                                      });
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                            Text('AMC Name: ${fund.amcName}'),
-                            const SizedBox(height: 8.0),
-                            Text('Scheme Name: ${fund.schemeName}'),
-                            const SizedBox(height: 8.0),
-                            Text('Folio Number: ${fund.folioNumber}'),
-                            const SizedBox(height: 8.0),
-                            Text('Fund Type: ${fund.fundType}'),
-                            const SizedBox(height: 8.0),
-                            Text('Comments: ${fund.comments}'),
-                            const SizedBox(height: 8.0),
-                            Text('Attachment: ${fund.attachment}'),
-                            const SizedBox(height: 8.0),
-                            ElevatedButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Delete Asset?"),
-                                      content: const Text(
-                                          "Are you sure you want to delete this Asset?"),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: const Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                              color: Color(0xff429bb8),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: const Text(
-                                            "Confirm",
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                            deleteAssetStatus(index);
-                                            List<MutualFund> newmutualfunds =
-                                                <MutualFund>[];
-                                            newmutualfunds.addAll(mutualFunds);
-                                            newmutualfunds.removeAt(index);
-                                            setState(() {
-                                              mutualFunds = newmutualfunds;
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                backgroundColor: const Color(0xff429bb8),
-                              ),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.delete, color: Colors.white),
-                                  SizedBox(width: 5),
-                                  Text("Delete",
-                                      style: TextStyle(color: Colors.white)),
-                                ],
+          ? const Center(child: CircularProgressIndicator())
+          : mutualFunds.isEmpty
+          ? const Center(
+        child: Text("No assets found",
+          style: TextStyle(fontSize: 20.0),
+        ),
+      )
+          : ListView.builder(
+        itemCount: mutualFunds.length,
+        itemBuilder: (context, index) {
+          final fund = mutualFunds[index];
+          return Card(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Color(0xff429bb8)),
+                        onPressed: () async {
+                          final updatedFund = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MutualFundEdit(
+                                fund: fund,
+                                assetType: widget.assetType,
                               ),
                             ),
-                          ],
-                        ),
+                          );
+                          if (updatedFund != null) {
+                            setState(() {
+                              // Update the corresponding Mutual Fund item in the list
+                              final index = mutualFunds.indexWhere(
+                                      (element) =>
+                                  element.assetId ==
+                                      updatedFund.assetId);
+                              if (index != -1) {
+                                mutualFunds[index] = updatedFund;
+                              }
+                            });
+                          }
+                        },
                       ),
-                    );
-                  },
-                )
-              : const Center(
-                  child: Text(
-                    'No mutual funds found',
-                    style: TextStyle(
-                      fontSize: 20.0,
+                    ],
+                  ),
+                  buildInfoRow('Amc name:', fund.amcName),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Scheme name:', fund.schemeName),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Folio number:', fund.folioNumber),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Fund type:', fund.fundType),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Comments:', fund.comments),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Attachment:', fund.attachment),
+                  const SizedBox(height: 8.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Delete asset?"),
+                            content: const Text(
+                                "Are you sure you want to delete this Asset?"),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    color: Color(0xff429bb8),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text(
+                                  "Confirm",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                  await deleteAssetStatus(index);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      backgroundColor: const Color(0xff429bb8),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delete, color: Colors.white),
+                        SizedBox(width: 5),
+                        Text("Delete",
+                            style: TextStyle(color: Colors.white)),
+                      ],
                     ),
                   ),
-                ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MutualFundAdd(
-                assetType: category,
-              ),
+              builder: (context) => MutualFundAdd(assetType: category),
             ),
           );
         },
         label: const Text(
           'Add New',
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        icon: const Icon(
-          Icons.add,
-          size: 24,
-          color: Colors.white,
-        ),
+        icon: const Icon(Icons.add, size: 24, color: Colors.white),
         backgroundColor: const Color(0xff429bb8),
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
+      ),
+    );
+  }
+
+  Widget buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            flex: 7,
+            child: Text(
+              value ?? '',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -262,9 +278,14 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
       );
 
       if (response.statusCode == 200) {
-        DisplayUtils.showToast("Mutual Fund successfully deleted.");
-
+        DisplayUtils.showToast("MutualFund successfully deleted");
+        setState(() {
+          mutualFunds = List.from(mutualFunds)
+            ..removeAt(index); // Create a mutable copy and update it
+        });
       }
-    } catch (e) {}
+    } catch (e) {
+      // Handle error
+    }
   }
 }

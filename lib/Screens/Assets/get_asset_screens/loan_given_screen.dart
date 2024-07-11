@@ -35,12 +35,12 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.get("token");
+    var token = prefs.getString("token");
 
     final url =
         Uri.parse('http://43.205.12.154:8080/v2/asset/category/LoanGiven');
     final response = await http.get(url, headers: {
-      "Authorization": token.toString(),
+      "Authorization": token ?? "",
       "ngrok-skip-browser-warning": "69420",
     });
 
@@ -49,7 +49,6 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
       if (data.success) {
         setState(() {
           loanGivens = data.assets;
-          isLoading = false;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -67,6 +66,39 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
         ),
       );
     }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> deleteAssetStatus(int index) async {
+    final loanGiven = loanGivens[index];
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null) {
+      // Handle token absence or expiration here
+      return;
+    }
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      final response = await dio.delete(
+        'http://43.205.12.154:8080/v2/asset/${loanGiven.assetId}',
+      );
+
+      if (response.statusCode == 200) {
+        DisplayUtils.showToast("Loan given successfully deleted.");
+        setState(() {
+          loanGivens.removeAt(index);
+        });
+      }
+    } catch (e) {
+      //DisplayUtils.showToast("Failed to delete loan given.");
+    }
   }
 
   @override
@@ -74,12 +106,15 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Loan Given', style: TextStyle(color: Colors.white)),
+        title: const Text('Loan given', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: Text("No Assets found"))
-          : loanGivens.isNotEmpty
-              ? ListView.builder(
+          ? const Center(child: CircularProgressIndicator())
+          : loanGivens.isEmpty
+              ? const Center(
+                  child:
+                      Text("No assets found", style: TextStyle(fontSize: 20.0)))
+              : ListView.builder(
                   itemCount: loanGivens.length,
                   itemBuilder: (context, index) {
                     final loangiven = loanGivens[index];
@@ -94,7 +129,8 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit,
+                                      color: Color(0xff429bb8)),
                                   onPressed: () async {
                                     final updatedloangiven =
                                         await Navigator.push(
@@ -115,19 +151,21 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                                 ),
                               ],
                             ),
-                            Text(
-                              'borrowerName: ${loangiven.borrowerName}',
-                            ),
+                            buildInfoRow(
+                                'Borrower name: ', loangiven.borrowerName),
                             const SizedBox(height: 8.0),
-                            Text('loanAmount: ${loangiven.loanAmount}'),
+                            buildInfoRow('Loan amount: ',
+                                loangiven.loanAmount.toString()),
                             const SizedBox(height: 8.0),
-                            Text('loanGivenDate: ${loangiven.loanGivenDate}'),
+                            buildInfoRow(
+                                'Loan given date: ', loangiven.loanGivenDate),
                             const SizedBox(height: 8.0),
-                            Text('interestRate: ${loangiven.interestRate}'),
+                            buildInfoRow('Interest rate: ',
+                                loangiven.interestRate.toString()),
                             const SizedBox(height: 8.0),
-                            Text('comments: ${loangiven.comments}'),
+                            buildInfoRow('Comments: ', loangiven.comments),
                             const SizedBox(height: 8.0),
-                            Text('attachment: ${loangiven.attachment}'),
+                            buildInfoRow('Attachment: ', loangiven.attachment),
                             const SizedBox(height: 8.0),
                             ElevatedButton(
                               onPressed: () {
@@ -135,7 +173,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text("Delete Asset?"),
+                                      title: const Text("Delete asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -143,8 +181,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                                           child: const Text(
                                             "Cancel",
                                             style: TextStyle(
-                                              color: Color(0xff429bb8),
-                                            ),
+                                                color: Color(0xff429bb8)),
                                           ),
                                           onPressed: () {
                                             Navigator.of(context).pop();
@@ -153,19 +190,17 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                                         TextButton(
                                           child: const Text(
                                             "Confirm",
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
+                                            style: TextStyle(color: Colors.red),
                                           ),
                                           onPressed: () async {
                                             Navigator.of(context).pop();
                                             deleteAssetStatus(index);
-                                            List<LoanGiven> newloangiven =
+                                            List<LoanGiven> newLoanGivens =
                                                 <LoanGiven>[];
-                                            newloangiven.addAll(loanGivens);
-                                            newloangiven.removeAt(index);
+                                            newLoanGivens.addAll(loanGivens);
+                                            newLoanGivens.removeAt(index);
                                             setState(() {
-                                              loanGivens = newloangiven;
+                                              loanGivens = newLoanGivens;
                                             });
                                           },
                                         ),
@@ -195,23 +230,13 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
                       ),
                     );
                   },
-                )
-              : const Center(
-                  child: Text(
-                    'No data found',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
-                  ),
                 ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => LoanGivenAdd(
-                assetType: category,
-              ),
+              builder: (context) => LoanGivenAdd(assetType: category),
             ),
           );
         },
@@ -223,11 +248,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
             color: Colors.white,
           ),
         ),
-        icon: const Icon(
-          Icons.add,
-          size: 24,
-          color: Colors.white,
-        ),
+        icon: const Icon(Icons.add, size: 24, color: Colors.white),
         backgroundColor: const Color(0xff429bb8),
         elevation: 4,
         shape: RoundedRectangleBorder(
@@ -237,27 +258,36 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
     );
   }
 
-  Future<void> deleteAssetStatus(int index) async {
-    final loanGiven = loanGivens[index];
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    if (token == null) {
-      // Handle token absence or expiration here
-      return;
-    }
-
-    final dio = Dio();
-    dio.options.headers["Authorization"] = token;
-
-    try {
-      final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${loanGiven.assetId}',
-      );
-
-      if (response.statusCode == 200) {
-        DisplayUtils.showToast(" loan given successfully deleted.");
-      }
-    } catch (e) {}
+  Widget buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            flex: 7,
+            child: Text(
+              value ?? '',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

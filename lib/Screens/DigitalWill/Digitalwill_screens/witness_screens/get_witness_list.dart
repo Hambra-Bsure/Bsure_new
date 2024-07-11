@@ -1,11 +1,13 @@
-
-import 'package:Bsure_devapp/Screens/Repositary/Models/Digital_will/digitalwill_get_res.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert';
+import '../../../Repositary/Models/Digital_will/witness_get_res.dart';
 import '../../../Repositary/Retrofit/node_api_client.dart';
 import 'DigitalWitness1.dart';
 import 'Edit_witness.dart';
+import 'Executor.dart';
+import 'willpdf_download.dart';
 
 class DigitalWillGetWitness extends StatefulWidget {
   @override
@@ -13,7 +15,7 @@ class DigitalWillGetWitness extends StatefulWidget {
 }
 
 class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
-  late Future<DigitalwillgetResponse> _futureData;
+  late Future<WitnessgetResponse> _futureData;
 
   @override
   void initState() {
@@ -21,7 +23,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     _futureData = fetchData();
   }
 
-  Future<DigitalwillgetResponse> fetchData() async {
+  Future<WitnessgetResponse> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -30,52 +32,141 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     }
 
     Dio dio = Dio();
-    dio.options.headers["Authorization"] = token; // Ensure Bearer token format
+    dio.options.headers["Authorization"] = '$token';
 
     NodeClient nodeClient = NodeClient(dio);
 
     try {
-      var response = await nodeClient.digitalWillGetData(token);
-
-      print("Response received:");
-      print(response);
-
-      // Ensure response data is parsed correctly
+      var response = await nodeClient.getWitnessData(token);
       return response;
     } catch (e) {
       if (e is DioError) {
-        if (e.response?.statusCode == 403) {
-          // Handle 403 error
-          print("Error: User does not have permission.");
-          throw Exception('User does not have permission.');
-        } else if (e.response?.statusCode == 404) {
-          // Handle 404 error
-          print("Error: Assets not found.");
-          throw Exception('Assets not found.');
-        } else {
-          // Handle other errors
-          print(
-              "Error: Failed to fetch data. Status code: ${e.response?.statusCode}");
-          throw Exception('Failed to fetch data. Please try again.');
+        switch (e.response?.statusCode) {
+          case 403:
+            throw Exception('User does not have permission.');
+          case 404:
+            throw Exception('Assets not found.');
+          default:
+            throw Exception('Failed to fetch data. Please try again.');
         }
       } else {
-        // Handle other exceptions
-        print("Error: An unexpected error occurred: $e");
         throw Exception('An unexpected error occurred. Please try again.');
       }
     }
+  }
+
+  Future<bool> _checkExecutorExists() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Token is not available.');
+    }
+
+    const url = 'http://43.205.12.154:8080/v2/will/executor';
+
+    try {
+      final response = await Dio().get(
+        url,
+        options: Options(headers: {'Authorization': token}),
+      );
+
+      if (response.statusCode == 200) {
+        final executorData = response.data;
+        return executorData != null;
+      } else {
+        print('Failed to check executor data');
+        return false;
+      }
+    } catch (e) {
+      print('Error checking executor data: $e');
+      return false;
+    }
+  }
+
+  Future<void> _checkAndNavigate() async {
+    try {
+      final data = await fetchData();
+      final executorExists = await _checkExecutorExists();
+
+      if (data.witnesses.length >= 2 && executorExists) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PdfDownloadScreen()),
+        );
+      } else {
+        _showOptionsDialog();
+      }
+    } catch (e) {
+      print('Error in navigation check: $e');
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Error in navigation check. Please try again.'),
+      ));
+    }
+  }
+
+  void _showOptionsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Choose an option'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.person_add),
+                title: const Text('Add witness'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const DigitalWitnessScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('Add executor'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const WillExecutorScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.download),
+                title: const Text('Will pdf download'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PdfDownloadScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _editWitness(Witness witness) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WitnessEditScreen(witness: witness,),
+        builder: (context) => WitnessEditScreen(witness: witness),
       ),
     );
   }
 
-  void _deleteWitness(int index, List<Witness> witnesses) async {
+  Future<void> _deleteWitness(int index, List<Witness> witnesses) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -95,37 +186,30 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     );
 
     if (confirmed != null && confirmed) {
-      // Proceed with deletion
       try {
-        final witnessId =
-            witnesses[index].id; // Accessing witness ID from the provided list
-        const token =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJNb2JpbGUiOiI4MzI4NTY0NjgzIiwiaWF0IjoxNzE2NjM1NzI4LCJleHAiOjE3MTcyNDA1Mjh9.qvdxr2kZ1T8793C-4l48UlAbq_mrD6x5ovMXafFIXAs";
+        final witnessId = witnesses[index].id;
+        final prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString("token");
+
         final response = await Dio().delete(
           'http://43.205.12.154:8080/v2/will/witness/$witnessId',
           options: Options(
-            headers: {'Authorization': token},
+            headers: {'Authorization': '$token'},
           ),
         );
 
-        // Check response status
         if (response.statusCode == 200) {
-          // Deletion successful
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Witness deleted successfully.'),
           ));
-          // Reload data after deletion
           setState(() {
             _futureData = fetchData();
           });
         } else {
-          // Handle other status codes
           throw Exception(
               'Failed to delete witness. Status code: ${response.statusCode}');
         }
       } catch (e) {
-        // Handle errors
-        print('Error deleting witness: $e');
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Failed to delete witness. Please try again.'),
         ));
@@ -138,82 +222,65 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Digital Will Witness',
+        title: const Text('Digitalwill witness',
             style: TextStyle(color: Colors.white)),
       ),
-      body: FutureBuilder<DigitalwillgetResponse>(
+      body: FutureBuilder<WitnessgetResponse>(
         future: _futureData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData) {
-            return const Center(child: Text('No data found.'));
+          } else if (!snapshot.hasData || snapshot.data!.witnesses.isEmpty) {
+            return const Center(child: Text('No witness details found.'));
           } else {
             final data = snapshot.data!;
-            return Stack(
-              children: [
-                ListView.builder(
-                  itemCount: data.witness.length,
-                  itemBuilder: (context, index) {
-                    final witness = data.witness[index];
-                    return Card(
-                      margin: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        title: Text(
-                            'Name: ${witness.firstName} ${witness.lastName}'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Mobile: ${witness.mobile}'),
-                            Text('Address: ${witness.address}'),
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () =>
-                                  _editWitness(witness),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () => _deleteWitness(index,
-                                  data.witness), // Pass the list of witnesses
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                if (data.witness.length < 2)
-                  Positioned(
-                    bottom: 16.0,
-                    right: 16.0,
-                    child: FloatingActionButton.extended(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const DigitalWitnessScreen(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.add, color: Colors.white),
-                      label: const Text('Add New',
-                          style: TextStyle(color: Colors.white)),
-                      backgroundColor: const Color(0xff429bb8),
-                      foregroundColor: Colors.white, // Set the foreground color
-                    ),
-                  ),
-              ],
-            );
+            return buildWitnessList(data.witnesses);
           }
         },
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _checkAndNavigate,
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: const Text('Add New', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xff429bb8),
+      ),
+    );
+  }
+
+  Widget buildWitnessList(List<Witness> witnesses) {
+    return ListView.builder(
+      itemCount: witnesses.length,
+      itemBuilder: (context, index) {
+        final witness = witnesses[index];
+        return Card(
+          margin: const EdgeInsets.all(8.0),
+          child: ListTile(
+            title: Text('Name: ${witness.firstName} ${witness.lastName}'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Mobile: ${witness.mobile}'),
+                Text('Address: ${witness.address}'),
+              ],
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => _editWitness(witness),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () => _deleteWitness(index, witnesses),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -27,7 +27,7 @@ _$PFImpl _$$PFImplFromJson(Map<String, dynamic> json) => _$PFImpl(
       uanNumber: json['uanNumber'] as String,
       comments: json['comments'] as String,
       attachment: json['attachment'] as String,
-      assetId: json['assetId'] as int,
+      assetId: (json['assetId'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$PFImplToJson(_$PFImpl instance) => <String, dynamic>{

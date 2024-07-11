@@ -1,10 +1,25 @@
 import 'dart:convert';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/real_estate_screen.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/real_estate.dart';
 import '../../Utils/DisplayUtils.dart';
+
+enum PropertyType { Residential, Commercial }
+
+String propertyTypeToString(PropertyType? propertyType) {
+  switch (propertyType) {
+    case PropertyType.Residential:
+      return 'Residential';
+    case PropertyType.Commercial:
+      return 'Commercial';
+    default:
+      return '';
+  }
+}
 
 class RealEstateEdit extends StatefulWidget {
   final RealEstate realestate;
@@ -18,31 +33,47 @@ class RealEstateEdit extends StatefulWidget {
 }
 
 class _RealEstateEditState extends State<RealEstateEdit> {
-  late String typeOfProperty;
   late String address;
   late String khataNumber;
   late String northOfProperty;
   late String southOfProperty;
   late String eastOfProperty;
   late String westOfProperty;
-  late String image = ''; // Initialize with an empty string
+  late String image;
   late String comments;
   late String attachment;
+
+  PropertyType? _selectedPropertyType;
+  var proof;
+  final TextEditingController _attachmentController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     // Initialize the local variables with the current values
-    typeOfProperty = widget.realestate.typeOfProperty ?? '';
+    _selectedPropertyType = widget.realestate.typeOfProperty != null
+        ? propertyTypeFromString(widget.realestate.typeOfProperty!)
+        : null;
     address = widget.realestate.address ?? '';
     khataNumber = widget.realestate.khataNumber ?? '';
     southOfProperty = widget.realestate.southOfProperty ?? '';
     eastOfProperty = widget.realestate.eastOfProperty ?? '';
     northOfProperty = widget.realestate.northOfProperty ?? '';
     westOfProperty = widget.realestate.westOfProperty ?? '';
-    northOfProperty = widget.realestate.image ?? '';
+    image = widget.realestate.image ?? '';
     comments = widget.realestate.comments ?? '';
     attachment = widget.realestate.attachment ?? '';
+  }
+
+  PropertyType? propertyTypeFromString(String type) {
+    switch (type) {
+      case 'Residential':
+        return PropertyType.Residential;
+      case 'Commercial':
+        return PropertyType.Commercial;
+      default:
+        return null;
+    }
   }
 
   @override
@@ -50,7 +81,7 @@ class _RealEstateEditState extends State<RealEstateEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit Real Estate',
+        title: const Text('Edit real estate',
             style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
@@ -59,129 +90,123 @@ class _RealEstateEditState extends State<RealEstateEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              DropdownButtonFormField<String>(
-                value: typeOfProperty,
-                onChanged: (value) {
-                  setState(() {
-                    typeOfProperty = value!;
-                  });
-                },
-                items: const [
-                  DropdownMenuItem<String>(
-                    value: 'Residential',
-                    child: Text('Residential'),
+              buildTextField(
+                labelText: 'Address',
+                initialValue: address,
+                onChanged: (value) => setState(() => address = value),
+                isMandatory: true,
+              ),
+              const SizedBox(height: 10),
+              const Row(
+                children: [
+                  Text(
+                    'Property type',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  DropdownMenuItem<String>(
-                    value: 'Commercial',
-                    child: Text('Commercial'),
+                  Text(
+                    ' *',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
+              ),
+              DropdownButtonFormField<PropertyType>(
+                value: _selectedPropertyType,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedPropertyType = value;
+                  });
+                },
+                items: [
+                  const DropdownMenuItem<PropertyType>(
+                    value: null,
+                    child: Text('Select property type'),
+                  ),
+                  ...PropertyType.values.map((type) {
+                    return DropdownMenuItem<PropertyType>(
+                      value: type,
+                      child: Text(type.toString().split('.').last),
+                    );
+                  }),
+                ],
                 decoration: const InputDecoration(
-                  labelText: 'Type Of Property',
-                  // border: OutlineInputBorder(),
+                  border: OutlineInputBorder(),
+                  contentPadding:
+                  EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                 ),
               ),
-              TextFormField(
-                initialValue: address,
-                decoration: const InputDecoration(labelText: 'Address'),
-                onChanged: (value) {
-                  setState(() {
-                    address = value;
-                  });
-                },
-              ),
-              TextFormField(
+              const SizedBox(height: 10),
+              buildTextField(
+                labelText: 'Khata number',
                 initialValue: khataNumber,
-                decoration: const InputDecoration(labelText: 'Khata Number'),
-                onChanged: (value) {
-                  setState(() {
-                    khataNumber = value;
-                  });
-                },
+                onChanged: (value) => setState(() => khataNumber = value),
+                isMandatory: false,
+                isNumeric: true
               ),
-              TextFormField(
+              const SizedBox(height: 10),
+              buildTextField(
+                labelText: 'North of property',
                 initialValue: northOfProperty,
-                decoration:
-                    const InputDecoration(labelText: ' North Of Property'),
-                onChanged: (value) {
-                  setState(() {
-                    northOfProperty = value;
-                  });
-                },
+                onChanged: (value) => setState(() => northOfProperty = value),
+                isMandatory: false,
               ),
-              TextFormField(
-                initialValue: northOfProperty,
-                decoration:
-                    const InputDecoration(labelText: ' North Of Property'),
-                onChanged: (value) {
-                  setState(() {
-                    northOfProperty = value;
-                  });
-                },
-              ),
-              TextFormField(
+              const SizedBox(height: 10),
+              buildTextField(
+                labelText: 'South of property',
                 initialValue: southOfProperty,
-                decoration:
-                    const InputDecoration(labelText: ' South Of Property'),
-                onChanged: (value) {
-                  setState(() {
-                    southOfProperty = value;
-                  });
-                },
+                onChanged: (value) => setState(() => southOfProperty = value),
+                isMandatory: false,
               ),
-              TextFormField(
+              const SizedBox(height: 10),
+              buildTextField(
+                labelText: 'East of property',
                 initialValue: eastOfProperty,
-                decoration:
-                    const InputDecoration(labelText: ' East Of Property'),
-                onChanged: (value) {
-                  setState(() {
-                    eastOfProperty = value;
-                  });
-                },
+                onChanged: (value) => setState(() => eastOfProperty = value),
+                isMandatory: false,
               ),
-              TextFormField(
+              const SizedBox(height: 10),
+              buildTextField(
+                labelText: 'West of property',
                 initialValue: westOfProperty,
-                decoration:
-                    const InputDecoration(labelText: ' West Of Property'),
-                onChanged: (value) {
-                  setState(() {
-                    westOfProperty = value;
-                  });
-                },
+                onChanged: (value) => setState(() => westOfProperty = value),
+                isMandatory: false,
               ),
-              TextFormField(
+              const SizedBox(height: 10),
+              buildTextField(
+                labelText: 'Image(url)',
                 initialValue: image,
-                decoration: const InputDecoration(labelText: 'Image'),
-                onChanged: (value) {
-                  setState(() {
-                    image = value;
-                  });
-                },
+                onChanged: (value) => setState(() => image = value),
+                isMandatory: false,
               ),
-              TextFormField(
+              const SizedBox(height: 10),
+              buildTextField(
+                labelText: 'Comments',
                 initialValue: comments,
-                decoration: const InputDecoration(labelText: 'Comments'),
-                onChanged: (value) {
-                  setState(() {
-                    comments = value;
-                  });
-                },
+                onChanged: (value) => setState(() => comments = value),
+                isMandatory: false,
               ),
-              TextFormField(
-                initialValue: attachment,
-                decoration: const InputDecoration(labelText: 'Attachment'),
-                onChanged: (value) {
-                  setState(() {
-                    attachment = value;
-                  });
-                },
-              ),
+              const SizedBox(height: 10),
+              buildAttachmentField(),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
-                  // Update the RealEstate object with the new values
+
+                  if (address.isEmpty) {
+                    DisplayUtils.showToast('Please enter Address');
+                    return;
+                  }
+                  if (_selectedPropertyType == null) {
+                    DisplayUtils.showToast('Please select Property type');
+                    return;
+                  }
+
                   final updatedRealEstate = RealEstate(
-                    typeOfProperty: typeOfProperty,
+                    typeOfProperty: propertyTypeToString(_selectedPropertyType),
                     address: address,
                     khataNumber: khataNumber,
                     northOfProperty: northOfProperty,
@@ -198,7 +223,7 @@ class _RealEstateEditState extends State<RealEstateEdit> {
                   // Call API to update real estate details
                   final response = await updateRealEstate(updatedRealEstate);
 
-                  DisplayUtils.showToast('Asset Updated Successfully');
+                  DisplayUtils.showToast('Asset updated successfully');
 
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
@@ -211,7 +236,7 @@ class _RealEstateEditState extends State<RealEstateEdit> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor : const Color(0xff429bb8), // Set background color here
+                  backgroundColor: const Color(0xff429bb8), // Set background color here
                 ),
                 child: const Text('Update', style: TextStyle(color: Colors.white)),
               ),
@@ -220,6 +245,119 @@ class _RealEstateEditState extends State<RealEstateEdit> {
         ),
       ),
     );
+  }
+
+  Widget buildTextField({
+    required String labelText,
+    required String initialValue,
+    required Function(String) onChanged,
+    bool isMandatory = false,
+    bool isNumeric = false,
+  }) {
+    return TextFormField(
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        label: isMandatory
+            ? RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: labelText,
+                style: const TextStyle(color: Colors.black),
+              ),
+              const TextSpan(
+                text: ' *',
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
+        )
+            : Text(labelText, style: const TextStyle(color: Colors.black)),
+        border: const OutlineInputBorder(),
+      ),
+      onChanged: (value) {
+        // Trim leading and trailing spaces
+        final trimmedValue = value.trim();
+        onChanged(trimmedValue);
+      },
+      validator: (value) {
+        if (isMandatory && value!.isEmpty) {
+          return 'Please enter $labelText.';
+        }
+        return null;
+      },
+      inputFormatters: isNumeric
+          ? <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(10),
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+        NoLeadingSpaceFormatter(),
+      ]
+          : <TextInputFormatter>[
+        NoLeadingSpaceFormatter(),
+      ],
+    );
+  }
+
+  Widget buildAttachmentField() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _attachmentController,
+                decoration: const InputDecoration(
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff429bb8)),
+                  ),
+                  hintText: "Select File",
+                  hintStyle: TextStyle(fontSize: 16),
+                ),
+                readOnly: true,
+                onTap: uploadFile,
+              ),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: uploadFile,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff429bb8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.width * 0.01,
+                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                ),
+              ),
+              child: const Text(
+                'File',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Future<void> uploadFile() async {
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
+
+    if (result != null) {
+      setState(() {
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
+      });
+    } else {
+      // Handle error when no file is selected.
+    }
   }
 
   Future<RealEstate?> updateRealEstate(RealEstate realEstate) async {
@@ -237,12 +375,10 @@ class _RealEstateEditState extends State<RealEstateEdit> {
     try {
       final response = await dio.put(
         'http://43.205.12.154:8080/v2/asset/${realEstate.assetId}',
-        data: realEstate
-            .toJson(), // Convert real estate object to JSON and send as request body
+        data: realEstate.toJson(), // Convert real estate object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {
-        // Parse and return updated real estate details
         return RealEstate.fromJson(jsonDecode(response.data));
       } else {
         return null; // Return null if update fails
@@ -250,5 +386,15 @@ class _RealEstateEditState extends State<RealEstateEdit> {
     } catch (e) {
       return null; // Return null if an error occurs
     }
+  }
+}
+
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

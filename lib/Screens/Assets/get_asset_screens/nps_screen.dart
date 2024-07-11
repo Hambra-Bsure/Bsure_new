@@ -76,7 +76,8 @@ class _NpsScreenState extends State<NpsScreen> {
         title: const Text('Nps', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: Text("No Assets found"))
+          ? const Center(child: Text("No assets found",
+          style: TextStyle(fontSize: 20.0)))
           : nps.isNotEmpty == true
               ? ListView.builder(
                   itemCount: nps.length,
@@ -93,7 +94,7 @@ class _NpsScreenState extends State<NpsScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit,color: Color(0xff429bb8)),
                                   onPressed: () async {
                                     final updatednps = await Navigator.push(
                                       context,
@@ -114,11 +115,11 @@ class _NpsScreenState extends State<NpsScreen> {
                                 ),
                               ],
                             ),
-                            Text('pranNumber: ${Nps.pranNumber}'),
+                            buildInfoRow('Pran number:',Nps.pranNumber),
                             const SizedBox(height: 8.0),
-                            Text('comments: ${Nps.comments}'),
+                            buildInfoRow('Comments: ', Nps.comments),
                             const SizedBox(height: 8.0),
-                            Text('attachment: ${Nps.attachment}'),
+                            buildInfoRow('Attachment: ', Nps.attachment),
                             const SizedBox(height: 8.0),
                             ElevatedButton(
                               onPressed: () {
@@ -126,7 +127,7 @@ class _NpsScreenState extends State<NpsScreen> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text("Delete Asset?"),
+                                      title: const Text("Delete asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -224,6 +225,39 @@ class _NpsScreenState extends State<NpsScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
+      ),
+    );
+  }
+
+  Widget buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            flex: 7,
+            child: Text(
+              value ?? '',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

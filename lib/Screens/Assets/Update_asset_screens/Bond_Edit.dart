@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/bond.dart';
 import '../../Utils/DisplayUtils.dart';
@@ -10,7 +12,8 @@ class BondEdit extends StatefulWidget {
   final Bond bond;
   final String assetType;
 
-  const BondEdit({super.key, required this.bond, required this.assetType});
+  const BondEdit({Key? key, required this.bond, required this.assetType})
+      : super(key: key);
 
   @override
   State<BondEdit> createState() => _BondEditState();
@@ -21,9 +24,13 @@ class _BondEditState extends State<BondEdit> {
   late String bondNumber;
   late String authorityWhoIssuedTheBond;
   late String typeOfBond;
-  late String maturityDate;
+  late String maturityDate; // Changed to String type
   late String comments;
   late String attachment;
+
+  var proof;
+  final TextEditingController _attachmentController = TextEditingController();
+  final TextEditingController _maturityDateController = TextEditingController();
 
   @override
   void initState() {
@@ -36,6 +43,9 @@ class _BondEditState extends State<BondEdit> {
     maturityDate = widget.bond.maturityDate ?? '';
     comments = widget.bond.comments ?? '';
     attachment = widget.bond.attachment ?? '';
+
+    // Set initial value to the _maturityDateController
+    _maturityDateController.text = maturityDate;
   }
 
   @override
@@ -43,7 +53,7 @@ class _BondEditState extends State<BondEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit Bond', style: TextStyle(color: Colors.white)),
+        title: const Text('Edit bond', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -51,75 +61,78 @@ class _BondEditState extends State<BondEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
+              buildTextField(
                 initialValue: bondName,
-                decoration: const InputDecoration(labelText: 'Bond Name'),
-                onChanged: (value) {
-                  setState(() {
-                    bondName = value;
-                  });
-                },
+                labelText: 'Bond name',
+                onChanged: (value) => setState(() => bondName = value),
+                isMandatory: true,
               ),
-              TextFormField(
+              const SizedBox(height: 16.0),
+              buildTextField(
                 initialValue: bondNumber,
-                decoration: const InputDecoration(labelText: 'Bond Number'),
-                onChanged: (value) {
-                  setState(() {
-                    bondNumber = value;
-                  });
-                },
+                labelText: 'Bond number',
+                onChanged: (value) => setState(() => bondNumber = value),
+                isMandatory: true,
               ),
-              TextFormField(
+              const SizedBox(height: 16.0),
+              buildTextField(
                 initialValue: authorityWhoIssuedTheBond,
-                decoration: const InputDecoration(
-                    labelText: 'Authority Who Issued The Bond'),
-                onChanged: (value) {
-                  setState(() {
-                    authorityWhoIssuedTheBond = value;
-                  });
-                },
+                labelText: 'Authority who issued the bond',
+                onChanged: (value) =>
+                    setState(() => authorityWhoIssuedTheBond = value),
+                isMandatory: true,
               ),
-              TextFormField(
+              const SizedBox(height: 16.0),
+              buildTextField(
                 initialValue: typeOfBond,
-                decoration: const InputDecoration(labelText: 'Type Of Bond'),
-                onChanged: (value) {
-                  setState(() {
-                    typeOfBond = value;
-                  });
-                },
+                labelText: 'Type of bond',
+                onChanged: (value) => setState(() => typeOfBond = value),
+                isMandatory: true,
               ),
-              TextFormField(
-                controller: TextEditingController(
-                  text: maturityDate,
-                ),
-                // Format date as text
-                decoration: const InputDecoration(labelText: 'Maturity Date'),
-                onTap: () {
-                  _selectDate(context);
-                },
+              const SizedBox(height: 16.0),
+              buildDateField(
+                controller: _maturityDateController,
+                labelText: 'Maturity date',
+                mandatory: true,
               ),
-              TextFormField(
+              const SizedBox(height: 16.0),
+              buildTextField(
                 initialValue: comments,
-                decoration: const InputDecoration(labelText: 'Comments'),
-                onChanged: (value) {
-                  setState(() {
-                    comments = value;
-                  });
-                },
+                labelText: 'Comments',
+                onChanged: (value) => setState(() => comments = value),
+                isMandatory: false,
               ),
-              TextFormField(
-                initialValue: attachment,
-                decoration: const InputDecoration(labelText: 'Attachment'),
-                onChanged: (value) {
-                  setState(() {
-                    attachment = value;
-                  });
-                },
-              ),
+              const SizedBox(height: 16.0),
+              buildAttachmentField(),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
-                  // Update the RealEstate object with the new values
+                  if (bondName.isEmpty) {
+                    DisplayUtils.showToast('Please enter Bond name.');
+                    return;
+                  }
+
+                  if (bondNumber.isEmpty) {
+                    DisplayUtils.showToast('Please enter Bond number.');
+                    return;
+                  }
+
+                  if (authorityWhoIssuedTheBond.isEmpty) {
+                    DisplayUtils.showToast(
+                        'Please enter authority issued bond.');
+                    return;
+                  }
+
+                  if (typeOfBond.isEmpty) {
+                    DisplayUtils.showToast('Please enter type of bond.');
+                    return;
+                  }
+
+                  if (maturityDate.isEmpty) {
+                    DisplayUtils.showToast('Please select maturity date.');
+                    return;
+                  }
+
                   final updatedbond = Bond(
                     bondName: bondName,
                     bondNumber: bondNumber,
@@ -132,11 +145,10 @@ class _BondEditState extends State<BondEdit> {
                     category: widget.assetType,
                   );
 
-                  // Call API to update real estate details
+                  // Call API to update bond details
                   final response = await updateBond(updatedbond);
 
-                  DisplayUtils.showToast('Asset Updated Successfully');
-
+                  DisplayUtils.showToast('Asset updated successfully');
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
                     context,
@@ -148,9 +160,11 @@ class _BondEditState extends State<BondEdit> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor : const Color(0xff429bb8), // Set background color here
+                  backgroundColor:
+                      const Color(0xff429bb8), // Set background color here
                 ),
-                child: const Text('Update', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Update', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -159,20 +173,182 @@ class _BondEditState extends State<BondEdit> {
     );
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime initialDateTime = DateTime.parse(maturityDate);
+  Widget buildTextField({
+    required String labelText,
+    required String initialValue,
+    required Function(String) onChanged,
+    bool isMandatory = false,
+    bool isNumeric = false,
+  }) {
+    return TextFormField(
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        label: isMandatory
+            ? RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: labelText,
+                style: const TextStyle(color: Colors.black),
+              ),
+              const TextSpan(
+                text: ' *',
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
+        )
+            : Text(labelText, style: const TextStyle(color: Colors.black)),
+        border: const OutlineInputBorder(),
+      ),
+      onChanged: (value) {
+        // Trim leading and trailing spaces
+        final trimmedValue = value.trim();
+        onChanged(trimmedValue);
+      },
+      validator: (value) {
+        if (isMandatory && value!.isEmpty) {
+          return 'Please enter $labelText.';
+        }
+        return null;
+      },
+      inputFormatters: isNumeric
+          ? <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(10),
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+        NoLeadingSpaceFormatter(),
+      ]
+          : <TextInputFormatter>[
+        NoLeadingSpaceFormatter(),
+      ],
+    );
+  }
 
+  Widget buildDateField({
+    required TextEditingController controller,
+    required String labelText,
+    bool mandatory = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              labelText,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (mandatory)
+              const Text(
+                ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () {
+            _selectDate(context);
+          },
+          child: IgnorePointer(
+            child: TextFormField(
+              controller: controller,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: initialDateTime, // Pass DateTime object
-      firstDate: DateTime(1900),
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
-
-    if (picked != null && picked != initialDateTime) {
+    if (picked != null) {
       setState(() {
-        maturityDate = picked.toIso8601String(); // Convert DateTime to String
+        maturityDate = formatDate(picked); // Convert DateTime to String
+        _maturityDateController.text = maturityDate; // Update text field
       });
+    }
+  }
+
+  String formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
+  Widget buildAttachmentField() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _attachmentController,
+                decoration: const InputDecoration(
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff429bb8)),
+                  ),
+                  hintText: "Select File",
+                  hintStyle: TextStyle(fontSize: 16),
+                ),
+                readOnly: true,
+                onTap: uploadFile,
+              ),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: uploadFile,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff429bb8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.width * 0.01,
+                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                ),
+              ),
+              child: const Text(
+                'File',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Future<void> uploadFile() async {
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
+
+    if (result != null) {
+      setState(() {
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
+      });
+    } else {
+      // Handle error when no file is selected.
     }
   }
 
@@ -192,11 +368,11 @@ class _BondEditState extends State<BondEdit> {
       final response = await dio.put(
         'http://43.205.12.154:8080/v2/asset/${bond.assetId}',
         data: bond
-            .toJson(), // Convert real estate object to JSON and send as request body
+            .toJson(), // Convert bond object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {
-        // Parse and return updated real estate details
+        // Parse and return updated bond details
         return Bond.fromJson(jsonDecode(response.data));
       } else {
         return null; // Return null if update fails
@@ -204,5 +380,16 @@ class _BondEditState extends State<BondEdit> {
     } catch (e) {
       return null; // Return null if an error occurs
     }
+  }
+}
+
+
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

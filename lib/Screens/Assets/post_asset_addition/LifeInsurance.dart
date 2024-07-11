@@ -1,9 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart'; // Import this for FilteringTextInputFormatter
 import 'package:Bsure_devapp/Screens/Repositary/Retrofit/node_api_client.dart';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/life_insurance_screen.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/LifeInsuranceRequest.dart';
+
+import '../../Utils/DisplayUtils.dart';
 
 class LifeInsuranceAdd extends StatefulWidget {
   final String assetType;
@@ -16,14 +24,25 @@ class LifeInsuranceAdd extends StatefulWidget {
 
 class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
   final TextEditingController _insuranceCompanyNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _policyNameController = TextEditingController();
   final TextEditingController _policyNumberController = TextEditingController();
   final TextEditingController _coverageAmountController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _maturityDateController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
+
+  File? file;
+  String? fileName;
+  String? downloadUrl;
+
+  //ImagePicker imagePicker = ImagePicker();
+  Color color1 = const Color(0xff429bb8);
+  String url = "";
+  var name;
+  var proof;
+  String? assetId;
 
   String? maturityDate;
 
@@ -33,61 +52,238 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title:
-            const Text('LifeInsurance', style: TextStyle(color: Colors.white)),
+        const Text('Life insurance', style: TextStyle(color: Colors.white)),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start, children: [
               buildTextField(
                 controller: _insuranceCompanyNameController,
-                labelText: 'Insurance Company Name',
+                labelText: 'Insurance company name',
                 mandatory: true,
               ),
               buildTextField(
                 controller: _policyNameController,
-                labelText: 'Policy Name (Optional)',
+                labelText: 'Policy name',
               ),
               buildTextField(
                 controller: _policyNumberController,
-                labelText: 'Policy Number (Optional)',
+                labelText: 'Policy number',
+                isNumeric: true,
               ),
               buildTextField(
                 controller: _coverageAmountController,
-                labelText: 'Coverage Amount (Optional)',
+                labelText: 'Coverage amount',
+                isNumeric: true,
               ),
               buildDateField(
                 controller: _maturityDateController,
-                labelText: 'Maturity Date (Optional)',
+                labelText: 'Maturity date',
                 //mandatory: false,
               ),
               buildTextField(
                 controller: _commentsController,
-                labelText: 'Comments (Optional)',
+                labelText: 'Comments',
               ),
-              buildTextField(
-                controller: _attachmentController,
-                labelText: 'Attachment (Optional)',
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    _submitForm();
-                  },
+                  onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor : const Color(0xff429bb8), // Set background color here
+                    backgroundColor: const Color(0xff429bb8),
                   ),
-                  child: const Text('Submit', style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                      'Save', style: TextStyle(color: Colors.white)),
                 ),
               ),
-            ],
+              const SizedBox(height: 20),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _attachmentController,
+                          decoration: const InputDecoration(
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff429bb8)),
+                            ),
+                            hintText: "Select file",
+                            hintStyle: TextStyle(fontSize: 16),
+                          ),
+                          readOnly: true,
+                          onTap: uploadFile,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: uploadFile,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xff429bb8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: MediaQuery
+                                .of(context)
+                                .size
+                                .width * 0.01,
+                            horizontal: MediaQuery
+                                .of(context)
+                                .size
+                                .width * 0.03,
+                          ),
+                        ),
+                        child: const Text(
+                          'File',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await submitImage();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff429bb8),
+                    ),
+                    child: const Text('Submit',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ]),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> uploadFile() async {
+    final result = await FilePicker.platform.pickFiles(
+        type: FileType.any, allowMultiple: false);
+
+    if (result != null) {
+      setState(() {
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
+      });
+    } else {
+      // Handle error when no file is selected.
+    }
+  }
+
+  Future<void> submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("token");
+
+    if (proof == null || token == null || token.isEmpty || assetId == null) {
+      // If any of the conditions are not met, return and navigate to the next screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              LifeInsuranceScreen(
+                assetType: widget.assetType,
+              ),
+        ),
+      );
+      return;
+    }
+
+    try {
+      var uri = Uri.parse(
+          'http://43.205.12.154:8080/v2/asset/attachment'); // Update the URL to your API endpoint
+      var request = http.MultipartRequest('POST', uri);
+
+      // Set headers
+      request.headers['Authorization'] = token;
+
+      // Add asset ID as a field
+      request.fields['assetId'] = assetId.toString();
+
+      print("url");
+      print(assetId);
+
+      if (proof != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          "attachment",
+          proof.bytes!,
+          filename: proof.name,
+        ));
+      }
+
+      var response = await request.send();
+      print(response);
+
+      if (response.statusCode == 201) {
+        var responseBody = await response.stream.bytesToString();
+        var jsonResponse = jsonDecode(responseBody);
+        var fileUrl = jsonResponse['fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+        var returnedAssetId = jsonResponse['assetId']; // Assuming the server returns the asset ID in 'assetId' key
+        // Handle the file URL and asset ID
+        print('File URL: $fileUrl');
+        print('Asset ID: $returnedAssetId');
+
+        // Navigate to the BankAccountsScreen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                LifeInsuranceScreen(
+                  assetType: widget.assetType,
+                ),
+          ),
+        );
+      } else {
+        // Handle error response
+        print('Failed to upload file: ${response.statusCode}');
+        // Navigate to the BankAccountsScreen even if upload fails
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                LifeInsuranceScreen(
+                  assetType: widget.assetType,
+                ),
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle exception
+      print('Error uploading file: $e');
+      // Navigate to the BankAccountsScreen in case of error
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              LifeInsuranceScreen(
+                assetType: widget.assetType,
+              ),
+        ),
+      );
+    }
+  }
+
+  Future<String?> saveFileLocally(FilePickerResult result) async {
+    final file = File(result.files.single.path!); // Get the file
+    // Define a directory where the file will be saved
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String filePath = '${directory.path}/${result.files.single.name}';
+
+    // Copy the file to the application directory
+    await file.copy(filePath);
+
+    return filePath; // Return the saved file path
   }
 
   Widget buildDateField({
@@ -119,153 +315,157 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
         ),
         const SizedBox(height: 8),
         InkWell(
-          onTap: () {
-            _selectDate(context);
+          onTap: () async {
+            final selectedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(1900),
+              lastDate: DateTime(2100),
+            );
+
+            if (selectedDate != null) {
+              controller.text = selectedDate.toString().split(' ')[0];
+            }
           },
-          child: IgnorePointer(
+          child: AbsorbPointer(
             child: TextFormField(
               controller: controller,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
               ),
             ),
           ),
         ),
+        const SizedBox(height: 16),
       ],
     );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      setState(() {
-        //_maturityDateController.text = "${picked.toLocal()}".split(' ')[0];
-        _maturityDateController.text = picked.toIso8601String();
-        maturityDate = _maturityDateController.text; // Update maturityDate
-      });
-    }
   }
 
   Widget buildTextField({
     required TextEditingController controller,
     required String labelText,
-    bool readOnly = false,
     bool mandatory = false,
-    GestureTapCallback? onTap,
+    bool isNumeric = false,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: labelText,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              labelText,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (mandatory)
+              const Text(
+                ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
                 ),
-                if (mandatory)
-                  const TextSpan(
-                    text: ' *',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-              ],
-            ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+          inputFormatters: isNumeric
+              ? [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(10), // Limiting to 10 digits
+            NoLeadingSpaceFormatter(),
+          ]
+              : [
+            NoLeadingSpaceFormatter(),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: controller,
-            readOnly: readOnly,
-            onTap: onTap,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-            ),
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 
   void _submitForm() async {
-    if (!_validateForm()) {
-      return;
+    if (_insuranceCompanyNameController.value.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Insurance company name is required')),
+      );
     }
 
     final prefs = await SharedPreferences.getInstance();
-    var token =
-        prefs.getString("token"); // Retrieve token from SharedPreferences
+    var token = prefs.getString("token");
 
-    // Check if token is null or empty
     if (token == null || token.isEmpty) {
       // Handle the case where token is not available
-
       return;
     }
 
     final dio = Dio();
     final client = NodeClient(dio);
 
-    // _maturityDateController.text == ""
-    //     ? null
-    //     : _maturityDateController
-    //     .text,
+    String? maturityDateValue = _maturityDateController.text.isEmpty
+        ? null
+        : _maturityDateController.text;
+
+    // Parse coverage amount only if it's not empty
+    int? coverageAmountValue;
+    if (_coverageAmountController.text.isNotEmpty) {
+      coverageAmountValue = int.tryParse(_coverageAmountController.text);
+    }
+
+    var assetType = widget.assetType; // Assuming widget.assetType is a String
 
     final request = LifeInsuranceRequest(
-      assetType: widget.assetType,
+      assetType: assetType,
       insuranceCompanyName: _insuranceCompanyNameController.text,
       policyName: _policyNameController.text,
       policyNumber: _policyNumberController.text,
-      coverageAmount: _coverageAmountController.text.isNotEmpty
-          ? int.tryParse(_coverageAmountController.text)
-          : null,
-      maturityDate: _maturityDateController.text == ""
-          ? null
-          : _maturityDateController.text,
+      coverageAmount: coverageAmountValue,
+      maturityDate: maturityDateValue,
       comments: _commentsController.text,
       attachment: _attachmentController.text,
     );
 
     try {
       final response = await client.CreateLifeInsurance(token, request);
+      print(response);
 
-      Navigator.pop(context);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              LifeInsuranceScreen(assetType: widget.assetType),
-        ),
-      );
+      setState(() {
+        assetId = response.asset!.lifeInsurance!.assetId?.toString();
+      });
+
+      if (response.success == 200) {
+        DisplayUtils.showToast("Life insurance details added successfully");
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                LifeInsuranceScreen(assetType: widget.assetType),
+          ),
+        );
+      }
     } catch (e) {
       // Handle errors
     }
   }
+}
 
-  bool _validateForm() {
-    if (_insuranceCompanyNameController.value.text.isEmpty) {
-      // Check if AMC name is empty
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('InsuranceCompanyName is required')),
-      );
-      return false;
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
     }
-    return true;
+    return newValue;
   }
 }

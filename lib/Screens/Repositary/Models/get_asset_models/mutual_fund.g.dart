@@ -26,14 +26,14 @@ Map<String, dynamic> _$$MutualFundResponseImplToJson(
 
 _$MutualFundImpl _$$MutualFundImplFromJson(Map<String, dynamic> json) =>
     _$MutualFundImpl(
-      category: json['category'] as String,
+      category: json['category'] as String?,
       amcName: json['amcName'] as String?,
       schemeName: json['schemeName'] as String?,
       folioNumber: json['folioNumber'] as String?,
       fundType: json['fundType'] as String?,
       attachment: json['attachment'] as String?,
       comments: json['comments'] as String?,
-      assetId: json['assetId'] as int,
+      assetId: (json['assetId'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$MutualFundImplToJson(_$MutualFundImpl instance) =>

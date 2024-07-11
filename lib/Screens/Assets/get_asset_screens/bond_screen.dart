@@ -18,7 +18,7 @@ class BondScreen extends StatefulWidget {
 }
 
 class _BondScreenState extends State<BondScreen> {
-  List<Bond> bond = []; // Renamed to plural 'vehicles'
+  List<Bond> bond = [];
   bool isLoading = false;
 
   final String category = 'Bond';
@@ -26,21 +26,20 @@ class _BondScreenState extends State<BondScreen> {
   @override
   void initState() {
     super.initState();
-    getData(); // Renamed method to fetchVehicles
+    getData();
   }
 
   Future<void> getData() async {
-    // Renamed method to fetchVehicles
     setState(() {
       isLoading = true;
     });
 
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.get("token");
+    var token = prefs.getString("token");
 
     final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Bond');
     final response = await http.get(url, headers: {
-      "Authorization": token.toString(),
+      "Authorization": token ?? '',
       "ngrok-skip-browser-warning": "69420",
     });
 
@@ -77,9 +76,13 @@ class _BondScreenState extends State<BondScreen> {
         title: const Text('Bond', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: Text("No Assets found"))
-          : bond.isNotEmpty == true
-              ? ListView.builder(
+          ? const Center(
+              child: Text("No assets found", style: TextStyle(fontSize: 20.0)))
+          : bond.isEmpty
+              ? const Center(
+                  child:
+                      Text("No assets found", style: TextStyle(fontSize: 20.0)))
+              : ListView.builder(
                   itemCount: bond.length,
                   itemBuilder: (context, index) {
                     final bonds = bond[index];
@@ -94,7 +97,8 @@ class _BondScreenState extends State<BondScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit,
+                                      color: Color(0xff429bb8)),
                                   onPressed: () async {
                                     final updatedbond = await Navigator.push(
                                       context,
@@ -114,20 +118,20 @@ class _BondScreenState extends State<BondScreen> {
                                 ),
                               ],
                             ),
-                            Text('bondName: ${bonds.bondName}'),
+                            buildInfoRow('Bond name', bonds.bondName),
                             const SizedBox(height: 8.0),
-                            Text('bondNumber: ${bonds.bondNumber}'),
+                            buildInfoRow('Bond number', bonds.bondNumber),
                             const SizedBox(height: 8.0),
-                            Text(
-                                'authorityWhoIssuedTheBond: ${bonds.authorityWhoIssuedTheBond}'),
+                            buildInfoRow('Authority issued bond',
+                                bonds.authorityWhoIssuedTheBond),
                             const SizedBox(height: 8.0),
-                            Text('typeOfBond: ${bonds.typeOfBond}'),
+                            buildInfoRow('Type of bond', bonds.typeOfBond),
                             const SizedBox(height: 8.0),
-                            Text('maturityDate: ${bonds.maturityDate}'),
+                            buildInfoRow('Maturity date', bonds.maturityDate),
                             const SizedBox(height: 8.0),
-                            Text('comments: ${bonds.comments}'),
+                            buildInfoRow('Comments', bonds.comments),
                             const SizedBox(height: 8.0),
-                            Text('attachment: ${bonds.attachment}'),
+                            buildInfoRow('Attachment', bonds.attachment),
                             const SizedBox(height: 8.0),
                             ElevatedButton(
                               onPressed: () {
@@ -135,7 +139,7 @@ class _BondScreenState extends State<BondScreen> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text("Delete Asset?"),
+                                      title: const Text("Delete asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -160,11 +164,11 @@ class _BondScreenState extends State<BondScreen> {
                                           onPressed: () async {
                                             Navigator.of(context).pop();
                                             deleteAssetStatus(index);
-                                            List<Bond> newbond = <Bond>[];
-                                            newbond.addAll(bond);
-                                            newbond.removeAt(index);
+                                            List<Bond> newBonds = <Bond>[];
+                                            newBonds.addAll(bond);
+                                            newBonds.removeAt(index);
                                             setState(() {
-                                              bond = newbond;
+                                              bond = newBonds;
                                             });
                                           },
                                         ),
@@ -194,14 +198,6 @@ class _BondScreenState extends State<BondScreen> {
                       ),
                     );
                   },
-                )
-              : const Center(
-                  child: Text(
-                    'No data found',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
-                  ),
                 ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -236,13 +232,45 @@ class _BondScreenState extends State<BondScreen> {
     );
   }
 
+  Widget buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            flex: 7,
+            child: Text(
+              value ?? '',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> deleteAssetStatus(int index) async {
-    final Bond = bond[index];
+    final bondToDelete = bond[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
     if (token == null) {
-      // Handle token absence or expiration here
       return;
     }
 
@@ -251,12 +279,14 @@ class _BondScreenState extends State<BondScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${Bond.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${bondToDelete.assetId}',
       );
 
       if (response.statusCode == 200) {
-        DisplayUtils.showToast(" bond successfully deleted.");
+        DisplayUtils.showToast("Bond successfully deleted.");
       }
-    } catch (e) {}
+    } catch (e) {
+      DisplayUtils.showToast("Failed to delete bond.");
+    }
   }
 }

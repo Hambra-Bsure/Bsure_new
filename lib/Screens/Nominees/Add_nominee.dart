@@ -1,13 +1,14 @@
 import 'dart:convert';
-import 'package:file_picker/file_picker.dart';
+import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Repositary/Models/Nominee_models/Add_Nominee_req.dart';
-import '../Repositary/Models/Nominee_models/Add_Nominee_res.dart';
-import 'Get_all_nominees.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:file_picker/file_picker.dart';
+
+import 'Get_all_nominees.dart';
 
 enum Relation {
   Spouse,
@@ -18,11 +19,11 @@ enum Relation {
   Brother,
   Sister,
   Grandchild,
-  Other
+  Other,
 }
 
 class AddNominee extends StatefulWidget {
-  const AddNominee({super.key});
+  const AddNominee({Key? key}) : super(key: key);
 
   @override
   _AddNomineeState createState() => _AddNomineeState();
@@ -40,14 +41,11 @@ class _AddNomineeState extends State<AddNominee> {
   TextEditingController guardianNameController = TextEditingController();
   TextEditingController guardianMobileNumberController =
       TextEditingController();
-  TextEditingController photoController = TextEditingController();
   TextEditingController attachmentController = TextEditingController();
+  TextEditingController photoController = TextEditingController();
 
-  //bool isMinor = false;
   late int age;
-  String result = '';
   bool isGuardianVisible = false;
-  var name;
   var proof;
 
   List<Contact> _contacts = [];
@@ -91,7 +89,7 @@ class _AddNomineeState extends State<AddNominee> {
     ),
     const DropdownMenuItem(
       value: Relation.Grandchild,
-      child: Text('grandchild'),
+      child: Text('Grandchild'),
     ),
   ];
 
@@ -100,7 +98,7 @@ class _AddNomineeState extends State<AddNominee> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Add Nominee', style: TextStyle(color: Colors.white)),
+        title: const Text('Create nominee', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -108,449 +106,358 @@ class _AddNomineeState extends State<AddNominee> {
           child: Form(
             key: _formKey,
             child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: firstNameController,
-                    decoration: const InputDecoration(labelText: 'First Name'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter first name';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: lastNameController,
-                    decoration: const InputDecoration(labelText: 'Last Name'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter last name';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: emailController,
-                    decoration: const InputDecoration(labelText: 'Email'),
-                    // validator: (value) {
-                    //   if (value!.isEmpty) {
-                    //     return 'Please enter email';
-                    //   }
-                    //   return null;
-                    // },
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    // Align items to the bottom
-                    children: [
-                      Expanded(
-                        child: Stack(
-                          alignment: Alignment.bottomCenter,
-                          children: [
-                            TextFormField(
-                              controller: mobileNumberController,
-                              enabled: true,
-                              onTap: () {
-                                if (_selectedContacts.isNotEmpty) {
-                                  _showSelectedContactsDialog();
-                                }
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildTextField(
+                  firstNameController,
+                  'First name',
+                  mandatory: true,
+                ),
+                const SizedBox(height: 10),
+                _buildTextField(
+                  lastNameController,
+                  'Last name',
+                  mandatory: true,
+                ),
+                const SizedBox(height: 10),
+                _buildTextField(emailController, 'Email id'),
+                const SizedBox(height: 10),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          _buildTextField(
+                            mobileNumberController,
+                            'Mobile number',
+                            isNumeric: true,
+                            onTap: () {
+                              if (_selectedContacts.isNotEmpty) {
+                                _showSelectedContactsDialog();
+                              }
+                            },
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.contacts),
+                              onPressed: () {
+                                _getContacts();
                               },
-                              decoration: const InputDecoration(
-                                hintText: 'Mobile number',
-                                // Remove border to prevent duplicate underline
-                                border: InputBorder.none,
-                                // Add padding to avoid overlapping with the icon
-                                // contentPadding: EdgeInsets.only(bottom: 8.0),
-                              ),
                             ),
-                            Container(
-                              height: 2,
-                              // Adjust the height of the underline here
-                              color: Colors
-                                  .grey, // Adjust the color of the underline here
-                            ),
-                          ],
-                        ),
+                          ),
+                          Container(
+                            height: 2,
+                            color: Colors.grey,
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.contacts),
-                        onPressed: () {
-                          _getContacts();
+                    ),
+                  ],
+                ),
+                _isLoading
+                    ? const CircularProgressIndicator()
+                    : ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: _contacts.length,
+                        itemBuilder: (context, index) {
+                          final contact = _contacts[index];
+                          return ListTile(
+                            title: Text(contact.displayName ?? ''),
+                            onTap: () => _selectContact(contact),
+                            trailing: Checkbox(
+                              value: _selectedContacts.contains(contact),
+                              onChanged: (bool? value) {
+                                _selectContact(contact);
+                              },
+                            ),
+                          );
                         },
                       ),
-                    ],
-                  ),
-                  _isLoading
-                      ? const CircularProgressIndicator()
-                      : ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: _contacts.length,
-                          itemBuilder: (context, index) {
-                            final contact = _contacts[index];
-                            return ListTile(
-                              title: Text(contact.displayName ?? ''),
-                              onTap: () => _selectContact(contact),
-                              trailing: Checkbox(
-                                value: _selectedContacts.contains(contact),
-                                onChanged: (bool? value) {
-                                  _selectContact(contact);
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                  TextFormField(
-                    controller: addressController,
-                    decoration: const InputDecoration(labelText: 'Address'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter address';
-                      }
-                      return null;
-                    },
-                  ),
-                  DropdownButtonFormField<Relation>(
-                    value: _selectedRelation,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedRelation = value;
-                      });
-                    },
-                    items: _relationDropdownItems,
-                    decoration: const InputDecoration(labelText: 'Relation'),
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select a relation';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: ageController,
-                    decoration: const InputDecoration(
-                      labelText: 'Enter Nominee Age',
+                const SizedBox(height: 10),
+                _buildTextField(addressController, 'Address', mandatory: true),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<Relation>(
+                  value: _selectedRelation,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedRelation = value;
+                    });
+                  },
+                  items: _relationDropdownItems,
+                  decoration: InputDecoration(
+                    labelText: 'Relation',
+                    // Updated to indicate mandatory field
+                    labelStyle: const TextStyle(
+                      color: Colors.black, // Set label text color to black
                     ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        age = int.parse(value);
-                        isGuardianVisible = age < 18;
-                      });
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter age';
-                      }
-                      return null;
-                    },
-                  ),
-                  Text(result),
-                  Visibility(
-                    visible: isGuardianVisible,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: guardianNameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Enter Guardian Name',
-                          ),
-                          validator: (value) {
-                            if (isGuardianVisible && value!.isEmpty) {
-                              return 'Please enter the guardian name';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: guardianMobileNumberController,
-                          decoration: const InputDecoration(
-                            labelText: 'Enter Guardian Mobile No',
-                          ),
-                          maxLength: 10,
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (isGuardianVisible && value!.isEmpty) {
-                              return 'Please enter the guardian Mobile number';
-                            }
-                            return null;
-                          },
-                        ),
-                      ],
+                    suffixIcon: const Padding(
+                      padding: EdgeInsets.only(top: 15),
+                      child: Text(
+                        ' *',
+                        style: TextStyle(color: Colors.red, fontSize: 20),
+                      ),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  Row(
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please select a relation'; // Validation message if no relation is selected
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                _buildTextField(
+                  ageController,
+                  'Age',
+                  mandatory: true,
+                  isNumeric: true,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() {
+                      age = int.parse(value);
+                      isGuardianVisible = age < 18;
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+                Visibility(
+                  visible: isGuardianVisible,
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff429bb8)),
-                            ),
-                            hintText: "Attach an ID Proof",
-                            hintStyle: TextStyle(fontSize: 16),
-                          ),
-                          readOnly: true,
-                          controller: attachmentController,
-                          onTap: uploadFile,
-                        ),
+                      _buildTextField(
+                        guardianNameController,
+                        'Guardian Name',
+                        mandatory: isGuardianVisible,
                       ),
-                      const SizedBox(width: 10),
-                      // Add some spacing between the text field and the button
-                      ElevatedButton(
-                        onPressed: uploadFile,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff429bb8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: MediaQuery.of(context).size.width * 0.01,
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.03,
-                          ),
-                        ),
-                        child: const Text(
-                          'Pick File',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      const SizedBox(height: 10),
+                      _buildTextField(
+                        guardianMobileNumberController,
+                        'Guardian Mobile No',
+                        mandatory: isGuardianVisible,
+                        isNumeric: true,
+                        maxLength: 10, // Ensure maximum length is 10 digits
+                        keyboardType: TextInputType.number,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff429bb8)),
-                            ),
-                            hintText: "Upload Photo",
-                            hintStyle: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xff429bb8)),
                           ),
-                          readOnly: true,
-                          controller: photoController,
-                          onTap: uploadphoto,
+                          hintText: "Select File",
+                          hintStyle: TextStyle(fontSize: 16),
                         ),
+                        readOnly: true,
+                        onTap: uploadFile,
                       ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: uploadphoto,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff429bb8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: MediaQuery.of(context).size.width * 0.01,
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.03,
-                          ),
-                        ),
-                        child: const Text(
-                          'Upload',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        // Form is valid, submit data
-                        submitNominee();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff429bb8), // Set background color here
                     ),
-                    child: const Text('Submit',style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: uploadFile,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff429bb8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          vertical: MediaQuery.of(context).size.width * 0.01,
+                          horizontal: MediaQuery.of(context).size.width * 0.03,
+                        ),
+                      ),
+                      child: const Text(
+                        'File',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xff429bb8)),
+                          ),
+                          hintText: "Upload Photo",
+                          hintStyle: TextStyle(fontSize: 16),
+                        ),
+                        readOnly: true,
+                        controller: photoController,
+                        onTap: uploadphoto,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: uploadphoto,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff429bb8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          vertical: MediaQuery.of(context).size.width * 0.01,
+                          horizontal: MediaQuery.of(context).size.width * 0.03,
+                        ),
+                      ),
+                      child: const Text(
+                        'Upload',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _submitForm();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff429bb8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      vertical: MediaQuery.of(context).size.width * 0.04,
+                      horizontal: MediaQuery.of(context).size.width * 0.07,
+                    ),
                   ),
-                ]),
+                  child: const Text(
+                    'Submit',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Future<void> _getContacts() async {
-    setState(() {
-      _isLoading = true;
-    });
 
-    if (await Permission.contacts.request().isGranted) {
-      List<Contact> contacts = (await ContactsService.getContacts()).toList();
-      setState(() {
-        _contacts = contacts;
-        _isLoading = false;
-      });
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Permission Denied'),
-          content: const Text('Please grant access to contacts to proceed.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
+  Widget _buildTextField(
+      TextEditingController controller,
+      String labelText, {
+        bool mandatory = false,
+        bool isNumeric = false,
+        TextInputType keyboardType = TextInputType.text,
+        Function()? onTap,
+        Widget? suffixIcon,
+        int? maxLength,
+        void Function(String)? onChanged,
+      }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: isNumeric ? TextInputType.number : keyboardType,
+      onTap: onTap,
+      onChanged: onChanged,
+      maxLength: maxLength,
+      inputFormatters: isNumeric
+          ? <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(10),
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+        NoLeadingSpaceFormatter(),
+      ]
+          : <TextInputFormatter>[
+        NoLeadingSpaceFormatter(),
+      ],
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: const TextStyle(
+          color: Colors.black, // Set label text color to black
         ),
-      );
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _showSelectedContactsDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Selected Contacts'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: _selectedContacts.map((contact) {
-                return ListTile(
-                  title: Text(contact.displayName ?? ''),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.remove),
-                    onPressed: () {
-                      //_removeContact(contact); // Remove the contact
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
+        suffixIcon: mandatory
+            ? suffixIcon ??
+            const Padding(
+              padding: EdgeInsets.only(top: 15),
+              child: Text(
+                ' *',
+                style: TextStyle(color: Colors.red, fontSize: 20),
+              ),
+            )
+            : suffixIcon,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      validator: mandatory
+          ? (value) {
+        if (value == null || value.isEmpty) {
+          return 'This field is required';
+        }
+        return null;
+      }
+          : null,
     );
   }
 
-  void _selectContact(Contact contact) {
-    setState(() {
-      // Check if the selected contact is already in _selectedContacts
-      bool isSelected = _selectedContacts.contains(contact);
+  Future<void> _submitForm() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
-      // If the contact is already selected, remove it
-      if (isSelected) {
-        _selectedContacts.remove(contact);
-      } else {
-        // Check if the selected contact's phone number already exists in _selectedContacts
-        bool hasDuplicatePhoneNumber = _selectedContacts.any((selectedContact) {
-          return selectedContact.phones?.any((phone) =>
-                  contact.phones?.any(
-                      (contactPhone) => contactPhone.value == phone.value) ??
-                  false) ??
-              false;
-        });
-
-        // If the contact's phone number is not a duplicate, add it to _selectedContacts
-        if (!hasDuplicatePhoneNumber) {
-          _selectedContacts.add(contact);
-        }
-      }
-    });
-  }
-
-  Future<void> uploadFile() async {
-    final result = await FilePicker.platform
-        .pickFiles(type: FileType.any, allowMultiple: false);
-
-    if (result != null) {
-      setState(() {
-        proof = result.files.single;
-        attachmentController.text = proof.name;
-      });
-    } else {}
-  }
-
-  Future<void> uploadphoto() async {
-    final result = await FilePicker.platform
-        .pickFiles(type: FileType.image, allowMultiple: false);
-
-    if (result != null) {
-      setState(() {
-        proof = result.files.single;
-        photoController.text = proof.name;
-      });
-    } else {}
-  }
-
-  void submitNominee() async {
-    String firstName = firstNameController.text;
-    String lastName = lastNameController.text;
-    String email = emailController.text;
-    String mobileNumber = mobileNumberController.text;
-    String address = addressController.text;
-
-    // Verify that guardian fields are not null before accessing their text properties
-    String guardianName = guardianNameController.text;
-    String guardianMobileNumber = guardianMobileNumberController.text;
-
-    Map<Relation, String> relationMapping = {
-      Relation.Father: 'father',
-      Relation.Mother: 'mother',
-      Relation.Daughter: 'daughter',
-      Relation.Son: 'son',
-      Relation.Spouse: 'spouse',
-      Relation.Grandchild: 'grandchild',
-      Relation.Brother: 'brother',
-      Relation.Sister: 'sister',
-      Relation.Other: 'other',
+    // Prepare the body of the request
+    Map<String, dynamic> body = {
+      "firstName": firstNameController.text,
+      "lastName": lastNameController.text,
+      "address": addressController.text,
+      "relation": _selectedRelation?.name.toLowerCase(),
+      "age": age,
     };
 
-    // Check if selected relation is not null before using it
-    String selectedRelationValue =
-        relationMapping[_selectedRelation] ?? "other";
-
-    final req = AddNomineeRequest(
-      firstName: firstName,
-      lastName: lastName,
-      address: address,
-      relation: selectedRelationValue,
-      age: age,
-      email: email,
-      mobileNumber: mobileNumber,
-      guardianName: guardianName,
-      guardianMobileNumber: guardianMobileNumber,
-    );
+    if (emailController.text.isNotEmpty) {
+      body['email'] = emailController.text;
+    }
+    if (mobileNumberController.text.isNotEmpty) {
+      body['mobileNumber'] = mobileNumberController.text;
+    }
+    // Add guardian fields conditionally
+    if (isGuardianVisible && guardianNameController.text.isNotEmpty) {
+      body['guardianName'] = guardianNameController.text;
+    }
+    if (isGuardianVisible && guardianMobileNumberController.text.isNotEmpty) {
+      body['guardianMobileNumber'] = guardianMobileNumberController.text;
+    }
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      var token = prefs.getString("token");
+      final response = await http.post(
+        Uri.parse('http://43.205.12.154:8080/v2/nominee'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token.toString(),
+        },
+        body: jsonEncode(body),
+      );
 
-      if (token == null) {
-        return;
-      }
-
-      final response =
-          await http.post(Uri.parse('http://43.205.12.154:8080/v2/nominee'),
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": token,
-              },
-              body: jsonEncode(req.toJson()));
-
-      // Handle response
       if (response.statusCode == 200) {
-        AddNomineeResponse nomineeResponse =
-            AddNomineeResponse.fromJson(jsonDecode(response.body));
+        // Handle success case
+        DisplayUtils.showToast("Nominee added successfully");
         Navigator.pop(context);
         Navigator.pushReplacement(
           context,
@@ -558,7 +465,135 @@ class _AddNomineeState extends State<AddNominee> {
             builder: (context) => const GetNomineeScreen(),
           ),
         );
-      } else {}
-    } catch (e) {}
+      } else {
+        // Handle error case
+        final responseData = json.decode(response.body);
+        final errorMessage = responseData['message'] ?? 'An error occurred';
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text(errorMessage),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle exception case
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: const Text('Failed to add nominee. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  void _selectContact(Contact contact) {
+    setState(() {
+      if (_selectedContacts.contains(contact)) {
+        _selectedContacts.remove(contact);
+      } else {
+        _selectedContacts.add(contact);
+      }
+    });
+
+    if (_selectedContacts.isNotEmpty) {
+      final selectedContact = _selectedContacts.first;
+      mobileNumberController.text = selectedContact.phones?.first.value ?? '';
+    }
+  }
+
+  Future<void> _getContacts() async {
+    if (await Permission.contacts.request().isGranted) {
+      final contacts = await ContactsService.getContacts();
+      setState(() {
+        _contacts = contacts.toList();
+      });
+    } else {
+      // Handle permission denial
+    }
+  }
+
+  void _showSelectedContactsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Selected contacts'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: _selectedContacts
+                .map((contact) => ListTile(
+                      title: Text(contact.displayName ?? ''),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            _selectedContacts.remove(contact);
+                          });
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ))
+                .toList(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> uploadFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      proof = result.files.first;
+    }
+  }
+
+  Future<void> uploadphoto() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      setState(() {
+        photoController.text = result.files.first.name;
+      });
+    }
+  }
+}
+
+
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

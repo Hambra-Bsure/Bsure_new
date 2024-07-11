@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../Repositary/Models/get_asset_models/non_life_insurance.dart';
 import '../../Utils/DisplayUtils.dart';
 
@@ -50,7 +49,6 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
       if (data.success) {
         setState(() {
           nonlifeInsurances = data.assets;
-          isLoading = false;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -68,6 +66,10 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
         ),
       );
     }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -75,143 +77,144 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Non Life Insurance',
+        title: const Text('Non-Life insurance',
             style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: Text("No Assets found"))
-          : nonlifeInsurances.isNotEmpty == true
-              ? ListView.builder(
-                  itemCount: nonlifeInsurances.length,
-                  itemBuilder: (context, index) {
-                    final nonlifeinsurance = nonlifeInsurances[index];
-                    return Card(
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () async {
-                                    final updatednonlifeinsurance =
-                                        await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            NonLifeInsuranceEdit(
-                                          nonlifeinsurance: nonlifeinsurance,
-                                          assetType: category,
-                                        ),
-                                      ),
-                                    );
-                                    if (updatednonlifeinsurance != null) {
-                                      setState(() {
-                                        nonlifeInsurances[index] =
-                                            updatednonlifeinsurance;
-                                      });
-                                    }
-                                  },
-                                ),
-                              ],
+          ? const Center(child: CircularProgressIndicator())
+          : nonlifeInsurances.isEmpty
+          ? const Center(
+        child: Text("No assets found",
+          style: TextStyle(fontSize: 20.0),
+        ),
+      )
+          : ListView.builder(
+        itemCount: nonlifeInsurances.length,
+        itemBuilder: (context, index) {
+          final nonlifeinsurance = nonlifeInsurances[index];
+          return Card(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit,
+                            color: Color(0xff429bb8)),
+                        onPressed: () async {
+                          final updatednonlifeinsurance =
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  NonLifeInsuranceEdit(
+                                    nonlifeinsurance: nonlifeinsurance,
+                                    assetType: category,
+                                  ),
                             ),
-                            Text(
-                                'insuranceCompanyName: ${nonlifeinsurance.insuranceCompanyName}'),
-                            const SizedBox(height: 8.0),
-                            Text(
-                                'typeOfInsurance: ${nonlifeinsurance.typeOfInsurance}'),
-                            const SizedBox(height: 8.0),
-                            Text('policyName: ${nonlifeinsurance.policyName}'),
-                            const SizedBox(height: 8.0),
-                            Text(
-                                'policyNumber: ${nonlifeinsurance.policyNumber}'),
-                            const SizedBox(height: 8.0),
-                            Text('comments: ${nonlifeinsurance.comments}'),
-                            const SizedBox(height: 8.0),
-                            Text('attachment: ${nonlifeinsurance.attachment}'),
-                            const SizedBox(height: 8.0),
-                            ElevatedButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Delete Asset?"),
-                                      content: const Text(
-                                          "Are you sure you want to delete this Asset?"),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: const Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                              color: Color(0xff429bb8),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: const Text(
-                                            "Confirm",
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                            deleteAssetStatus(index);
-                                            List<NonLifeInsurance>
-                                                newnonlifeinsurance =
-                                                <NonLifeInsurance>[];
-                                            newnonlifeinsurance
-                                                .addAll(nonlifeInsurances);
-                                            newnonlifeinsurance.removeAt(index);
-                                            setState(() {
-                                              nonlifeInsurances =
-                                                  newnonlifeinsurance;
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                backgroundColor: const Color(0xff429bb8),
-                              ),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.delete, color: Colors.white),
-                                  SizedBox(width: 5),
-                                  Text("Delete",
-                                      style: TextStyle(color: Colors.white)),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                          );
+                          if (updatednonlifeinsurance != null) {
+                            setState(() {
+                              nonlifeInsurances[index] =
+                                  updatednonlifeinsurance;
+                            });
+                          }
+                        },
                       ),
-                    );
-                  },
-                )
-              : const Center(
-                  child: Text(
-                    'No data found',
-                    style: TextStyle(
-                      fontSize: 20.0,
+                    ],
+                  ),
+                  buildInfoRow('Insurance company name:',
+                      nonlifeinsurance.insuranceCompanyName),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow('Type of insurance:',
+                      nonlifeinsurance.typeOfInsurance),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow(
+                      'Policy name:', nonlifeinsurance.policyName),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow(
+                      'Policy number:', nonlifeinsurance.policyNumber),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow(
+                      'Comments:', nonlifeinsurance.comments),
+                  const SizedBox(height: 8.0),
+                  buildInfoRow(
+                      'Attachment:', nonlifeinsurance.attachment),
+                  const SizedBox(height: 8.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Delete asset?"),
+                            content: const Text(
+                                "Are you sure you want to delete this Asset?"),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    color: Color(0xff429bb8),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text(
+                                  "Confirm",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                  deleteAssetStatus(index);
+                                  List<NonLifeInsurance>
+                                  newnonlifeinsurance =
+                                  <NonLifeInsurance>[];
+                                  newnonlifeinsurance
+                                      .addAll(nonlifeInsurances);
+                                  newnonlifeinsurance.removeAt(index);
+                                  setState(() {
+                                    nonlifeInsurances =
+                                        newnonlifeinsurance;
+                                  });
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      backgroundColor: const Color(0xff429bb8),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delete, color: Colors.white),
+                        SizedBox(width: 5),
+                        Text("Delete",
+                            style: TextStyle(color: Colors.white)),
+                      ],
                     ),
                   ),
-                ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
@@ -245,6 +248,39 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
     );
   }
 
+  Widget buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            flex: 7,
+            child: Text(
+              value ?? '',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> deleteAssetStatus(int index) async {
     final mutualFund = nonlifeInsurances[index];
     final prefs = await SharedPreferences.getInstance();
@@ -264,8 +300,10 @@ class _NonLifeInsuranceScreenState extends State<NonLifeInsuranceScreen> {
       );
 
       if (response.statusCode == 200) {
-        DisplayUtils.showToast(" non life insurance successfully deleted.");
+        DisplayUtils.showToast("Non life insurance successfully deleted.");
       }
-    } catch (e) {}
+    } catch (e) {
+      DisplayUtils.showToast("Failed to delete non life insurance.");
+    }
   }
 }

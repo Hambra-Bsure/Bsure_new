@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/Vehicle.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/vehicle_screen.dart';
+
+enum VehicleType { Car, Bike }
 
 class VehicleEdit extends StatefulWidget {
   final Vehicle vehicle;
@@ -26,6 +30,10 @@ class _VehicleEditState extends State<VehicleEdit> {
   late String comments;
   late String attachment;
 
+  VehicleType? _selectedVehicleType;
+  var proof;
+  final TextEditingController _attachmentController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +45,15 @@ class _VehicleEditState extends State<VehicleEdit> {
     chassisNumber = widget.vehicle.chassisNumber ?? '';
     comments = widget.vehicle.comments ?? '';
     attachment = widget.vehicle.attachment ?? '';
+
+    // Initialize _selectedVehicleType based on vehicleType
+    if (vehicleType.isNotEmpty) {
+      _selectedVehicleType = VehicleType.values.firstWhere(
+        (type) =>
+            type.toString().split('.').last.toLowerCase() ==
+            vehicleType.toLowerCase(),
+      );
+    }
   }
 
   @override
@@ -45,7 +62,7 @@ class _VehicleEditState extends State<VehicleEdit> {
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title:
-            const Text('Edit Vehicle', style: TextStyle(color: Colors.white)),
+            const Text('Edit vehicle', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -53,84 +70,81 @@ class _VehicleEditState extends State<VehicleEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              DropdownButtonFormField<String>(
-                value: vehicleType,
-                decoration: const InputDecoration(
-                  labelText: 'Vehicle Type', // Set the label text
-                ),
-                items: <String>['Bike', 'Car'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
+              buildDropdownField(
+                value: _selectedVehicleType,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedVehicleType = value as VehicleType?;
+                    vehicleType =
+                        _selectedVehicleType?.toString().split('.').last ?? '';
+                  });
+                },
+                items: VehicleType.values.map((type) {
+                  return DropdownMenuItem<VehicleType>(
+                    value: type,
+                    child: Text(type.toString().split('.').last),
                   );
                 }).toList(),
-                onChanged: (String? value) {
-                  if (value != null) {
-                    setState(() {
-                      vehicleType = value;
-                    });
-                  }
-                },
+                labelText: 'Select vehicle type',
+                mandatory: true,
               ),
-              TextFormField(
+              const SizedBox(height: 16.0),
+              buildTextField(
+                labelText: 'Brand name',
                 initialValue: brandName,
-                decoration: const InputDecoration(labelText: 'Brand Name'),
-                onChanged: (value) {
-                  setState(() {
-                    brandName = value;
-                  });
-                },
+                onChanged: (value) => setState(() => brandName = value),
+                isMandatory: true,
               ),
-              TextFormField(
+              const SizedBox(height: 16.0),
+              buildTextField(
+                labelText: 'Model name',
                 initialValue: modelName,
-                decoration: const InputDecoration(labelText: 'Model Name'),
-                onChanged: (value) {
-                  setState(() {
-                    modelName = value;
-                  });
-                },
+                onChanged: (value) => setState(() => modelName = value),
+                isMandatory: false,
               ),
-              TextFormField(
+              const SizedBox(height: 16.0),
+              buildTextField(
+                labelText: 'Registration number',
                 initialValue: registrationNumber,
-                decoration:
-                    const InputDecoration(labelText: ' Registration Number'),
-                onChanged: (value) {
-                  setState(() {
-                    registrationNumber = value;
-                  });
-                },
+                onChanged: (value) =>
+                    setState(() => registrationNumber = value),
+                isMandatory: true,
+                isNumeric: true
               ),
-              TextFormField(
+              const SizedBox(height: 16.0),
+              buildTextField(
+                labelText: 'Chassis number',
                 initialValue: chassisNumber,
-                decoration: const InputDecoration(labelText: 'Chassis Number'),
-                onChanged: (value) {
-                  setState(() {
-                    chassisNumber = value;
-                  });
-                },
+                onChanged: (value) => setState(() => chassisNumber = value),
+                isMandatory: false,
               ),
-              TextFormField(
+              const SizedBox(height: 16.0),
+              buildTextField(
+                labelText: 'Comments',
                 initialValue: comments,
-                decoration: const InputDecoration(labelText: 'Comments'),
-                onChanged: (value) {
-                  setState(() {
-                    comments = value;
-                  });
-                },
+                onChanged: (value) => setState(() => comments = value),
+                isMandatory: false,
               ),
-              TextFormField(
-                initialValue: attachment,
-                decoration: const InputDecoration(labelText: 'Attachment'),
-                onChanged: (value) {
-                  setState(() {
-                    attachment = value;
-                  });
-                },
-              ),
+              const SizedBox(height: 16.0),
+              buildAttachmentField(),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
-                  // Update the RealEstate object with the new values
+                  if (_selectedVehicleType == null) {
+                    DisplayUtils.showToast('Please select Vehicle type');
+                    return;
+                  }
+
+                  if (brandName.isEmpty) {
+                    DisplayUtils.showToast('Please enter Brand name');
+                    return;
+                  }
+
+                  if (registrationNumber.isEmpty) {
+                    DisplayUtils.showToast('Please enter Registration number');
+                    return;
+                  }
+
                   final updatedVehicle = Vehicle(
                     vehicleType: vehicleType,
                     brandName: brandName,
@@ -143,10 +157,10 @@ class _VehicleEditState extends State<VehicleEdit> {
                     category: widget.assetType,
                   );
 
-                  // Call API to update real estate details
+                  // Call API to update vehicle details
                   final response = await updateVehicle(updatedVehicle);
 
-                  DisplayUtils.showToast('Asset Updated Successfully');
+                  DisplayUtils.showToast('Asset updated successfully');
 
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
@@ -159,9 +173,10 @@ class _VehicleEditState extends State<VehicleEdit> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor : const Color(0xff429bb8), // Set background color here
+                  backgroundColor: const Color(0xff429bb8),
                 ),
-                child: const Text('Update', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Update', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -170,7 +185,165 @@ class _VehicleEditState extends State<VehicleEdit> {
     );
   }
 
-  Future<Vehicle?> updateVehicle(Vehicle realEstate) async {
+  Widget buildDropdownField({
+    required VehicleType? value,
+    required ValueChanged<dynamic> onChanged,
+    required List<DropdownMenuItem<VehicleType>> items,
+    required String labelText,
+    bool mandatory = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              labelText,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (mandatory)
+              const Text(
+                ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<VehicleType>(
+          value: value,
+          onChanged: onChanged,
+          items: items,
+          decoration: InputDecoration(
+            labelText: labelText,
+            border: const OutlineInputBorder(),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildTextField({
+    required String labelText,
+    required String initialValue,
+    required Function(String) onChanged,
+    bool isMandatory = false,
+    bool isNumeric = false,
+  }) {
+    return TextFormField(
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        label: isMandatory
+            ? RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: labelText,
+                style: const TextStyle(color: Colors.black),
+              ),
+              const TextSpan(
+                text: ' *',
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
+        )
+            : Text(labelText, style: const TextStyle(color: Colors.black)),
+        border: const OutlineInputBorder(),
+      ),
+      onChanged: (value) {
+        // Trim leading and trailing spaces
+        final trimmedValue = value.trim();
+        onChanged(trimmedValue);
+      },
+      validator: (value) {
+        if (isMandatory && value!.isEmpty) {
+          return 'Please enter $labelText.';
+        }
+        return null;
+      },
+      inputFormatters: isNumeric
+          ? <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(10),
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+        NoLeadingSpaceFormatter(),
+      ]
+          : <TextInputFormatter>[
+        NoLeadingSpaceFormatter(),
+      ],
+    );
+  }
+
+  Widget buildAttachmentField() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _attachmentController,
+                decoration: const InputDecoration(
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff429bb8)),
+                  ),
+                  hintText: "Select File",
+                  hintStyle: TextStyle(fontSize: 16),
+                ),
+                readOnly: true,
+                onTap: uploadFile,
+              ),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: uploadFile,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff429bb8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.width * 0.01,
+                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                ),
+              ),
+              child: const Text(
+                'File',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Future<void> uploadFile() async {
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
+
+    if (result != null) {
+      setState(() {
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
+      });
+    } else {
+      // Handle error when no file is selected.
+    }
+  }
+
+  Future<Vehicle?> updateVehicle(Vehicle vehicle) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -184,13 +357,12 @@ class _VehicleEditState extends State<VehicleEdit> {
 
     try {
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/asset/${realEstate.assetId}',
-        data: realEstate
-            .toJson(), // Convert real estate object to JSON and send as request body
+        'http://43.205.12.154:8080/v2/asset/${vehicle.assetId}',
+        data: vehicle
+            .toJson(), // Convert vehicle object to JSON and send as request body
       );
 
       if (response.statusCode == 200) {
-        // Parse and return updated real estate details
         return Vehicle.fromJson(jsonDecode(response.data));
       } else {
         return null; // Return null if update fails
@@ -198,5 +370,17 @@ class _VehicleEditState extends State<VehicleEdit> {
     } catch (e) {
       return null; // Return null if an error occurs
     }
+  }
+}
+
+
+
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

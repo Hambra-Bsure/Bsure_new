@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:Bsure_devapp/Screens/Assets/Update_asset_screens/LifeInsurance_Edit.dart';
 import 'package:Bsure_devapp/Screens/Assets/post_asset_addition/LifeInsurance.dart';
+import 'package:Bsure_devapp/Screens/Repositary/Models/get_asset_models/category_response.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -50,38 +51,47 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
       if (data.success) {
         setState(() {
           lifeInsurances = data.assets;
-          isLoading = false;
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(data.message),
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        showSnackBar(context, data.message);
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to fetch life insurance details'),
-          duration: Duration(seconds: 3),
-        ),
-      );
+      showSnackBar(context, 'Failed to fetch life insurance details');
     }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    // print("Asset Type: ${widget.assetType}");
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title:
-            const Text('Life Insurance', style: TextStyle(color: Colors.white)),
+            const Text('Life insurance', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child: Text("No Assets found"))
-          : lifeInsurances.isNotEmpty == true
-              ? ListView.builder(
+          ? const Center(child: CircularProgressIndicator())
+          : lifeInsurances.isEmpty
+              ? const Center(
+                  child: Text("No assets found",
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                )
+              : ListView.builder(
                   itemCount: lifeInsurances.length,
                   itemBuilder: (context, index) {
                     final insurance = lifeInsurances[index];
@@ -96,7 +106,8 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit,
+                                      color: Color(0xff429bb8)),
                                   onPressed: () async {
                                     final updatedInsurance =
                                         await Navigator.push(
@@ -104,7 +115,7 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                                       MaterialPageRoute(
                                         builder: (context) => LifeInsuranceEdit(
                                           insurance: insurance,
-                                          assetType: category,
+                                          assetType: widget.assetType,
                                         ),
                                       ),
                                     );
@@ -118,20 +129,25 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                                 ),
                               ],
                             ),
-                            Text(
-                                'insuranceCompanyName: ${insurance.insuranceCompanyName}'),
+                            buildInfoRow('Insurance company name',
+                                insurance.insuranceCompanyName),
                             const SizedBox(height: 8.0),
-                            Text('policyName: ${insurance.policyName}'),
+                            buildInfoRow('Policy name', insurance.policyName),
                             const SizedBox(height: 8.0),
-                            Text('policyNumber: ${insurance.policyNumber}'),
+                            buildInfoRow(
+                                'Policy number', insurance.policyNumber),
+                            const SizedBox(height: 4.0),
+                            if (insurance.coverageAmount != null &&
+                                insurance.coverageAmount != 0)
+                              buildInfoRow('Coverage amount',
+                                  insurance.coverageAmount.toString()),
                             const SizedBox(height: 8.0),
-                            Text('coverageAmount: ${insurance.coverageAmount}'),
+                            buildInfoRow(
+                                'Maturity aate', insurance.maturityDate),
+                            const SizedBox(height: 4.0),
+                            buildInfoRow('Comments', insurance.comments),
                             const SizedBox(height: 8.0),
-                            Text('maturityDate: ${insurance.maturityDate}'),
-                            const SizedBox(height: 8.0),
-                            Text('comments: ${insurance.comments}'),
-                            const SizedBox(height: 8.0),
-                            Text('attachment: ${insurance.attachment}'),
+                            buildInfoRow('Attachment', insurance.attachment),
                             const SizedBox(height: 8.0),
                             ElevatedButton(
                               onPressed: () {
@@ -139,7 +155,7 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text("Delete Asset?"),
+                                      title: const Text("Delete asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -165,14 +181,14 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                                             Navigator.of(context).pop();
                                             deleteAssetStatus(index);
                                             List<LifeInsurance>
-                                                newlifeInsurances =
+                                                newLifeInsurances =
                                                 <LifeInsurance>[];
-                                            newlifeInsurances
+                                            newLifeInsurances
                                                 .addAll(lifeInsurances);
-                                            newlifeInsurances.removeAt(index);
+                                            newLifeInsurances.removeAt(index);
                                             setState(() {
                                               lifeInsurances =
-                                                  newlifeInsurances;
+                                                  newLifeInsurances;
                                             });
                                           },
                                         ),
@@ -202,14 +218,6 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
                       ),
                     );
                   },
-                )
-              : const Center(
-                  child: Text(
-                    'No data found',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
-                  ),
                 ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -244,8 +252,41 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
     );
   }
 
+  Widget buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            flex: 7,
+            child: Text(
+              value ?? '',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> deleteAssetStatus(int index) async {
-    final mutualFund = lifeInsurances[index];
+    final insurance = lifeInsurances[index];
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -259,13 +300,17 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${mutualFund.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${insurance.assetId}',
       );
 
       if (response.statusCode == 200) {
-        DisplayUtils.showToast("life insurance successfully deleted.");
-
+        setState(() {
+          lifeInsurances.removeAt(index);
+        });
+        DisplayUtils.showToast("Life insurance successfully deleted");
       }
-    } catch (e) {}
+    } catch (e) {
+      DisplayUtils.showToast("Failed to delete life insurance");
+    }
   }
 }

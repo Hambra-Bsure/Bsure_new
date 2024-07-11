@@ -19,10 +19,10 @@ Map<String, dynamic> _$$WillResponseImplToJson(_$WillResponseImpl instance) =>
     };
 
 _$AssetImpl _$$AssetImplFromJson(Map<String, dynamic> json) => _$AssetImpl(
-      assetId: json['assetId'] as int,
+      assetId: (json['assetId'] as num).toInt(),
       assetName: json['assetName'] as String,
       assetIdentity: json['assetIdentity'] as String?,
-      categoryId: json['categoryId'] as int,
+      categoryId: (json['categoryId'] as num).toInt(),
       equalShareCheckbox: json['equalShareCheckbox'] as bool? ?? false,
       nominees: (json['nominees'] as List<dynamic>)
           .map((e) => Nominee.fromJson(e as Map<String, dynamic>))
@@ -41,7 +41,7 @@ Map<String, dynamic> _$$AssetImplToJson(_$AssetImpl instance) =>
 
 _$NomineeImpl _$$NomineeImplFromJson(Map<String, dynamic> json) =>
     _$NomineeImpl(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       mobile: json['mobile'] as String,
       relation: json['relation'] as String,
       name: json['name'] as String,

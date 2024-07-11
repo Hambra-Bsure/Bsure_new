@@ -70,9 +70,9 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 20),
               _buildInputField(
-                label: "Mobile Number",
+                label: "Mobile number",
                 controller: mobileController,
-                hintText: "Enter your mobile number",
+                hintText: "Enter your Mobile number",
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 20),
@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 const TextSpan(text: "Agree to "),
                 _buildClickableText(
-                  text: 'Terms and Conditions',
+                  text: 'Terms and conditions',
                   onTap: () {
                     // Navigate to the Terms and Conditions screen
                     Navigator.push(
@@ -120,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const TextSpan(text: " and "),
                 _buildClickableText(
-                  text: 'Privacy Policy',
+                  text: 'Privacy policy',
                   onTap: () {
                     // Navigate to the Privacy Policy screen
                     Navigator.push(

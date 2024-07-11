@@ -78,7 +78,7 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title: const Text(
-          'Shared Assets with me',
+          'Shared assets with me',
           style: TextStyle(color: Colors.white),
         ),
       ),

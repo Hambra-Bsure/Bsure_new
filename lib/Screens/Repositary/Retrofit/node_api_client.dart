@@ -32,6 +32,7 @@ import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/StockBrokerRe
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/StockBrokerResponse.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/VehicleRequest.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/VehicleResponse.dart';
+import 'package:Bsure_devapp/Screens/Repositary/Models/Digital_will/witness_get_res.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/GetAssetResponse.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
@@ -50,12 +51,16 @@ import '../Models/Digital_will/Digitalwill_video_req.dart';
 import '../Models/Digital_will/Digitalwill_video_res.dart';
 import '../Models/LoginRequest.dart';
 import '../Models/LoginResponse.dart';
+import '../Models/Nudge/Coupon/Coupon_response.dart';
+import '../Models/Nudge/Coupon/Nudge_coupon_request.dart';
+import '../Models/Nudge/Get_plan_res.dart';
 import '../Models/OtpVerifyRequest.dart';
 import '../Models/OtpVerifyResponse.dart';
 import '../Models/Share_assets/Delete_share_res.dart';
 import '../Models/Share_assets/my_share_asset_res.dart';
 import '../Models/Share_assets/Share_asset_req.dart';
 import '../Models/Share_assets/Share_asset_res.dart';
+import '../Models/User_models/Account_delete_res.dart';
 part 'node_api_client.g.dart';
 
 //@RestApi(baseUrl: 'https://api.bsure.live')
@@ -72,11 +77,13 @@ abstract class NodeClient {
   @POST("/v2/auth/verify")
   Future<VerifyResponse> verifyotp(@Body() VerifyRequest req);
 
-  // @POST("/login2")
-  // Future<LoginResponse2> login2(@Body() LoginRequest2 Request);
 
-  // @POST("/verify")
-  // Future<VerifyResponse> verify(@Body() VerifyRequest req);
+  //user account deletion
+  //
+  @DELETE("/v2/users")
+  Future<userAccountDeleteResponse> deleteAccount(
+      @Header('Authorization') String token);
+
 
   //get all Categorys
 
@@ -170,6 +177,15 @@ abstract class NodeClient {
   Future<EsopResponse> CreateEsop(
       @Header('Authorization') String token, @Body() EsopRequest req);
 
+
+  //Nudge
+
+  @POST("/payment/nudge-plans")
+  Future<PlanDetailsResponseBean> getPlanDetails();
+
+  @POST("/account/user/redeemCode")
+  Future<UserdiscountResponsebean> userdiscount(@Body() UserDiscountRequest request);
+
   //Digitalwil
 
   // @GET("/v2/asset")
@@ -192,6 +208,10 @@ abstract class NodeClient {
 
   @GET("/v2/will/assets")
   Future<DigitalwillgetResponse> digitalWillGetData(
+      @Header('Authorization') String token);
+
+  @GET("/v2/will/witness")
+  Future<WitnessgetResponse> getWitnessData(
       @Header('Authorization') String token);
 
   @POST("/v2/will/confirmation")

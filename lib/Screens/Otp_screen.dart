@@ -48,15 +48,6 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
     }
   }
 
-  @override
-  void dispose() {
-    pinCtl.dispose();
-    pinFn.dispose();
-    SmsAutoFill().unregisterListener();
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
   Future<String> _loadUserId() async {
     final sharedPreferences = await SharedPreferences.getInstance();
     userId = sharedPreferences.getString(SharedPrefHelper().USER_ID) ?? '';
@@ -74,7 +65,7 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('OTP Screen', style: TextStyle(color: Colors.white)),
+        title: const Text('Otp Screen', style: TextStyle(color: Colors.white)),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -97,7 +88,7 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 64.0),
+            const SizedBox(height: 30.0),
             Image.asset(
               'assets/images/logo.png',
               height: 96.0,
@@ -149,7 +140,7 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Verify your mobile number',
+            'Verify your Mobile number',
             style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -272,7 +263,7 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
                 }
               } else {
                 setState(() {
-                  errorMessage = 'Please enter the OTP';
+                  errorMessage = 'Please enter the Otp';
                 });
               }
             }

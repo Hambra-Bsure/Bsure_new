@@ -32,6 +32,7 @@ dependencies:
   image_picker: ^1.0.4
   file_picker: ^6.1.1
   path_provider: ^2.0.5 #TODO: check where it's been used if not remove it.
+  flutter_pdfview: ^1.0.0+19
   url_launcher: ^6.0.13 #TODO: check where it's been used if not remove it.
   line_awesome_flutter: ^2.0.0
   photo_view: ^0.14.0 #TODO: check where it's been used if not remove it.
@@ -54,6 +55,7 @@ dependencies:
   contacts_service: ^0.6.3
   permission_handler: ^10.3.0
   page_indicator: ^0.4.1
+
 
 dev_dependencies:
   flutter_lints: ^3.0.1

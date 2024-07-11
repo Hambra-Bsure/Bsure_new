@@ -20,7 +20,7 @@ Map<String, dynamic> _$$WillSaveReqImplToJson(_$WillSaveReqImpl instance) =>
 
 _$AssetReqImpl _$$AssetReqImplFromJson(Map<String, dynamic> json) =>
     _$AssetReqImpl(
-      assetId: json['assetId'] as int,
+      assetId: (json['assetId'] as num).toInt(),
       nominees: (json['nominees'] as List<dynamic>)
           .map((e) => NomineeReq.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -34,7 +34,7 @@ Map<String, dynamic> _$$AssetReqImplToJson(_$AssetReqImpl instance) =>
 
 _$NomineeReqImpl _$$NomineeReqImplFromJson(Map<String, dynamic> json) =>
     _$NomineeReqImpl(
-      nomineeId: json['nomineeId'] as int,
+      nomineeId: (json['nomineeId'] as num).toInt(),
       share: (json['share'] as num).toDouble(),
     );
 

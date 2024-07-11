@@ -1,10 +1,14 @@
 import 'dart:io';
+import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart'; // Required for TextInputFormatter
 import '../../Repositary/Models/AssetModels/BankAccountRequest.dart';
+import '../../Repositary/Models/AssetModels/BankAccountResponse.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../get_asset_screens/bank_account_screen.dart';
 
@@ -31,7 +35,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   final TextEditingController _assetTypeController = TextEditingController();
   final TextEditingController _bankNameController = TextEditingController();
   final TextEditingController _accountNumberController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _ifscCodeController = TextEditingController();
   final TextEditingController _branchNameController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
@@ -42,8 +46,8 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   File? file;
   String? fileName;
   String? downloadUrl;
+  String? assetId;
 
-  //ImagePicker imagePicker = ImagePicker();
   Color color1 = const Color(0xff429bb8);
   String url = "";
   var name;
@@ -52,7 +56,6 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   @override
   void initState() {
     super.initState();
-
     _assetTypeController.text = widget.assetType;
   }
 
@@ -61,7 +64,8 @@ class _BankAccountAddState extends State<BankAccountAdd> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Bank Account', style: TextStyle(color: Colors.white)),
+        title:
+        const Text('Bank account', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -71,101 +75,98 @@ class _BankAccountAddState extends State<BankAccountAdd> {
             children: [
               buildTextField(
                 controller: _bankNameController,
-                labelText: 'Bank Name',
+                labelText: 'Bank name',
                 mandatory: true,
               ),
               buildTextField(
                 controller: _accountNumberController,
-                labelText: 'Account Number (Optional)',
+                labelText: 'Account number',
                 mandatory: false,
+                isNumeric: true
               ),
               buildTextField(
                 controller: _ifscCodeController,
-                labelText: 'IFSC Code (Optional)',
+                labelText: 'IFSC code',
                 mandatory: false,
               ),
               buildTextField(
                 controller: _branchNameController,
-                labelText: 'Branch Name',
+                labelText: 'Branch name',
                 mandatory: true,
               ),
-              buildAccountTypeDropdown(), // Account Type dropdown field
+              buildAccountTypeDropdown(),
               buildTextField(
                 controller: _commentsController,
-                labelText: 'Comments (Optional)',
+                labelText: 'Comments',
                 mandatory: false,
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                child: Row(
-                  children: [
-                    Flexible(
-                      // Wrap TextFormField with Flexible
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        margin: const EdgeInsets.only(right: 10, left: 15),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff429bb8)),
-                            ),
-                            hintText: "Attach an ID Proof (Optional)",
-                            hintStyle: TextStyle(fontSize: 16),
-                          ),
-                          readOnly: true,
-                          controller: _attachmentController,
-                          onTap: uploadFile,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // Add spacing between TextFormField and ElevatedButton
-                    Expanded(
-                      // Wrap ElevatedButton with Expanded
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        alignment: Alignment.centerRight,
-                        child: ElevatedButton(
-                          onPressed: uploadFile,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff429bb8),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.width * 0.01,
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.09,
-                            ),
-                          ),
-                          child: const Text(
-                            'Pick File',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ),
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Handle submit button press
-                    _submitForm();
-                  },
+                  onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor : const Color(0xff429bb8), // Set background color here
+                    backgroundColor: const Color(0xff429bb8),
                   ),
-                  child: const Text('Submit', style: TextStyle(color: Colors.white)),
+                  child:
+                  const Text('Save', style: TextStyle(color: Colors.white)),
                 ),
+              ),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _attachmentController,
+                          decoration: const InputDecoration(
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff429bb8)),
+                            ),
+                            hintText: "Select File",
+                            hintStyle: TextStyle(fontSize: 16),
+                          ),
+                          readOnly: true,
+                          onTap: uploadFile,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // Change the label for picking a file
+                      ElevatedButton(
+                        onPressed: uploadFile,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xff429bb8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: MediaQuery.of(context).size.width * 0.01,
+                            horizontal:
+                            MediaQuery.of(context).size.width * 0.03,
+                          ),
+                        ),
+                        child: const Text(
+                          'File',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await submitImage();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff429bb8),
+                    ),
+                    child: const Text('Submit',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                ],
               ),
             ],
           ),
@@ -178,6 +179,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
     required TextEditingController controller,
     required String labelText,
     bool mandatory = false,
+    bool isNumeric = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,11 +206,15 @@ class _BankAccountAddState extends State<BankAccountAdd> {
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
+          inputFormatters: isNumeric
+              ? [FilteringTextInputFormatter.digitsOnly, NoLeadingSpaceFormatter()]
+              : [NoLeadingSpaceFormatter()],
           decoration: const InputDecoration(
-            border: OutlineInputBorder(), // Adding border to text field
+            border: OutlineInputBorder(),
             contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
+          keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         ),
       ],
     );
@@ -221,7 +227,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
         const Row(
           children: [
             Text(
-              'Account Type',
+              'Account type',
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
@@ -245,12 +251,10 @@ class _BankAccountAddState extends State<BankAccountAdd> {
             });
           },
           items: [
-            // Add a null value as the default option
             const DropdownMenuItem<AccountType>(
               value: null,
-              child: Text('Select Type'),
+              child: Text('Select type'),
             ),
-            // Add other account types
             ...AccountType.values.map((type) {
               return DropdownMenuItem<AccountType>(
                 value: type,
@@ -261,11 +265,73 @@ class _BankAccountAddState extends State<BankAccountAdd> {
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _submitForm() async {
+    if (_bankNameController.value.text.trim().isEmpty ||
+        _branchNameController.value.text.trim().isEmpty ||
+        _selectedAccountType == null) {
+      if (_bankNameController.value.text.trim().isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Bank name is required')),
+        );
+      } else if (_branchNameController.value.text.trim().isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Branch name is required')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Account type is required')),
+        );
+      }
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      return;
+    }
+
+    final dio = Dio();
+    final client = NodeClient(dio);
+
+    final accountType = _selectedAccountType ?? AccountType.Saving; // Provide a default value if needed
+
+    final req = BankAccountRequest(
+      assetType: widget.assetType,
+      bankName: _bankNameController.value.text.trim(),
+      accountNumber: _accountNumberController.value.text.trim(),
+      ifscCode: _ifscCodeController.value.text.trim(),
+      branchName: _branchNameController.value.text.trim(),
+      accountType: accountType,
+      comments: _commentsController.value.text.trim(),
+      attachment: downloadUrl ?? '', // Use the file URL obtained from the server
+    );
+
+    try {
+      final BankAccountResponse response =
+      await client.CreateBankAccount(token, req);
+
+      setState(() {
+        assetId = response.asset!.bankAccount!.assetId?.toString();
+      });
+
+      // Now you can use the assetId as needed
+      print('Asset ID: $assetId');
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print(e.response);
+      } else {
+        print(e.message);
+      }
+    }
   }
 
   Future<void> uploadFile() async {
@@ -277,124 +343,109 @@ class _BankAccountAddState extends State<BankAccountAdd> {
         proof = result.files.single;
         _attachmentController.text = proof.name;
       });
-
-      // Save the file locally
-      final fileSaved = await saveFileLocally(proof);
-      if (fileSaved != null) {
-        setState(() {
-          // Update the file variable with the saved file
-          file = fileSaved as File?;
-        });
-      }
+    } else {
+      // Handle error when no file is selected.
     }
   }
 
-  Future<String?> saveFileLocally(FilePickerResult result) async {
-    final File file = File(result.files.single.path!); // Get the file
-    // Define a directory where the file will be saved
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final String filePath = '${directory.path}/${result.files.single.name}';
-
-    // Copy the file to the application directory
-    await file.copy(filePath);
-
-    return filePath; // Return the saved file path
-  }
-
-  Future<void> _submitForm() async {
-    if (!_validateForm()) {
-      return;
-    }
-
+  Future<void> submitImage() async {
     final prefs = await SharedPreferences.getInstance();
-    var token =
-        prefs.getString("token"); // Retrieve token from SharedPreferences
+    var token = prefs.getString("token");
 
-    // Check if token is null or empty
-    if (token == null || token.isEmpty) {
-      // Handle the case where token is not available
-
-      return;
-    }
-
-    //final isFormValid = _validateForm();
-
-    //if (isFormValid) {
-    final dio = Dio();
-    final client = NodeClient(dio);
-
-    String? fileUrl;
-
-    // Check if a file is uploaded and saved locally
-    if (file != null) {
-      // Use the saved file path
-      fileUrl = file!.path;
-    } else {
-      // Get the file URL from the controller
-      fileUrl = _attachmentController.value.text.trim();
-    }
-
-    // If no file is uploaded, set fileUrl to an empty string or null
-    if (fileUrl.isEmpty) {
-      fileUrl = ''; // or fileUrl = null;
-    }
-
-    AccountType accountType;
-    if (_selectedAccountType != null) {
-      accountType = _selectedAccountType!;
-    } else {
-      accountType = AccountType
-          .Saving; // Provide a default value when _selectedAccountType is null
-    }
-
-    final req = BankAccountRequest(
-      assetType: widget.assetType,
-      bankName: _bankNameController.value.text,
-      accountNumber: _accountNumberController.value.text,
-      ifscCode: _ifscCodeController.value.text,
-      branchName: _branchNameController.value.text,
-      accountType: accountType,
-      comments: _commentsController.value.text,
-      attachment: fileUrl,
-    );
-
-    try {
-      final response = await client.CreateBankAccount(token, req);
-      // Handle the response data
-
-      Navigator.pop(context);
+    if (proof == null || token == null || token.isEmpty || assetId == null) {
+      // If any of the conditions are not met, return and navigate to the next screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => BankAccountsScreen(assetType: widget.assetType),
+          builder: (context) => BankAccountsScreen(
+            assetType: widget.assetType,
+          ),
         ),
       );
-    } on DioError catch (e) {
-      if (e.response != null) {
-      } else {}
+      return;
     }
-    //}
-  }
 
-  bool _validateForm() {
-    if (_bankNameController.value.text.isEmpty ||
-        _branchNameController.value.text.isEmpty ||
-        _selectedAccountType == null) {
-      if (_bankNameController.value.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Bank Name is required')),
-        );
-      } else if (_branchNameController.value.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Branch Name is required')),
+    try {
+      var uri = Uri.parse(
+          'http://43.205.12.154:8080/v2/asset/attachment'); // Update the URL to your API endpoint
+      var request = http.MultipartRequest('POST', uri);
+
+      // Set headers
+      request.headers['Authorization'] = token;
+
+      // Add asset ID as a field
+      request.fields['assetId'] = assetId.toString();
+
+      if (proof != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          "attachment",
+          proof.bytes!,
+          filename: proof.name,
+        ));
+      }
+
+      var response = await request.send();
+      print(response);
+
+      if (response.statusCode == 200) {
+        DisplayUtils.showToast("Bank details added successfully");
+        var responseBody = await response.stream.bytesToString();
+        var jsonResponse = jsonDecode(responseBody);
+        var fileUrl = jsonResponse[
+        'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+        var returnedAssetId = jsonResponse[
+        'assetId']; // Assuming the server returns the asset ID in 'assetId' key
+        // Handle the file URL and asset ID
+        print('File URL: $fileUrl');
+        print('Asset ID: $returnedAssetId');
+
+        // Navigate to the BankAccountsScreen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BankAccountsScreen(
+              assetType: widget.assetType,
+            ),
+          ),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Account Type is required')),
+        // Handle error response
+        print('Failed to upload file: ${response.statusCode}');
+        // Navigate to the BankAccountsScreen even if upload fails
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BankAccountsScreen(
+              assetType: widget.assetType,
+            ),
+          ),
         );
       }
-      return false;
+    } catch (e) {
+      // Handle exception
+      print('Error uploading file: $e');
+      // Navigate to the BankAccountsScreen in case of error
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BankAccountsScreen(
+            assetType: widget.assetType,
+          ),
+        ),
+      );
     }
-    return true;
+  }
+}
+
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

@@ -31,7 +31,7 @@ _$StockBrokerImpl _$$StockBrokerImplFromJson(Map<String, dynamic> json) =>
       dematAccountNumber: json['dematAccountNumber'] as String,
       attachment: json['attachment'] as String,
       comments: json['comments'] as String,
-      assetId: json['assetId'] as int,
+      assetId: (json['assetId'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$StockBrokerImplToJson(_$StockBrokerImpl instance) =>

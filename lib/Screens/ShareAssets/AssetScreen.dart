@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'MyShareAsssets.dart';
 import 'SelectedAssetsScreen.dart';
 import 'ShareAssetswithme.dart';
 import 'ShareassetBenefits.dart';
 
 class AssetScreen extends StatelessWidget {
-  const AssetScreen({super.key});
+  const AssetScreen({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +13,14 @@ class AssetScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title:
-            const Text('Share Assets', style: TextStyle(color: Colors.white)),
+        title: Text(
+          'Share assets',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20 * scaleFactor, // Adjust the font size as needed
+            fontWeight: FontWeight.bold, // Add bold font weight for emphasis
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -41,43 +46,46 @@ class AssetScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  backgroundColor:
-                      const Color(0xFF35Adc2), // Set button background color
+                  backgroundColor: const Color(0xFF35Adc2), // Set button background color
                 ),
                 child: Text(
-                  'Share My Assets',
+                  'Share my assets',
                   style: TextStyle(
-                      fontSize: 18 * scaleFactor, color: Colors.white),
+                    fontSize: 18 * scaleFactor,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               SizedBox(height: 20 * scaleFactor), // Use height instead of width
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MyAssetsScreen(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 40 * scaleFactor,
-                    vertical: 20 * scaleFactor,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  backgroundColor: const Color(0xFF429bb9),
-                ),
-                child: Text(
-                  'My Share Assets',
-                  style: TextStyle(
-                      fontSize: 18 * scaleFactor, color: Colors.white),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              SizedBox(height: 20 * scaleFactor), // Use height instead of width
+              // ElevatedButton(
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => const MyAssetsScreen(),
+              //       ),
+              //     );
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     padding: EdgeInsets.symmetric(
+              //       horizontal: 40 * scaleFactor,
+              //       vertical: 20 * scaleFactor,
+              //     ),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(10),
+              //     ),
+              //     backgroundColor: const Color(0xFF429bb9),
+              //   ),
+              //   child: Text(
+              //     'My Share Assets',
+              //     style: TextStyle(
+              //       fontSize: 18 * scaleFactor,
+              //       color: Colors.white,
+              //     ),
+              //     overflow: TextOverflow.ellipsis,
+              //   ),
+              // ),
+             // SizedBox(height: 20 * scaleFactor), // Use height instead of width
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -98,9 +106,11 @@ class AssetScreen extends StatelessWidget {
                   backgroundColor: const Color(0xFF38B6ff),
                 ),
                 child: Text(
-                  'Assets Shared with Me',
+                  'Share assets with Me',
                   style: TextStyle(
-                      fontSize: 18 * scaleFactor, color: Colors.white),
+                    fontSize: 18 * scaleFactor,
+                    color: Colors.white,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -110,7 +120,8 @@ class AssetScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const Shareassetbenefits()),
+                      builder: (context) => const Shareassetbenefits(),
+                    ),
                   );
                 },
                 child: Container(
@@ -143,7 +154,6 @@ class AssetScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    //overflow: TextOverflow.ellipsis,
                   ),
                 ),
               )

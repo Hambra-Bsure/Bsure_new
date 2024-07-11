@@ -6,7 +6,7 @@ part of 'node_api_client.dart';
 // RetrofitGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element
 
 class _NodeClient implements NodeClient {
   _NodeClient(
@@ -44,8 +44,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = LoginResponse2.fromJson(_result.data!);
-    return value;
+    final _value = LoginResponse2.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -72,8 +72,36 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = VerifyResponse.fromJson(_result.data!);
-    return value;
+    final _value = VerifyResponse.fromJson(_result.data!);
+    return _value;
+  }
+
+  @override
+  Future<userAccountDeleteResponse> deleteAccount(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<userAccountDeleteResponse>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/v2/users',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final _value = userAccountDeleteResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -100,8 +128,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetCategoryresponse.fromJson(_result.data!);
-    return value;
+    final _value = GetCategoryresponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -131,8 +159,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetAssetResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetAssetResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -162,8 +190,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetBankResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetBankResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -194,8 +222,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = BankAccountResponse.fromJson(_result.data!);
-    return value;
+    final _value = BankAccountResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -226,8 +254,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = MutualFundResponse.fromJson(_result.data!);
-    return value;
+    final _value = MutualFundResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -258,8 +286,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = StockBrokerResponse.fromJson(_result.data!);
-    return value;
+    final _value = StockBrokerResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -290,8 +318,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = LifeInsuranceResponse.fromJson(_result.data!);
-    return value;
+    final _value = LifeInsuranceResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -322,8 +350,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = NonLifeInsuranceResponse.fromJson(_result.data!);
-    return value;
+    final _value = NonLifeInsuranceResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -354,8 +382,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = PostOfficeAccountResponse.fromJson(_result.data!);
-    return value;
+    final _value = PostOfficeAccountResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -386,8 +414,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = CryptoExchangeResponse.fromJson(_result.data!);
-    return value;
+    final _value = CryptoExchangeResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -418,8 +446,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = NpsResponse.fromJson(_result.data!);
-    return value;
+    final _value = NpsResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -450,8 +478,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = PpfResponse.fromJson(_result.data!);
-    return value;
+    final _value = PpfResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -482,8 +510,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = PfResponse.fromJson(_result.data!);
-    return value;
+    final _value = PfResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -514,8 +542,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = RealEstateResponse.fromJson(_result.data!);
-    return value;
+    final _value = RealEstateResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -546,8 +574,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = OtherAssetResponse.fromJson(_result.data!);
-    return value;
+    final _value = OtherAssetResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -578,8 +606,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = LoanGivenResponse.fromJson(_result.data!);
-    return value;
+    final _value = LoanGivenResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -610,8 +638,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = VehicleResponse.fromJson(_result.data!);
-    return value;
+    final _value = VehicleResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -642,8 +670,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GoldResponse.fromJson(_result.data!);
-    return value;
+    final _value = GoldResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -674,8 +702,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = BondResponse.fromJson(_result.data!);
-    return value;
+    final _value = BondResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -706,8 +734,64 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = EsopResponse.fromJson(_result.data!);
-    return value;
+    final _value = EsopResponse.fromJson(_result.data!);
+    return _value;
+  }
+
+  @override
+  Future<PlanDetailsResponseBean> getPlanDetails() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<PlanDetailsResponseBean>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/payment/nudge-plans',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final _value = PlanDetailsResponseBean.fromJson(_result.data!);
+    return _value;
+  }
+
+  @override
+  Future<UserdiscountResponsebean> userdiscount(
+      UserDiscountRequest request) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<UserdiscountResponsebean>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/account/user/redeemCode',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final _value = UserdiscountResponsebean.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -734,8 +818,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = AssetsResponse2.fromJson(_result.data!);
-    return value;
+    final _value = AssetsResponse2.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -766,8 +850,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = Digitalwillsaveresponse.fromJson(_result.data!);
-    return value;
+    final _value = Digitalwillsaveresponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -794,8 +878,36 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = DigitalwillgetResponse.fromJson(_result.data!);
-    return value;
+    final _value = DigitalwillgetResponse.fromJson(_result.data!);
+    return _value;
+  }
+
+  @override
+  Future<WitnessgetResponse> getWitnessData(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<WitnessgetResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/v2/will/witness',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final _value = WitnessgetResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -822,8 +934,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = confirmationotpresponse.fromJson(_result.data!);
-    return value;
+    final _value = confirmationotpresponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -854,8 +966,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = digitalwillverifyotpresponse.fromJson(_result.data!);
-    return value;
+    final _value = digitalwillverifyotpresponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -886,8 +998,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = Digitalwill_video_request.fromJson(_result.data!);
-    return value;
+    final _value = Digitalwill_video_request.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -918,8 +1030,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = ShareAssetResponse.fromJson(_result.data!);
-    return value;
+    final _value = ShareAssetResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -946,8 +1058,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = MyShareAssetsResponse.fromJson(_result.data!);
-    return value;
+    final _value = MyShareAssetsResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -977,8 +1089,8 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = Deleteshareresponse.fromJson(_result.data!);
-    return value;
+    final _value = Deleteshareresponse.fromJson(_result.data!);
+    return _value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

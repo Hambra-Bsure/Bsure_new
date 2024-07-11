@@ -1,12 +1,16 @@
 import 'dart:convert';
-
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/gold.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/gold_screen.dart';
-import '../post_asset_addition/Gold.dart';
+
+enum MetalType { Gold, Silver }
+
+enum Type { Ring, Earing, Necklace }
 
 class GoldEdit extends StatefulWidget {
   final Golds gold;
@@ -30,6 +34,9 @@ class _GoldEditState extends State<GoldEdit> {
   late String comments;
   late String attachment;
 
+  var proof;
+  final TextEditingController _attachmentController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -47,7 +54,7 @@ class _GoldEditState extends State<GoldEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit Gold', style: TextStyle(color: Colors.white)),
+        title: const Text('Edit gold', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -68,9 +75,10 @@ class _GoldEditState extends State<GoldEdit> {
                     child: Text(type.toString().split('.').last),
                   );
                 }).toList(),
-                labelText: 'Metal Type',
+                labelText: 'Metal type',
                 mandatory: true,
               ),
+              const SizedBox(height: 12.0),
               buildDropdownField(
                 value: type,
                 onChanged: (value) {
@@ -87,46 +95,50 @@ class _GoldEditState extends State<GoldEdit> {
                 labelText: 'Type',
                 mandatory: true,
               ),
-              TextFormField(
+              const SizedBox(height: 12.0),
+              buildTextField(
                 initialValue: weightInGrams,
-                decoration: const InputDecoration(labelText: 'Weight In Grams'),
-                onChanged: (value) {
-                  setState(() {
-                    weightInGrams = value;
-                  });
-                },
+                labelText: 'Weight (in grams)',
+                onChanged: (value) => setState(() => weightInGrams = value),
+                isMandatory: true,
+                isNumeric: true
               ),
-              TextFormField(
+              const SizedBox(height: 12.0),
+              buildTextField(
                 initialValue: whereItIsKept,
-                decoration:
-                    const InputDecoration(labelText: 'Where It Is Kept'),
-                onChanged: (value) {
-                  setState(() {
-                    whereItIsKept = value;
-                  });
-                },
+                labelText: 'Where it is kept',
+                onChanged: (value) => setState(() => whereItIsKept = value),
+                isMandatory: false,
               ),
-              TextFormField(
+              const SizedBox(height: 12.0),
+              buildTextField(
                 initialValue: comments,
-                decoration: const InputDecoration(labelText: 'Comments'),
-                onChanged: (value) {
-                  setState(() {
-                    comments = value;
-                  });
-                },
+                labelText: 'Comments',
+                onChanged: (value) => setState(() => comments = value),
+                isMandatory: false,
               ),
-              TextFormField(
-                initialValue: attachment,
-                decoration: const InputDecoration(labelText: 'Attachment'),
-                onChanged: (value) {
-                  setState(() {
-                    attachment = value;
-                  });
-                },
-              ),
+              const SizedBox(height: 12.0),
+              buildAttachmentField(),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
+                  // Validate mandatory fields
+
+                  if (metalType.isEmpty) {
+                    DisplayUtils.showToast('Please select Metal type.');
+                    return;
+                  }
+
+                  if (type.isEmpty) {
+                    DisplayUtils.showToast('Please select Type.');
+                    return;
+                  }
+
+                  if (weightInGrams.isEmpty) {
+                    DisplayUtils.showToast('Please enter Weight in grams.');
+                    return;
+                  }
+
                   // Update the Gold object with the new values
                   final updatedGold = Golds(
                     metalType: metalType,
@@ -142,8 +154,7 @@ class _GoldEditState extends State<GoldEdit> {
                   // Call API to update gold details
                   final response = await updateGold(updatedGold);
 
-                  DisplayUtils.showToast('Asset Updated Successfully');
-
+                  DisplayUtils.showToast('Asset updated successfully');
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
                     context,
@@ -155,9 +166,11 @@ class _GoldEditState extends State<GoldEdit> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor : const Color(0xff429bb8), // Set background color here
+                  backgroundColor:
+                      const Color(0xff429bb8), // Set background color here
                 ),
-                child: const Text('Update', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Update', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -167,23 +180,44 @@ class _GoldEditState extends State<GoldEdit> {
   }
 
   Widget buildDropdownField({
-    required String value,
-    required ValueChanged<String?> onChanged,
-    required List<DropdownMenuItem<String>> items,
+    required dynamic value,
+    required ValueChanged<dynamic> onChanged,
+    required List<DropdownMenuItem<dynamic>> items,
     required String labelText,
     bool mandatory = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DropdownButtonFormField<String>(
+        Row(
+          children: [
+            Text(
+              labelText,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (mandatory)
+              const Text(
+                ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<dynamic>(
           value: value,
           onChanged: onChanged,
           items: items,
           decoration: InputDecoration(
             labelText: labelText, // Update to include labelText as label
-            // border: const OutlineInputBorder(),
-            // contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            border: const OutlineInputBorder(),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -191,26 +225,117 @@ class _GoldEditState extends State<GoldEdit> {
   }
 
   Widget buildTextField({
-    required TextEditingController controller,
     required String labelText,
-    bool mandatory = false,
+    required String initialValue,
+    required Function(String) onChanged,
+    bool isMandatory = false,
+    bool isNumeric = false,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          labelText + (mandatory ? ' *' : ''),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          decoration: const InputDecoration(
-              //border: OutlineInputBorder(),
-              //contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+    return TextFormField(
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        label: isMandatory
+            ? RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: labelText,
+                style: const TextStyle(color: Colors.black),
               ),
+              const TextSpan(
+                text: ' *',
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
+        )
+            : Text(labelText, style: const TextStyle(color: Colors.black)),
+        border: const OutlineInputBorder(),
+      ),
+      onChanged: (value) {
+        // Trim leading and trailing spaces
+        final trimmedValue = value.trim();
+        onChanged(trimmedValue);
+      },
+      validator: (value) {
+        if (isMandatory && value!.isEmpty) {
+          return 'Please enter $labelText.';
+        }
+        return null;
+      },
+      inputFormatters: isNumeric
+          ? <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(10),
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+        NoLeadingSpaceFormatter(),
+      ]
+          : <TextInputFormatter>[
+        NoLeadingSpaceFormatter(),
+      ],
+    );
+  }
+
+  Widget buildAttachmentField() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _attachmentController,
+                decoration: const InputDecoration(
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff429bb8)),
+                  ),
+                  hintText: "Select File",
+                  hintStyle: TextStyle(fontSize: 16),
+                ),
+                readOnly: true,
+                onTap: uploadFile,
+              ),
+            ),
+            const SizedBox(width: 10),
+            // Change the label for picking a file
+            ElevatedButton(
+              onPressed: uploadFile,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff429bb8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.width * 0.01,
+                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                ),
+              ),
+              child: const Text(
+                'File',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
+  }
+
+  Future<void> uploadFile() async {
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
+
+    if (result != null) {
+      setState(() {
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
+      });
+    } else {
+      // Handle error when no file is selected.
+    }
   }
 
   Future<Golds?> updateGold(Golds gold) async {
@@ -233,7 +358,7 @@ class _GoldEditState extends State<GoldEdit> {
       );
 
       if (response.statusCode == 200) {
-        // Parse and return updated gold details
+        //  DisplayUtils.showToast("Gold Details Updated Successfully");
         return Golds.fromJson(jsonDecode(response.data));
       } else {
         return null; // Return null if update fails
@@ -241,5 +366,16 @@ class _GoldEditState extends State<GoldEdit> {
     } catch (e) {
       return null; // Return null if an error occurs
     }
+  }
+}
+
+
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

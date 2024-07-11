@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sms_autofill/sms_autofill.dart';
-import 'Screens/DigitalWill/Digitalwill_screens/witness_screens/get_witness_list.dart';
 import 'Screens/Homepage.dart';
 import 'Screens/Tutorial.dart';
 import 'Screens/Utils/SharedPrefHelper.dart';
@@ -12,8 +11,6 @@ import 'Screens/Utils/SharedPrefHelper.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SmsAutoFill().listenForCode();
-  // await SmsAutoFill().listenForCode();
-  // SmsAutoFill().listenForCode();
   runApp(const MyApp());
 }
 
@@ -89,7 +86,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>  Intro(),
+          builder: (context) => const Intro(),
         ),
       );
     }

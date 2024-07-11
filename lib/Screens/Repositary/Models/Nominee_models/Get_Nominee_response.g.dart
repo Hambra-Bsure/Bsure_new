@@ -24,21 +24,21 @@ Map<String, dynamic> _$$GetNomineeResponseImplToJson(
 
 _$NomineesImpl _$$NomineesImplFromJson(Map<String, dynamic> json) =>
     _$NomineesImpl(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
       mobileNumber: json['mobileNumber'] as String?,
       email: json['email'] as String?,
       address: json['address'] as String?,
       relation: json['relation'] as String?,
-      age: json['age'] as int?,
+      age: (json['age'] as num?)?.toInt(),
       image: json['image'] as String?,
       idProof: json['idProof'] as String?,
       guardianName: json['guardianName'] as String?,
       guardianMobileNumber: json['guardianMobileNumber'] as String?,
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
-      userId: json['userId'] as int?,
+      userId: (json['userId'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$NomineesImplToJson(_$NomineesImpl instance) =>

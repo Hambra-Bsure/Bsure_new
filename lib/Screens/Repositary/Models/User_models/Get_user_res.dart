@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-
 part 'Get_user_res.freezed.dart';
 part 'Get_user_res.g.dart';
 

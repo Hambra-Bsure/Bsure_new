@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../Repositary/Models/Digital_will/Witness1Res.dart';
 import '../../../Repositary/Models/Digital_will/witness1_req.dart';
 import 'get_witness_list.dart';
@@ -55,7 +57,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     await prefs.setString('address', _controller6.text);
   }
 
-  void _submit() async {
+  Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       _saveDataLocally();
 
@@ -87,7 +89,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
         body: jsonEncode(body),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': token.toString(),
+          'Authorization': token!,
         },
       );
 
@@ -95,7 +97,8 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
       print('Response body: ${response.body}');
 
       if (response.statusCode == 201) {
-        Witness1Res witness1Res = Witness1Res.fromJson(jsonDecode(response.body));
+        Witness1Res witness1Res =
+        Witness1Res.fromJson(jsonDecode(response.body));
         if (witness1Res.witness != null && witness1Res.witness!.isNotEmpty) {
           setState(() {
             _witnessId = witness1Res.witness!.first.id.toString();
@@ -114,21 +117,25 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    final response = await Dio().post(
-      'http://43.205.12.154:8080/v2/will/witness/otp',
-      data: {"witnessId": int.parse(witnessId)},
-      options: Options(
-        headers: {'Authorization': token},
-      ),
-    );
+    try {
+      final response = await Dio().post(
+        'http://43.205.12.154:8080/v2/will/witness/otp',
+        data: {"witnessId": int.parse(witnessId)},
+        options: Options(
+          headers: {'Authorization': token},
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      setState(() {
-        _isOtpFieldVisible = true;
-      });
-      print('OTP sent successfully');
-    } else {
-      print('Failed to send OTP');
+      if (response.statusCode == 200) {
+        setState(() {
+          _isOtpFieldVisible = true;
+        });
+        print('OTP sent successfully');
+      } else {
+        print('Failed to send OTP');
+      }
+    } catch (e) {
+      print('Error sending OTP: $e');
     }
   }
 
@@ -158,7 +165,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  DigitalWillGetWitness(),
+              builder: (context) => DigitalWillGetWitness(),
             ),
           );
           print("OTP verified successfully");
@@ -228,9 +235,10 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     return null;
   }
 
-  InputDecoration _buildInputDecoration(String labelText) {
+  InputDecoration _buildInputDecoration(String labelText,
+      {bool mandatory = false}) {
     return InputDecoration(
-      labelText: labelText,
+      labelText: mandatory ? "$labelText *" : labelText,
       labelStyle: const TextStyle(color: Colors.black87),
       focusedBorder: const OutlineInputBorder(
         borderSide: BorderSide(
@@ -252,6 +260,15 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
           color: Colors.red,
         ),
       ),
+      suffixIcon: mandatory
+          ? const Padding(
+        padding: EdgeInsets.only(top: 15),
+        child: Text(
+          '*',
+          style: TextStyle(color: Colors.red),
+        ),
+      )
+          : null,
     );
   }
 
@@ -261,7 +278,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text("Witness1", style: TextStyle(color: Colors.white)),
+        title: const Text("Witness", style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -274,38 +291,44 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
                 const SizedBox(height: 30),
                 _buildTextField(
                   controller: _controller1,
-                  labelText: 'First Name',
+                  labelText: 'First name',
                   validator: _validateFirstName,
+                  mandatory: true,
                 ),
                 const SizedBox(height: 15),
                 _buildTextField(
                   controller: _controller2,
-                  labelText: 'Last Name',
+                  labelText: 'Last name',
                   validator: _validateLastName,
+                  mandatory: true,
                 ),
                 const SizedBox(height: 15),
                 _buildTextField(
                   controller: _controller3,
                   labelText: 'Age',
-                  //validator: _validateAge,
+                //  validator: _validateAge,
+                  isNumeric: true,
                 ),
                 const SizedBox(height: 15),
                 _buildTextField(
                   controller: _controller4,
-                  labelText: 'Mobile No',
+                  labelText: 'Mobile no',
                   validator: _validateMobileNumber,
+                  mandatory: true,
+                  isNumeric: true,
                 ),
                 const SizedBox(height: 15),
                 _buildTextField(
                   controller: _controller5,
                   labelText: 'Email id',
-                  // validator: _validateEmail,
+                 // validator: _validateEmail,
                 ),
                 const SizedBox(height: 15),
                 _buildTextField(
                   controller: _controller6,
                   labelText: 'Address',
                   validator: _validateAddress,
+                  mandatory: true,
                 ),
                 const SizedBox(height: 30),
                 if (_isOtpFieldVisible)
@@ -320,16 +343,21 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
                           }
                           return null;
                         },
+                        isNumeric: true,
                       ),
                       const SizedBox(height: 15),
                       ElevatedButton(
                         onPressed: _verifyOtp,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff429bb8),
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 15),
                           textStyle: const TextStyle(fontSize: 18),
                         ),
-                        child: const Text('Verify OTP', style: TextStyle(color: Colors.white)),
+                        child: const Text(
+                          'Verify OTP',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                       const SizedBox(height: 15),
                     ],
@@ -338,10 +366,14 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
                   onPressed: _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff429bb8),
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 15),
                     textStyle: const TextStyle(fontSize: 18),
                   ),
-                  child: const Text('Submit', style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    'Submit',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
@@ -354,13 +386,62 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String labelText,
+    bool mandatory = false,
+    bool isNumeric = false,
     String? Function(String?)? validator,
   }) {
-    return TextFormField(
-      controller: controller,
-      style: const TextStyle(color: Colors.black87),
-      decoration: _buildInputDecoration(labelText),
-      validator: validator,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              labelText,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (mandatory)
+              const Text(
+                ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          validator: validator,
+          inputFormatters: isNumeric
+              ? [
+            FilteringTextInputFormatter.digitsOnly,
+            NoLeadingSpaceFormatter(),
+          ]
+              : [NoLeadingSpaceFormatter()],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+          keyboardType:
+          isNumeric ? TextInputType.number : TextInputType.text,
+        ),
+      ],
     );
+  }
+}
+
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

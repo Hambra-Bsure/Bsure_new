@@ -1,10 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../Repositary/Models/AssetModels/RealEstateRequest.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
+import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/real_estate_screen.dart';
+import 'package:flutter/services.dart';
 
 // Import other necessary packages and files
 
@@ -23,41 +29,53 @@ class _RealEstateAddState extends State<RealEstateAdd> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _khataNumberController = TextEditingController();
   final TextEditingController _northOfPropertyController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _southOfPropertyController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _eastOfPropertyController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _westOfPropertyController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _imageController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
 
   PropertyType? _selectedPropertyType;
 
+  File? file;
+  String? fileName;
+  String? downloadUrl;
+
+  //ImagePicker imagePicker = ImagePicker();
+  Color color1 = const Color(0xff429bb8);
+  String url = "";
+  var name;
+  var proof;
+  String? assetId;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Real Estate', style: TextStyle(color: Colors.white)),
+        title: const Text('Real estate', style: TextStyle(color: Colors.white)),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               buildTextField(
                 controller: _addressController,
                 labelText: 'Address',
                 mandatory: true,
               ),
+              const SizedBox(height: 10),
               const Row(
                 children: [
                   Text(
-                    'Property Type',
+                    'Property type',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -82,7 +100,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                 items: [
                   const DropdownMenuItem<PropertyType>(
                     value: null,
-                    child: Text('Select Property Type'),
+                    child: Text('Select property type'),
                   ),
                   ...PropertyType.values.map((type) {
                     return DropdownMenuItem<PropertyType>(
@@ -94,73 +112,236 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                  EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                 ),
               ),
+              const SizedBox(height: 10),
               buildTextField(
-                controller: _khataNumberController,
-                labelText: 'Khata Number (Optional)',
-                mandatory: false,
+                  controller: _khataNumberController,
+                  labelText: 'Khata number',
+                  mandatory: false,
+                  isNumeric: true
               ),
               buildTextField(
                 controller: _northOfPropertyController,
-                labelText: 'North of Property (Optional)',
+                labelText: 'North of property ',
                 mandatory: false,
               ),
               buildTextField(
                 controller: _southOfPropertyController,
-                labelText: 'South of Property (Optional)',
+                labelText: 'South of property',
                 mandatory: false,
               ),
               buildTextField(
                 controller: _eastOfPropertyController,
-                labelText: 'East of Property (Optional)',
+                labelText: 'East of property',
                 mandatory: false,
               ),
               buildTextField(
                 controller: _westOfPropertyController,
-                labelText: 'West of Property (Optional)',
+                labelText: 'West of property ',
                 mandatory: false,
               ),
               buildTextField(
                 controller: _imageController,
-                labelText: 'Image (Optional)',
+                labelText: 'Image ',
                 mandatory: false,
               ),
               buildTextField(
                 controller: _commentsController,
-                labelText: 'Comments (Optional)',
+                labelText: 'Comments ',
                 mandatory: false,
               ),
-              buildTextField(
-                controller: _attachmentController,
-                labelText: 'Attachment (Optional)',
-                mandatory: false,
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Handle submit button press
-                    _submitForm();
-                  },
+                  onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor : const Color(0xff429bb8), // Set background color here
+                    backgroundColor: const Color(0xff429bb8),
                   ),
-                  child: const Text('Submit', style: TextStyle(color: Colors.white)),
+                  child:
+                  const Text('Save', style: TextStyle(color: Colors.white)),
                 ),
               ),
-            ],
+              const SizedBox(height: 20),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _attachmentController,
+                          decoration: const InputDecoration(
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff429bb8)),
+                            ),
+                            hintText: "Select file",
+                            hintStyle: TextStyle(fontSize: 16),
+                          ),
+                          readOnly: true,
+                          onTap: uploadFile,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: uploadFile,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xff429bb8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: MediaQuery.of(context).size.width * 0.01,
+                            horizontal:
+                            MediaQuery.of(context).size.width * 0.03,
+                          ),
+                        ),
+                        child: const Text(
+                          'File',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await submitImage();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff429bb8),
+                    ),
+                    child:
+                    const Text('Submit', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ]),
           ),
         ),
       ),
     );
   }
 
+  Future<void> uploadFile() async {
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
+
+    if (result != null) {
+      setState(() {
+        proof = result.files.single;
+        _attachmentController.text = proof!.name;
+      });
+    } else {
+      // Handle error when no file is selected.
+      print('No file selected.');
+    }
+  }
+
+  Future<void> submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("token");
+
+    if (proof == null || token == null || token.isEmpty || assetId == null) {
+      // If any of the conditions are not met, return and navigate to the next screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RealEstateScreen(
+            assetType: widget.assetType,
+          ),
+        ),
+      );
+      return;
+    }
+
+    try {
+      var uri = Uri.parse(
+          'http://43.205.12.154:8080/v2/asset/attachment'); // Update the URL to your API endpoint
+      var request = http.MultipartRequest('POST', uri);
+
+      // Set headers
+      request.headers['Authorization'] = token;
+
+      // Add asset ID as a field
+      request.fields['assetId'] = assetId!;
+
+      if (proof != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          "attachment",
+          proof!.bytes!,
+          filename: proof!.name,
+        ));
+      }
+
+      var response = await request.send();
+
+      if (response.statusCode == 201) {
+        var responseBody = await response.stream.bytesToString();
+        var jsonResponse = jsonDecode(responseBody);
+        var fileUrl = jsonResponse[
+        'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+        var returnedAssetId = jsonResponse[
+        'assetId']; // Assuming the server returns the asset ID in 'assetId' key
+        // Handle the file URL and asset ID
+
+        // Navigate to the NpsScreen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RealEstateScreen(
+              assetType: widget.assetType,
+            ),
+          ),
+        );
+      } else {
+        // Handle error response
+        // Navigate to the NpsScreen even if upload fails
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RealEstateScreen(
+              assetType: widget.assetType,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle exception
+      print('Error uploading file: $e');
+      // Navigate to the NpsScreen in case of error
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RealEstateScreen(
+            assetType: widget.assetType,
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<String?> saveFileLocally(FilePickerResult result) async {
+    final file = File(result.files.single.path!); // Get the file
+    // Define a directory where the file will be saved
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String filePath = '${directory.path}/${result.files.single.name}';
+
+    // Copy the file to the application directory
+    await file.copy(filePath);
+
+    return filePath; // Return the saved file path
+  }
+
   Widget buildTextField({
     required TextEditingController controller,
     required String labelText,
     bool mandatory = false,
+    bool isNumeric = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,24 +368,41 @@ class _RealEstateAddState extends State<RealEstateAdd> {
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
+          keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+          inputFormatters: isNumeric
+              ? <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(10), // Limiting to 10 digits
+            NoLeadingSpaceFormatter(),
+          ]
+              : <TextInputFormatter>[
+            NoLeadingSpaceFormatter(),
+          ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
+        const SizedBox(height: 16),
       ],
     );
   }
 
   void _submitForm() async {
-    if (!_validateForm()) {
-      return;
+    if (_addressController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Address is required')),
+      );
+    } else if (_selectedPropertyType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Select property type is required')),
+      );
     }
 
     final prefs = await SharedPreferences.getInstance();
     var token =
-        prefs.getString("token"); // Retrieve token from SharedPreferences
+    prefs.getString("token"); // Retrieve token from SharedPreferences
 
     // Check if token is null or empty
     if (token == null || token.isEmpty) {
@@ -232,30 +430,35 @@ class _RealEstateAddState extends State<RealEstateAdd> {
 
     try {
       final response = await client.CreateRealEstate(token, request);
+
+      setState(() {
+        assetId = response.asset?.realEstate?.assetId.toString();
+      });
       // Handle the response data
 
-      Navigator.pop(context);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RealEstateScreen(assetType: widget.assetType),
-        ),
-      );
-    } catch (e) {}
-  }
-
-  bool _validateForm() {
-    if (_addressController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Address is required')),
-      );
-      return false;
-    } else if (_selectedPropertyType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Select Property Type is required')),
-      );
-      return false;
+      if (response.success == 200) {
+        DisplayUtils.showToast("Real estate details added successfully");
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RealEstateScreen(assetType: widget.assetType),
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle exception
     }
-    return true;
+  }
+}
+
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

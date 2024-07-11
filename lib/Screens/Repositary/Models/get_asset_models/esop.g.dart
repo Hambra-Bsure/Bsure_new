@@ -25,15 +25,15 @@ Map<String, dynamic> _$$EsopResponseImplToJson(_$EsopResponseImpl instance) =>
 _$EsopImpl _$$EsopImplFromJson(Map<String, dynamic> json) => _$EsopImpl(
       category: json['category'] as String,
       companyName: json['companyName'] as String,
-      numberOfStocks: json['numberOfStocks'] as int?,
-      optionPrice: json['optionPrice'] as int?,
+      numberOfStocks: (json['numberOfStocks'] as num?)?.toInt(),
+      optionPrice: (json['optionPrice'] as num?)?.toInt(),
       expiryDate: json['expiryDate'] as String,
       totalSharesAvailableForIssue:
-          json['totalSharesAvailableForIssue'] as int?,
-      issuePricePerShare: json['issuePricePerShare'] as int?,
+          (json['totalSharesAvailableForIssue'] as num?)?.toInt(),
+      issuePricePerShare: (json['issuePricePerShare'] as num?)?.toInt(),
       comments: json['comments'] as String,
       attachment: json['attachment'] as String,
-      assetId: json['assetId'] as int,
+      assetId: (json['assetId'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$EsopImplToJson(_$EsopImpl instance) =>

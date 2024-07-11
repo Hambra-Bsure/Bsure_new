@@ -45,8 +45,8 @@ Map<String, dynamic> _$$UserDataImplToJson(_$UserDataImpl instance) =>
     };
 
 _$AssetImpl _$$AssetImplFromJson(Map<String, dynamic> json) => _$AssetImpl(
-      id: json['id'] as int,
-      userId: json['userId'] as int,
+      id: (json['id'] as num).toInt(),
+      userId: (json['userId'] as num).toInt(),
       category: json['category'] as String,
       details: (json['details'] as List<dynamic>)
           .map((e) => Detail.fromJson(e as Map<String, dynamic>))

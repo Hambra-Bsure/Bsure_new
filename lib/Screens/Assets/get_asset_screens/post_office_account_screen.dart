@@ -79,11 +79,14 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('PostOfficeAccount',
-            style: TextStyle(color: Colors.white)),
+        title: const Text('Post office account',
+            style: TextStyle(
+              color: Colors.white,
+            )),
       ),
       body: isLoading
-          ? const Center(child: Text("No Assets found"))
+          ? const Center(
+              child: Text("No assets found", style: TextStyle(fontSize: 20.0)))
           : PostofficeAccounts.isNotEmpty == true
               ? ListView.builder(
                   itemCount: PostofficeAccounts.length,
@@ -100,7 +103,8 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit,
+                                      color: Color(0xff429bb8)),
                                   onPressed: () async {
                                     final updatedPostOfficeAccount =
                                         await Navigator.push(
@@ -123,18 +127,18 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                                 ),
                               ],
                             ),
-                            Text(
-                              'branchName: ${postoffice.branchName}',
-                            ),
+                            buildInfoRow('Branch name:', postoffice.branchName),
                             const SizedBox(height: 8.0),
-                            Text('accountNumber: ${postoffice.accountNumber}'),
+                            buildInfoRow(
+                                'Account number:', postoffice.accountNumber),
                             const SizedBox(height: 8.0),
-                            Text('accountType: ${postoffice.accountType}'),
+                            buildInfoRow(
+                                'Account type:', postoffice.accountType),
                             const SizedBox(height: 8.0),
                             const SizedBox(height: 8.0),
-                            Text('comments: ${postoffice.comments}'),
+                            buildInfoRow('Comments:', postoffice.comments),
                             const SizedBox(height: 8.0),
-                            Text('attachment: ${postoffice.attachment}'),
+                            buildInfoRow('Attachment:', postoffice.attachment),
                             const SizedBox(height: 8.0),
                             ElevatedButton(
                               onPressed: () {
@@ -142,7 +146,7 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text("Delete Asset?"),
+                                      title: const Text("Delete asset?"),
                                       content: const Text(
                                           "Are you sure you want to delete this Asset?"),
                                       actions: <Widget>[
@@ -248,6 +252,39 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
     );
   }
 
+  Widget buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            flex: 7,
+            child: Text(
+              value ?? '',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> deleteAssetStatus(int index) async {
     final PostofficeAccount = PostofficeAccounts[index];
     final prefs = await SharedPreferences.getInstance();
@@ -267,7 +304,7 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
       );
 
       if (response.statusCode == 200) {
-        DisplayUtils.showToast("PostofficeAccounts successfully deleted.");
+        DisplayUtils.showToast("PostofficeAccount successfully deleted.");
       }
     } catch (e) {}
   }
