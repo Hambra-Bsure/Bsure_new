@@ -357,7 +357,7 @@ class _VehicleEditState extends State<VehicleEdit> {
 
     try {
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/asset/${vehicle.assetId}',
+        'https://dev.bsure.live/v2/asset/${vehicle.assetId}',
         data: vehicle
             .toJson(), // Convert vehicle object to JSON and send as request body
       );

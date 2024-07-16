@@ -251,7 +251,7 @@ class _StockBrokerEditState extends State<StockBrokerEdit> {
 
     try {
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/asset/${broker.assetId}',
+        'https://dev.bsure.live/v2/asset/${broker.assetId}',
         data: broker.toJson(),
       );
 

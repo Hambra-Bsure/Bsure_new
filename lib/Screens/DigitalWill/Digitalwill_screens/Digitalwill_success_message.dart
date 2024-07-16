@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:Bsure_devapp/Screens/DigitalWill/Digitalwill_screens/witness_screens/get_witness_list.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'witness_screens/DigitalWitness1.dart';
 import 'Digitalwillpreview.dart';
 
 class Nomineeforallassets4 extends StatefulWidget {

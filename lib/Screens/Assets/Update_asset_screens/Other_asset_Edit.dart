@@ -237,7 +237,7 @@ class _OtherEditState extends State<OtherEdit> {
 
     try {
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/asset/${other.assetId}',
+        'https://dev.bsure.live/v2/asset/${other.assetId}',
         data: other
             .toJson(), // Convert account object to JSON and send as request body
       );

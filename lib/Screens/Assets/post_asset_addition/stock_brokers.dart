@@ -224,7 +224,7 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
 
     try {
       var uri = Uri.parse(
-          'http://43.205.12.154:8080/v2/asset/attachment'); // Update the URL to your API endpoint
+          'https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers

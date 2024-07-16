@@ -374,7 +374,7 @@ class _RealEstateEditState extends State<RealEstateEdit> {
 
     try {
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/asset/${realEstate.assetId}',
+        'https://dev.bsure.live/v2/asset/${realEstate.assetId}',
         data: realEstate.toJson(), // Convert real estate object to JSON and send as request body
       );
 

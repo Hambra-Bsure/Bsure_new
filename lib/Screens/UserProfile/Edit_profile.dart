@@ -293,7 +293,7 @@ class _EditUserState extends State<EditUser> {
 
     try {
       final response = await http.patch(
-        Uri.parse('http://43.205.12.154:8080/v2/users/update'),
+        Uri.parse('https://dev.bsure.live/v2/users/update'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": token,

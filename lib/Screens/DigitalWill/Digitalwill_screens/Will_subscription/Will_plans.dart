@@ -29,7 +29,7 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
 
     final response = await http.get(
       Uri.parse(
-          'http://43.205.12.154:8080/v2/subscription/products/digitalWill/plans'),
+          'https://dev.bsure.live/v2/subscription/products/digitalWill/plans'),
     );
 
     if (response.statusCode == 200) {

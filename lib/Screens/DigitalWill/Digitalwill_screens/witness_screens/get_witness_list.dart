@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert';
 import '../../../Repositary/Models/Digital_will/witness_get_res.dart';
 import '../../../Repositary/Retrofit/node_api_client.dart';
 import 'DigitalWitness1.dart';
@@ -63,7 +62,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
       throw Exception('Token is not available.');
     }
 
-    const url = 'http://43.205.12.154:8080/v2/will/executor';
+    const url = 'https://dev.bsure.live/v2/will/executor';
 
     try {
       final response = await Dio().get(
@@ -192,7 +191,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
         final token = prefs.getString("token");
 
         final response = await Dio().delete(
-          'http://43.205.12.154:8080/v2/will/witness/$witnessId',
+          'https://dev.bsure.live/v2/will/witness/$witnessId',
           options: Options(
             headers: {'Authorization': '$token'},
           ),

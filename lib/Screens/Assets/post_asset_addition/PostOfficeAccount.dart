@@ -275,7 +275,7 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
     }
 
     try {
-      var uri = Uri.parse('http://43.205.12.154:8080/v2/asset/attachment');
+      var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment');
       var request = http.MultipartRequest('POST', uri);
 
       request.headers['Authorization'] = 'Bearer $token';

@@ -38,7 +38,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
     var token = prefs.getString("token");
 
     final url =
-        Uri.parse('http://43.205.12.154:8080/v2/asset/category/LoanGiven');
+        Uri.parse('https://dev.bsure.live/v2/asset/category/LoanGiven');
     final response = await http.get(url, headers: {
       "Authorization": token ?? "",
       "ngrok-skip-browser-warning": "69420",
@@ -87,7 +87,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${loanGiven.assetId}',
+        'https://dev.bsure.live/v2/asset/${loanGiven.assetId}',
       );
 
       if (response.statusCode == 200) {

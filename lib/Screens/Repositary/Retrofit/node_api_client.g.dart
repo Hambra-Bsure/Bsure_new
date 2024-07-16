@@ -13,7 +13,7 @@ class _NodeClient implements NodeClient {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://43.205.12.154:8080';
+    baseUrl ??= 'https://dev.bsure.live';
   }
 
   final Dio _dio;

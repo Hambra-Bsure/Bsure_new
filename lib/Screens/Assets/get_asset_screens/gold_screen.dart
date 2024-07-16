@@ -50,7 +50,7 @@ class _GoldScreenState extends State<GoldScreen> {
       return;
     }
 
-    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Gold');
+    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/Gold');
     final response = await http.get(
       url,
       headers: {
@@ -102,7 +102,7 @@ class _GoldScreenState extends State<GoldScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${golds.assetId}',
+        'https://dev.bsure.live/v2/asset/${golds.assetId}',
       );
 
       if (response.statusCode == 200) {

@@ -41,7 +41,7 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    final url = Uri.parse('http://43.205.12.154:8080/v2/nominee/all');
+    final url = Uri.parse('https://dev.bsure.live/v2/nominee/all');
     final response = await http.get(url, headers: {
       "Authorization": token.toString(),
       "ngrok-skip-browser-warning": "69420",
@@ -73,7 +73,7 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
 
     try {
       final res = await http.get(
-        Uri.parse("http://43.205.12.154:8080/v2/asset/all"),
+        Uri.parse("https://dev.bsure.live/v2/asset/all"),
         headers: {
           "Authorization": token.toString(),
         },

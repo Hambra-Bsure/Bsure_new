@@ -54,7 +54,7 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
       final token = prefs.get("token");
 
       final response = await http.post(
-        Uri.parse('http://43.205.12.154:8080/v2/subscription/create-order'),
+        Uri.parse('https://dev.bsure.live/v2/subscription/create-order'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token.toString(),
@@ -169,7 +169,7 @@ class PaymentSuccessScreen extends StatelessWidget {
 
     try {
       final response = await http.get(
-        Uri.parse('http://43.205.12.154:8080/v2/will/pdf'),
+        Uri.parse('https://dev.bsure.live/v2/will/pdf'),
         headers: {
           'Authorization': token.toString(),
         },

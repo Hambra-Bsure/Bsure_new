@@ -371,7 +371,7 @@ class _EsopEditState extends State<EsopEdit> {
 
     try {
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/asset/${esop.assetId}',
+        'https://dev.bsure.live/v2/asset/${esop.assetId}',
         data: esop
             .toJson(), // Convert Esop object to JSON and send as request body
       );

@@ -352,7 +352,7 @@ class _GoldEditState extends State<GoldEdit> {
 
     try {
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/asset/${gold.assetId}',
+        'https://dev.bsure.live/v2/asset/${gold.assetId}',
         data: gold
             .toJson(), // Convert gold object to JSON and send as request body
       );

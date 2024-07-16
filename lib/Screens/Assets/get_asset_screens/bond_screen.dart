@@ -37,7 +37,7 @@ class _BondScreenState extends State<BondScreen> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Bond');
+    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/Bond');
     final response = await http.get(url, headers: {
       "Authorization": token ?? '',
       "ngrok-skip-browser-warning": "69420",
@@ -279,7 +279,7 @@ class _BondScreenState extends State<BondScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${bondToDelete.assetId}',
+        'https://dev.bsure.live/v2/asset/${bondToDelete.assetId}',
       );
 
       if (response.statusCode == 200) {

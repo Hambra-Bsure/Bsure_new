@@ -37,7 +37,7 @@ class _NpsScreenState extends State<NpsScreen> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.get("token");
 
-    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Nps');
+    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/Nps');
     final response = await http.get(url, headers: {
       "Authorization": token.toString(),
       "ngrok-skip-browser-warning": "69420",
@@ -277,7 +277,7 @@ class _NpsScreenState extends State<NpsScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${Nps.assetId}',
+        'https://dev.bsure.live/v2/asset/${Nps.assetId}',
       );
 
       if (response.statusCode == 200) {

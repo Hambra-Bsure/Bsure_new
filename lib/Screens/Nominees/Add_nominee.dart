@@ -447,7 +447,7 @@ class _AddNomineeState extends State<AddNominee> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://43.205.12.154:8080/v2/nominee'),
+        Uri.parse('https://dev.bsure.live/v2/nominee'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": token.toString(),

@@ -346,7 +346,7 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
 
     try {
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/asset/${loanGiven.assetId}',
+        'https://dev.bsure.live/v2/asset/${loanGiven.assetId}',
         data: loanGiven
             .toJson(), // Convert loanGiven object to JSON and send as request body
       );

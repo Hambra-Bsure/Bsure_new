@@ -47,7 +47,7 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
       final token = prefs.get("token");
 
       Response response =
-      await Dio().put('http://43.205.12.154:8080/v2/will/witness',
+      await Dio().put('https://dev.bsure.live/v2/will/witness',
           data: updateData,
           options: Options(
             headers: {'Authorization': token},

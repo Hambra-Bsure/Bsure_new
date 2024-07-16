@@ -37,7 +37,7 @@ class _OtherScreenState extends State<OtherScreen> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Other');
+    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/Other');
     final response = await http.get(url, headers: {
       "Authorization": token ?? "",
       "ngrok-skip-browser-warning": "69420",
@@ -85,7 +85,7 @@ class _OtherScreenState extends State<OtherScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${otherAsset.assetId}',
+        'https://dev.bsure.live/v2/asset/${otherAsset.assetId}',
       );
 
       if (response.statusCode == 200) {

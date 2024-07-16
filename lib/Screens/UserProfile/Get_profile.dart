@@ -38,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final dio = Dio();
       dio.options.headers['Authorization'] = token;
 
-      final response = await dio.get('http://43.205.12.154:8080/v2/users');
+      final response = await dio.get('https://dev.bsure.live/v2/users');
 
       if (response.statusCode == 200) {
         final getUserResponse = GetUserResponse.fromJson(response.data);

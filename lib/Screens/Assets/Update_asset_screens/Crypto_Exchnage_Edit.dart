@@ -265,7 +265,7 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
 
     try {
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/asset/${cryptoExchange.assetId}',
+        'https://dev.bsure.live/v2/asset/${cryptoExchange.assetId}',
         data: cryptoExchange
             .toJson(), // Convert account object to JSON and send as request body
       );

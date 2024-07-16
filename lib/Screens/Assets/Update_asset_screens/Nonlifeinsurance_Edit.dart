@@ -332,7 +332,7 @@ class _NonLifeInsuranceEditState extends State<NonLifeInsuranceEdit> {
 
     try {
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/asset/${nonLifeInsurance.assetId}',
+        'https://dev.bsure.live/v2/asset/${nonLifeInsurance.assetId}',
         data: nonLifeInsurance
             .toJson(), // Convert account object to JSON and send as request body
       );

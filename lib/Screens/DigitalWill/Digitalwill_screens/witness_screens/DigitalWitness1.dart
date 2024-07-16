@@ -82,7 +82,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
 
       Map<String, dynamic> body = witness1Req.toJson();
 
-      Uri apiUrl = Uri.parse('http://43.205.12.154:8080/v2/will/witness');
+      Uri apiUrl = Uri.parse('https://dev.bsure.live/v2/will/witness');
 
       final response = await http.post(
         apiUrl,
@@ -119,7 +119,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
 
     try {
       final response = await Dio().post(
-        'http://43.205.12.154:8080/v2/will/witness/otp',
+        'https://dev.bsure.live/v2/will/witness/otp',
         data: {"witnessId": int.parse(witnessId)},
         options: Options(
           headers: {'Authorization': token},
@@ -157,7 +157,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
         }
 
         final response = await dio.post(
-          "http://43.205.12.154:8080/v2/will/witness/verify",
+          "https://dev.bsure.live/v2/will/witness/verify",
           data: {"witnessId": witnessId, "otp": otpValue},
         );
 
@@ -233,43 +233,6 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
       return 'Please enter address';
     }
     return null;
-  }
-
-  InputDecoration _buildInputDecoration(String labelText,
-      {bool mandatory = false}) {
-    return InputDecoration(
-      labelText: mandatory ? "$labelText *" : labelText,
-      labelStyle: const TextStyle(color: Colors.black87),
-      focusedBorder: const OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.blue,
-        ),
-      ),
-      enabledBorder: const OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.grey,
-        ),
-      ),
-      errorBorder: const OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.red,
-        ),
-      ),
-      focusedErrorBorder: const OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.red,
-        ),
-      ),
-      suffixIcon: mandatory
-          ? const Padding(
-        padding: EdgeInsets.only(top: 15),
-        child: Text(
-          '*',
-          style: TextStyle(color: Colors.red),
-        ),
-      )
-          : null,
-    );
   }
 
   @override

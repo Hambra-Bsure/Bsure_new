@@ -40,7 +40,7 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
     var token = prefs.get("token");
 
     final url =
-        Uri.parse('http://43.205.12.154:8080/v2/asset/category/LifeInsurance');
+        Uri.parse('https://dev.bsure.live/v2/asset/category/LifeInsurance');
     final response = await http.get(url, headers: {
       "Authorization": token.toString(),
       "ngrok-skip-browser-warning": "69420",
@@ -300,7 +300,7 @@ class _LifeInsuranceScreenState extends State<LifeInsuranceScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/asset/${insurance.assetId}',
+        'https://dev.bsure.live/v2/asset/${insurance.assetId}',
       );
 
       if (response.statusCode == 200) {

@@ -34,7 +34,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    const url = 'http://43.205.12.154:8080/v2/will/executor';
+    const url = 'https://dev.bsure.live/v2/will/executor';
 
     try {
       final response = await http.get(
@@ -72,7 +72,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    const url = 'http://43.205.12.154:8080/v2/will/executor';
+    const url = 'https://dev.bsure.live/v2/will/executor';
 
     final willExecutor = WillExecutorReq(
       firstName: _firstNameController.text,

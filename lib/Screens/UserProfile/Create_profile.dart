@@ -294,7 +294,7 @@ class EditProfileState extends State<EditProfile> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://43.205.12.154:8080/v2/users'),
+        Uri.parse('https://dev.bsure.live/v2/users'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": token,

@@ -2,8 +2,6 @@ import 'package:Bsure_devapp/Screens/DigitalWill/widget/asset_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'bloc/will_bloc.dart';
 import 'bloc/will_state.dart';
 import 'api.dart';

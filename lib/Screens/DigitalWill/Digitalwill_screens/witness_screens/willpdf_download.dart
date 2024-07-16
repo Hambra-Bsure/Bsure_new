@@ -29,7 +29,7 @@ class _PdfDownloadScreenState extends State<PdfDownloadScreen> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://43.205.12.154:8080/v2/will/pdf'),
+        Uri.parse('https://dev.bsure.live/v2/will/pdf'),
         headers: {
           'Authorization': token.toString(),
         },

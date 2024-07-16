@@ -47,7 +47,7 @@ class _MutualFundEditState extends State<MutualFundEdit> {
     if (selectedFile == null) return;
 
     try {
-      var uri = Uri.parse('http://43.205.12.154:8080/v2/asset/attachment');
+      var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment');
       var request = http.MultipartRequest('POST', uri);
       request.headers['Authorization'] = token;
       request.fields['assetId'] = assetId;

@@ -38,7 +38,7 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
       if (token != null) {
         final dio = Dio();
         dio.options.headers["Authorization"] = token;
-        const url = 'http://43.205.12.154:8080/v2/share/with-me';
+        const url = 'https://dev.bsure.live/v2/share/with-me';
 
         final response = await dio.get(
           url,

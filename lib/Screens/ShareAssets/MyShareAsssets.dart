@@ -29,7 +29,7 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
 
       final dio = Dio();
       dio.options.headers["Authorization"] = token;
-      const url = 'http://43.205.12.154:8080/v2/share/by-me';
+      const url = 'https://dev.bsure.live/v2/share/by-me';
 
       final response = await dio.get(
         url,
@@ -256,7 +256,7 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
       final dio = Dio();
       dio.options.headers["Authorization"] = token;
 
-      final url = 'http://43.205.12.154:8080/v2/share/$sharedAssetId';
+      final url = 'https://dev.bsure.live/v2/share/$sharedAssetId';
       final response = await dio.delete(
         url,
         options: Options(
