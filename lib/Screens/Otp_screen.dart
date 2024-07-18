@@ -6,6 +6,7 @@ import 'package:sms_autofill/sms_autofill.dart';
 import 'Homepage.dart';
 import 'Repositary/Models/OtpVerifyRequest.dart';
 import 'Repositary/Retrofit/node_api_client.dart';
+import 'UserProfile/Create_profile.dart';
 import 'UserProfile/Get_profile.dart';
 import 'Utils/SharedPrefHelper.dart';
 
@@ -25,6 +26,7 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
   FocusNode pinFn = FocusNode();
   bool showAcceptIcon = false;
   String errorMessage = '';
+  String successMessage = '';
   String? otpText;
 
   @override
@@ -97,6 +99,14 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
             _buildVerifyMobileWidget(),
             const SizedBox(height: 20),
             _buildPinCodeTextField(),
+            if (errorMessage.isNotEmpty) // Display error message
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  errorMessage,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
             const SizedBox(height: 30),
             _buildVerifyButton(context),
           ],
@@ -106,7 +116,6 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
   }
 
   Widget _buildDesktopLayout() {
-    // Customize your desktop layout here
     return SingleChildScrollView(
       child: Center(
         child: Container(
@@ -124,6 +133,14 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
               _buildVerifyMobileWidget(),
               const SizedBox(height: 20),
               _buildPinCodeTextField(),
+              if (errorMessage.isNotEmpty) // Display error message
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    errorMessage,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
               const SizedBox(height: 30),
               _buildVerifyButton(context),
             ],
@@ -151,9 +168,9 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
           const Text(
             'A One-Time Password (OTP) has been sent to',
             style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-               // overflow: TextOverflow.ellipsis
+              fontSize: 16,
+              color: Colors.grey,
+              // overflow: TextOverflow.ellipsis
             ),
           ),
           const SizedBox(height: 5),
@@ -180,7 +197,6 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
             null) // Check if mobilenumber is null (i.e., login with email)
           Text(
             'Email: ${widget.email}',
-            // Replace 'widget.email' with the actual variable storing the email
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -263,7 +279,7 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
                 }
               } else {
                 setState(() {
-                  errorMessage = 'Please enter the Otp';
+                  errorMessage = 'Please enter the OTP';
                 });
               }
             }
@@ -310,77 +326,60 @@ class _OtpScreenState extends State<OtpScreen> with WidgetsBindingObserver {
           bool isNewUser = prefs.getBool("isNewUser") ?? false;
 
           if (verifyResponse.user!.userId != null) {
-            if (isNewUser) {
-              // New User
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfileScreen()),
-              );
-            } else {
-              // Existing User
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Homepage()),
-              );
-            }
+            setState(() {
+              successMessage = 'OTP verification successful!';
+              errorMessage = '';
+            });
+
+            // Navigate to appropriate screen after a short delay to display success message
+            Future.delayed(Duration(seconds: 2), () {
+              if (isNewUser) {
+                // New User
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const EditProfile()),
+                );
+              } else {
+                // Existing User
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Homepage()),
+                );
+              }
+            });
           }
         } else {
           setState(() {
             errorMessage = 'Invalid OTP. Please try again.';
+            successMessage = '';
           });
         }
       } else {
         setState(() {
           errorMessage = 'Invalid user ID. Please try again.';
+          successMessage = '';
         });
       }
     } on DioError {
       setState(() {
-        errorMessage =
-            'An error occurred while verifying OTP. Please try again later.';
+        errorMessage = 'Invalid OTP. Please enter a valid OTP.';
+        successMessage = '';
       });
     } on FormatException {
       setState(() {
         errorMessage = 'Invalid OTP format. Please enter a valid number.';
+        successMessage = '';
       });
     } catch (e) {
       setState(() {
         errorMessage =
             'An unexpected error occurred while verifying OTP. Please try again later.';
+        successMessage = '';
       });
     }
   }
 
-  Future<void> _listenOtp() async {
-    SmsAutoFill().listenForCode;
-
-    SmsAutoFill().code.listen((String otp) {
-      if (otp.isNotEmpty) {
-        setState(() {
-          pinCtl.text = otp;
-          // Automatically trigger OTP validation when OTP is received
-          otpValidation(context, otp);
-        });
-      }
-    });
+  void _listenOtp() {
+    SmsAutoFill().listenForCode();
   }
-
-// void _listenOtp() async {
-//   try {
-//     String otp = await SmsAutoFill().getAppSignature;
-//     if (otp.isNotEmpty) {
-//       pinCtl.text = otp;
-//     }
-//   } catch (e) {
-//
-//   }
-//
-//   await SmsAutoFill().listenForCode;
-//
-//   SmsAutoFill().code.listen((String otp) {
-//     if (otp.isNotEmpty) {
-//       pinCtl.text = otp;
-//     }
-//   });
-// }
 }

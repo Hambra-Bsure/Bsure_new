@@ -22,16 +22,26 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController mobileController = TextEditingController();
   bool _isTermsAccepted = false;
-  FocusNode mobileFocusNode = FocusNode(); // Add this line
+  bool _isMobileNumberValid = false;
 
   @override
   void initState() {
     super.initState();
     // Add listener to mobileController
-    mobileController.addListener(() {
-      if (mobileController.text.length == 10) {
-        mobileFocusNode.unfocus();
-      }
+    mobileController.addListener(_validateInput);
+  }
+
+  @override
+  void dispose() {
+    mobileController.removeListener(_validateInput);
+    mobileController.dispose();
+    super.dispose();
+  }
+
+  void _validateInput() {
+    setState(() {
+      _isMobileNumberValid = mobileController.text.length == 10 &&
+          int.tryParse(mobileController.text) != null;
     });
   }
 
@@ -175,11 +185,10 @@ class _LoginPageState extends State<LoginPage> {
           controller: controller,
           keyboardType: keyboardType,
           inputFormatters: [LengthLimitingTextInputFormatter(10)],
-          // Limit input to 10 characters
           decoration: InputDecoration(
             hintText: hintText,
             contentPadding:
-                const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+            const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
             enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
             ),
@@ -187,13 +196,6 @@ class _LoginPageState extends State<LoginPage> {
               borderSide: BorderSide(color: Colors.grey),
             ),
           ),
-          onChanged: (value) {
-            // Add listener for text changes
-            if (value.length == 10) {
-              // Unfocus the text field when the length reaches 10
-              FocusScope.of(context).requestFocus(FocusNode());
-            }
-          },
         ),
       ],
     );
@@ -203,8 +205,9 @@ class _LoginPageState extends State<LoginPage> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed:
-            _isTermsAccepted && _isMobileNumberValid() ? handleLogin : null,
+        onPressed: _isTermsAccepted && _isMobileNumberValid
+            ? handleLogin
+            : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xff429bb8),
           shape: RoundedRectangleBorder(
@@ -227,11 +230,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  bool _isMobileNumberValid() {
-    final String mobileNumber = mobileController.text;
-    return mobileNumber.length == 10 && int.tryParse(mobileNumber) != null;
-  }
-
   void handleLogin() async {
     final String mobileNumber = mobileController.text;
 
@@ -239,7 +237,6 @@ class _LoginPageState extends State<LoginPage> {
       Fluttertoast.showToast(msg: "Please fill in all fields");
       return;
     }
-    mobileFocusNode.unfocus();
 
     final dio = Dio();
     final client = NodeClient(dio);
@@ -248,14 +245,10 @@ class _LoginPageState extends State<LoginPage> {
       final loginRequest = LoginRequest2(username: mobileNumber);
       final LoginResponse2 response = await client.login(loginRequest);
 
-      // Print the response for debugging
-
       if (response.success != null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String userId = response.userId.toString();
         prefs.setString(SharedPrefHelper().USER_ID, userId);
-
-        // Save the newUser flag to SharedPreferences
         prefs.setBool("isNewUser", response.newUser ?? false);
 
         Navigator.push(
@@ -271,7 +264,6 @@ class _LoginPageState extends State<LoginPage> {
         Fluttertoast.showToast(msg: "Login failed");
       }
     } catch (e) {
-      // Print the error for debugging
       Fluttertoast.showToast(msg: 'Network error: $e');
     }
   }

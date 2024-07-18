@@ -14,7 +14,7 @@ class WillProductsScreen extends StatefulWidget {
 
 class _WillProductsScreenState extends State<WillProductsScreen> {
   Future<DigitalwillProducts>? _futureProducts;
-  int? _selectedProductId;
+  String? _selectedProductLabel;
 
   @override
   void initState() {
@@ -37,30 +37,23 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
     }
   }
 
-  void _navigateToPlans(int productId) {
-    if (productId == 1) {
-      // Assuming 1 is the ID for Digital Will product
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const WillPlansScreen()),
-      );
-    } else if (productId == 2) {
-      // Assuming 2 is the ID for Nudge product
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const NudgePlansScreen()),
-      // );
-    } else {
-      // Handle other product IDs if necessary
-    }
-  }
+  // void _navigateToPlans(String productLabel) {
+  //   print("Navigating with product label: $productLabel");
+  //   if (productLabel == 'Digital Will') {
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => const WillPlansScreen()),
+  //     );
+  //   } else {
+  //     print("No navigation route defined for product label: $productLabel");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Digital Will Products',
-            style: TextStyle(color: Colors.white)),
+        title: const Text('Digital Will Products', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xff429bb8),
       ),
       body: FutureBuilder<DigitalwillProducts>(
@@ -82,12 +75,13 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      _selectedProductId = product.id;
+                      _selectedProductLabel = product.label;
                     });
+                    print("Selected product label: ${product.label}");
                   },
                   child: Card(
                     margin: const EdgeInsets.all(8.0),
-                    color: _selectedProductId == product.id
+                    color: _selectedProductLabel == product.label
                         ? Colors.blue.withOpacity(0.1)
                         : null,
                     child: ListTile(
@@ -99,13 +93,14 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
                         '${product.description ?? ''}\nLabel: ${product.label ?? ''}\nId: ${product.id ?? ''}',
                         style: const TextStyle(color: Colors.black54),
                       ),
-                      trailing: Radio<int>(
-                        value: product.id!,
-                        groupValue: _selectedProductId,
-                        onChanged: (int? value) {
+                      trailing: Radio<String>(
+                        value: product.label!,
+                        groupValue: _selectedProductLabel,
+                        onChanged: (String? value) {
                           setState(() {
-                            _selectedProductId = value;
+                            _selectedProductLabel = value;
                           });
+                          print("Radio selected product label: $value");
                         },
                       ),
                       isThreeLine: true,
@@ -120,11 +115,15 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
-          onPressed: _selectedProductId == null
+          onPressed: _selectedProductLabel == null
               ? null
               : () {
-                  _navigateToPlans(_selectedProductId!);
-                },
+          //  print("Button pressed with selected product label: $_selectedProductLabel");
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const WillPlansScreen()),
+            );
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xff429bb8),
             padding: const EdgeInsets.symmetric(vertical: 16.0),

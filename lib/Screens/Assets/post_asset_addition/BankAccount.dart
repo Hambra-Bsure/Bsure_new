@@ -35,7 +35,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   final TextEditingController _assetTypeController = TextEditingController();
   final TextEditingController _bankNameController = TextEditingController();
   final TextEditingController _accountNumberController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _ifscCodeController = TextEditingController();
   final TextEditingController _branchNameController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
@@ -65,7 +65,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title:
-        const Text('Bank account', style: TextStyle(color: Colors.white)),
+            const Text('Bank account', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -79,11 +79,10 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                 mandatory: true,
               ),
               buildTextField(
-                controller: _accountNumberController,
-                labelText: 'Account number',
-                mandatory: false,
-                isNumeric: true
-              ),
+                  controller: _accountNumberController,
+                  labelText: 'Account number',
+                  mandatory: false,
+                  isNumeric: true),
               buildTextField(
                 controller: _ifscCodeController,
                 labelText: 'IFSC code',
@@ -108,7 +107,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                     backgroundColor: const Color(0xff429bb8),
                   ),
                   child:
-                  const Text('Save', style: TextStyle(color: Colors.white)),
+                      const Text('Save', style: TextStyle(color: Colors.white)),
                 ),
               ),
               Column(
@@ -141,7 +140,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                           padding: EdgeInsets.symmetric(
                             vertical: MediaQuery.of(context).size.width * 0.01,
                             horizontal:
-                            MediaQuery.of(context).size.width * 0.03,
+                                MediaQuery.of(context).size.width * 0.03,
                           ),
                         ),
                         child: const Text(
@@ -207,12 +206,15 @@ class _BankAccountAddState extends State<BankAccountAdd> {
         TextFormField(
           controller: controller,
           inputFormatters: isNumeric
-              ? [FilteringTextInputFormatter.digitsOnly, NoLeadingSpaceFormatter()]
+              ? [
+                  FilteringTextInputFormatter.digitsOnly,
+                  NoLeadingSpaceFormatter()
+                ]
               : [NoLeadingSpaceFormatter()],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             contentPadding:
-            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         ),
@@ -265,7 +267,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             contentPadding:
-            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -302,7 +304,8 @@ class _BankAccountAddState extends State<BankAccountAdd> {
     final dio = Dio();
     final client = NodeClient(dio);
 
-    final accountType = _selectedAccountType ?? AccountType.Saving; // Provide a default value if needed
+    final accountType = _selectedAccountType ??
+        AccountType.Saving; // Provide a default value if needed
 
     final req = BankAccountRequest(
       assetType: widget.assetType,
@@ -312,12 +315,13 @@ class _BankAccountAddState extends State<BankAccountAdd> {
       branchName: _branchNameController.value.text.trim(),
       accountType: accountType,
       comments: _commentsController.value.text.trim(),
-      attachment: downloadUrl ?? '', // Use the file URL obtained from the server
+      attachment:
+          downloadUrl ?? '', // Use the file URL obtained from the server
     );
 
     try {
       final BankAccountResponse response =
-      await client.CreateBankAccount(token, req);
+          await client.CreateBankAccount(token, req);
 
       setState(() {
         assetId = response.asset!.bankAccount!.assetId?.toString();
@@ -392,9 +396,9 @@ class _BankAccountAddState extends State<BankAccountAdd> {
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse[
-        'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+            'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
         var returnedAssetId = jsonResponse[
-        'assetId']; // Assuming the server returns the asset ID in 'assetId' key
+            'assetId']; // Assuming the server returns the asset ID in 'assetId' key
         // Handle the file URL and asset ID
         print('File URL: $fileUrl');
         print('Asset ID: $returnedAssetId');
@@ -440,9 +444,9 @@ class _BankAccountAddState extends State<BankAccountAdd> {
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     if (newValue.text.startsWith(' ')) {
       return oldValue;
     }

@@ -220,7 +220,7 @@ class EditProfileState extends State<EditProfile> {
               value: null,
               child: Text(
                 'Select gender',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Colors.black),
               ),
             ),
             ...['Male', 'Female', 'Other'].map<DropdownMenuItem<String>>(

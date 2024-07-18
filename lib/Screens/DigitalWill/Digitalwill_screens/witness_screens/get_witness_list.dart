@@ -94,7 +94,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
           MaterialPageRoute(builder: (context) => PdfDownloadScreen()),
         );
       } else {
-        _showOptionsDialog();
+        _showOptionsDialog(data.witnesses.length, executorExists);
       }
     } catch (e) {
       print('Error in navigation check: $e');
@@ -104,7 +104,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     }
   }
 
-  void _showOptionsDialog() {
+  void _showOptionsDialog(int witnessCount, bool executorExists) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -113,18 +113,20 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.person_add),
-                title: const Text('Add witness'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const DigitalWitnessScreen()),
-                  );
-                },
-              ),
+              if (witnessCount < 2)
+                ListTile(
+                  leading: const Icon(Icons.person_add),
+                  title: const Text('Add witness'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const DigitalWitnessScreen()),
+                    );
+                  },
+                ),
+              // if (!executorExists)
               ListTile(
                 leading: const Icon(Icons.person),
                 title: const Text('Add executor'),
@@ -137,18 +139,19 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
                   );
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.download),
-                title: const Text('Will pdf download'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PdfDownloadScreen()),
-                  );
-                },
-              ),
+              if (witnessCount >= 2)
+                ListTile(
+                  leading: const Icon(Icons.download),
+                  title: const Text('Will pdf download'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PdfDownloadScreen()),
+                    );
+                  },
+                ),
             ],
           ),
         );
@@ -156,13 +159,20 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     );
   }
 
-  void _editWitness(Witness witness) {
-    Navigator.push(
+  void _editWitness(Witness witness) async {
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => WitnessEditScreen(witness: witness),
       ),
     );
+
+    if (result == true) {
+      // Re-fetch the data if the update was successful
+      setState(() {
+        _futureData = fetchData();
+      });
+    }
   }
 
   Future<void> _deleteWitness(int index, List<Witness> witnesses) async {

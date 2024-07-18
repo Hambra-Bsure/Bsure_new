@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Repositary/Models/Digital_will/Subscriptions/Will_plans.dart';
-import 'Will_payments.dart';
+import 'Will_billing_screen.dart';
 import 'package:http/http.dart' as http;
 
 class WillPlansScreen extends StatefulWidget {
@@ -25,7 +25,7 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
 
   Future<DigitalwillPlans> fetchPlans() async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.get("token");
+    final token = prefs.getString("token");
 
     final response = await http.get(
       Uri.parse(
@@ -46,7 +46,7 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
         context,
         MaterialPageRoute(
           builder: (context) =>
-              WillPaymentsScreen(planId: planId, price: price),
+              WillBillingScreen(planId: planId, price: price),
         ),
       );
     }
@@ -68,21 +68,23 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData ||
-              snapshot.data!.plans == null ||
-              snapshot.data!.plans!.isEmpty) {
+              snapshot.data!.product == null ||
+              snapshot.data!.product!.plans == null ||
+              snapshot.data!.product!.plans!.isEmpty) {
             return const Center(child: Text('No plans available'));
           } else {
             return ListView.builder(
-              itemCount: snapshot.data!.plans!.length,
+              itemCount: snapshot.data!.product!.plans!.length,
               itemBuilder: (context, index) {
-                final plan = snapshot.data!.plans![index];
-                final formattedPrice = (plan.price! / 100).toStringAsFixed(2);
+                final plan = snapshot.data!.product!.plans![index];
+                final formattedPrice =
+                    (plan.priceInPaisa! / 100).toStringAsFixed(2);
 
                 return GestureDetector(
                   onTap: () {
                     setState(() {
                       _selectedPlanId = plan.id;
-                      _selectedPlanPrice = plan.price;
+                      _selectedPlanPrice = plan.priceInPaisa;
                     });
                   },
                   child: Card(
@@ -93,7 +95,7 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
                     child: ListTile(
                       title: Text(plan.name ?? 'N/A'),
                       subtitle: Text(
-                        '${plan.label ?? ''}\nPrice: ₹${formattedPrice}\nPeriod: ${plan.period ?? ''}\nProductId: ${plan.productId ?? ''}',
+                        '${plan.description ?? ''}\nPrice: ₹${formattedPrice}\nPeriod: ${plan.period ?? ''}',
                         style: const TextStyle(height: 1.5),
                       ),
                       trailing: Radio<int>(
@@ -102,7 +104,7 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
                         onChanged: (int? value) {
                           setState(() {
                             _selectedPlanId = value;
-                            _selectedPlanPrice = plan.price ?? 0;
+                            _selectedPlanPrice = plan.priceInPaisa ?? 0;
                           });
                         },
                       ),

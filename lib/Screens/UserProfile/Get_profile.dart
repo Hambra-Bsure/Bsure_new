@@ -149,8 +149,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildText(
-                'Name:', '${user.firstName ?? ''} ${user.lastName ?? ''}'),
+            _buildText('First Name:', user.firstName ?? ''),
+            _buildText('Last Name:', user.lastName ?? ''),
             _buildText('Gender:', user.gender ?? ''),
             _buildText('Whatsapp no:', user.whatsappNumber ?? ''),
             if (user.secondaryNumber != null &&

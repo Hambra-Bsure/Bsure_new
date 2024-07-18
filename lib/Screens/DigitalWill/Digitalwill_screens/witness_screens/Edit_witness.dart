@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Repositary/Models/Digital_will/witness_get_res.dart';
-import 'get_witness_list.dart';
-
 
 class WitnessEditScreen extends StatefulWidget {
   final Witness witness;
@@ -19,9 +17,8 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _mobileController;
-  late TextEditingController _ageController;
   late TextEditingController _addressController;
-  late TextEditingController _emailController;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -32,38 +29,52 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
     _addressController = TextEditingController(text: widget.witness.address);
   }
 
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _mobileController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
 
   void _updateWitnessDetails() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     Map<String, dynamic> updateData = {
       'witnessId': widget.witness.id,
-      'firstName': _firstNameController.text,
-      'lastName': _lastNameController.text,
-      'mobile': _mobileController.text,
-      'address': _addressController.text,
+      'firstName': _firstNameController.text.trim(),
+      'lastName': _lastNameController.text.trim(),
+      'mobile': _mobileController.text.trim(),
+      'address': _addressController.text.trim(),
     };
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.get("token");
+      final token = prefs.getString("token");
 
-      Response response =
-      await Dio().put('https://dev.bsure.live/v2/will/witness',
-          data: updateData,
-          options: Options(
-            headers: {'Authorization': token},
-          ));
+      if (token == null || token.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Token is not available.'),
+        ));
+        return;
+      }
+
+      Response response = await Dio().put(
+        'https://dev.bsure.live/v2/will/witness',
+        data: updateData,
+        options: Options(
+          headers: {'Authorization': token},
+        ),
+      );
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Witness details updated successfully.'),
         ));
-        Navigator.pop(context);
-        Navigator.pushReplacement<void, void>(
-          context,
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) =>  DigitalWillGetWitness(),
-          ),
-        );
+        Navigator.pop(context, true); // Pass a value indicating success
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Failed to update witness details.'),
@@ -82,57 +93,73 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title:
-        const Text('Edit witness', style: TextStyle(color: Colors.white)),
+        title: const Text('Edit witness', style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            buildTextField(
-              controller: _firstNameController,
-              labelText: 'First name',
-              mandatory: true,
-            ),
-            buildTextField(
-              controller: _lastNameController,
-              labelText: 'Last name',
-              mandatory: true,
-            ),
-            buildTextField(
-              controller: _ageController,
-              labelText: 'Age',
-              mandatory: false,
-              isNumeric: true
-            ),
-            buildTextField(
-              controller: _mobileController,
-              labelText: 'Mobile',
-              mandatory: true,
-              isNumeric: true
-            ),
-            buildTextField(
-              controller: _emailController,
-              labelText: 'Email id',
-              mandatory: false,
-            ),
-            buildTextField(
-              controller: _addressController,
-              labelText: 'Address',
-              mandatory: true,
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _updateWitnessDetails,
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                const Color(0xff429bb8), // Set the background color
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              buildTextField(
+                controller: _firstNameController,
+                labelText: 'First name',
+                mandatory: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter first name';
+                  }
+                  return null;
+                },
               ),
-              child:
-              const Text('Update', style: TextStyle(color: Colors.white)),
-            )
-          ],
+              buildTextField(
+                controller: _lastNameController,
+                labelText: 'Last name',
+                mandatory: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter last name';
+                  }
+                  return null;
+                },
+              ),
+              buildTextField(
+                controller: _mobileController,
+                labelText: 'Mobile',
+                mandatory: true,
+                isNumeric: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter mobile number';
+                  }
+                  if (value.length != 10) {
+                    return 'Mobile number must be 10 digits';
+                  }
+                  return null;
+                },
+              ),
+              buildTextField(
+                controller: _addressController,
+                labelText: 'Address',
+                mandatory: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter address';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: _updateWitnessDetails,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff429bb8),
+                ),
+                child: const Text('Update', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -179,11 +206,9 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
               : [NoLeadingSpaceFormatter()],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding:
-            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
-          keyboardType:
-          isNumeric ? TextInputType.number : TextInputType.text,
+          keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         ),
       ],
     );
@@ -192,8 +217,7 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
 
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.startsWith(' ')) {
       return oldValue;
     }

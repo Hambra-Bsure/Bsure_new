@@ -157,7 +157,7 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
         appContext: context,
         length: 5,
         pinTheme: PinTheme(
-          shape: PinCodeFieldShape.circle,
+          shape: PinCodeFieldShape.box,
           borderRadius: BorderRadius.circular(5),
           fieldHeight: 50,
           fieldWidth: 40,
@@ -190,9 +190,19 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
             }
           });
         },
+        //errorAnimationController: errorController, // Add error controller
+        animationType: AnimationType.fade,
+        validator: (v) {
+          if (v!.length < 5) {
+            return "Please enter valid OTP";
+          } else {
+            return null;
+          }
+        },
       ),
     );
   }
+
 
   Widget _buildTermsAndConditionsText() {
     return _buildText(
@@ -255,18 +265,23 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
       final response = await client.digitalwillVerifyOtp(token!, otpRequest);
 
       if (response.isValid == true) {
+        // Show OTP success message
         DisplayUtils.showToast('OTP Verified Successfully');
+
+        // Navigate to success message or additional confirmation screen
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const Nomineeforallassets4(),
+            builder: (context) => const Nomineeforallassets4(), // Replace with your success message screen
           ),
         );
       } else {
+        // Handle case where OTP verification fails
         setState(() {
           errorMessage = 'Incorrect OTP. Please try again.';
         });
       }
     } catch (e) {
+      // Handle exceptions
       setState(() {
         errorMessage = 'An error occurred. Please try again.';
       });

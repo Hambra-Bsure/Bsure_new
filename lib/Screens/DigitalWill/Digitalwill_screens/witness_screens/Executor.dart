@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Repositary/Models/Digital_will/Subscriptions/Will_ececutor_res.dart';
 import 'willpdf_download.dart';
 import '../../../Repositary/Models/Digital_will/Subscriptions/Will_executor_req.dart';
-import '../../../Repositary/Models/Digital_will/Subscriptions/Will_ececutor_res.dart';
 
 class WillExecutorScreen extends StatefulWidget {
   const WillExecutorScreen({Key? key}) : super(key: key);
@@ -40,7 +40,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
-          'Authorization': 'Bearer $token',
+          'Authorization': token.toString(),
         },
       );
 
@@ -52,13 +52,19 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
             MaterialPageRoute(builder: (context) => PdfDownloadScreen()),
           );
         }
+      } else if (response.statusCode == 404) {
+        setState(() {
+          _errorMessage = 'Executor data not found.';
+        });
+      } else if (response.statusCode == 403) {
+        setState(() {
+          _errorMessage = 'Access forbidden. Please check your credentials.';
+        });
       } else {
         setState(() {
-          _errorMessage =
-          'Failed to check executor data. Status code: ${response.statusCode}';
+          _errorMessage = 'Failed to check executor data. Status code: ${response.statusCode}';
         });
-        _showErrorMessage(
-            'Failed to check executor data. Status code: ${response.statusCode}');
+        _showErrorMessage('Failed to check executor data. Status code: ${response.statusCode}');
       }
     } catch (e) {
       setState(() {
@@ -81,6 +87,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
       fatherName: _fatherNameController.text,
       age: int.tryParse(_ageController.text),
       religion: _religionController.text,
+      // address: _addressController.text,
     );
 
     try {
@@ -89,11 +96,11 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
         body: jsonEncode(willExecutor.toJson()),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $token',
+          'Authorization': token.toString(),
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 204) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PdfDownloadScreen()),
@@ -101,6 +108,9 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
       } else {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         final errorResponse = WillExecutorRes.fromJson(responseData);
+        setState(() {
+          _errorMessage = errorResponse.message ?? 'Failed to save data';
+        });
         _showErrorMessage(errorResponse.message ?? 'Failed to save data');
       }
     } catch (e) {
@@ -147,6 +157,37 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
   String? _validateAddress(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter address';
+    }
+    return null;
+  }
+
+  String? _validateFatherName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter father name';
+    }
+    if (value.length < 2) {
+      return 'Father name must be at least 2 characters';
+    }
+    return null;
+  }
+
+  String? _validateReligion(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter religion';
+    }
+    if (value.length < 2) {
+      return 'Religion must be at least 2 characters';
+    }
+    return null;
+  }
+
+  String? _validateAge(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter age';
+    }
+    final int? age = int.tryParse(value);
+    if (age == null) {
+      return 'Age must be a number';
     }
     return null;
   }
@@ -207,8 +248,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title:
-        const Text('Will Executor', style: TextStyle(color: Colors.white)),
+        title: const Text('Will Executor', style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -241,7 +281,9 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
               _buildTextField(
                 controller: _ageController,
                 labelText: 'Age',
+                validator: _validateAge,
                 isNumeric: true,
+                mandatory: true,
               ),
               const SizedBox(height: 15),
               _buildTextField(
@@ -255,20 +297,17 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
               _buildTextField(
                 controller: _religionController,
                 labelText: 'Religion',
-              ),
-              const SizedBox(height: 15),
-              _buildTextField(
-                  controller: _fatherNameController,
-                  labelText: 'Father name',
-              ),
-              const SizedBox(height: 15),
-              _buildTextField(
-                controller: _religionController,
-                labelText: 'Address',
-                validator: _validateAddress,
+                validator: _validateReligion,
                 mandatory: true,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
+              _buildTextField(
+                controller: _fatherNameController,
+                labelText: 'Father name',
+                validator: _validateFatherName,
+                mandatory: true,
+              ),
+              const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -278,8 +317,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
                 ),
-                child:
-                const Text('Save', style: TextStyle(color: Colors.white)),
+                child: const Text('Submit', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -292,7 +330,9 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
     if (newValue.text.startsWith(' ')) {
       return oldValue;
     }

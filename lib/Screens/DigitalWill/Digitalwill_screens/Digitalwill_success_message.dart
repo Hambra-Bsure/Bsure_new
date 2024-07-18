@@ -90,7 +90,7 @@ class _Nomineeforallassets3State extends State<Nomineeforallassets4> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                               DigitalWillGetWitness()), // Replace NextScreen with your desired screen
+                              DigitalWillGetWitness()), // Replace NextScreen with your desired screen
                     );
                   },
                   backgroundColor: Colors.white,

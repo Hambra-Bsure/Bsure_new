@@ -29,14 +29,27 @@ class Products {
   String? name;
   String? description;
   String? label;
+  bool? isActive;
+  String? createdAt;
+  String? updatedAt;
 
-  Products({this.id, this.name, this.description, this.label});
+  Products(
+      {this.id,
+        this.name,
+        this.description,
+        this.label,
+        this.isActive,
+        this.createdAt,
+        this.updatedAt});
 
   Products.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     description = json['description'];
     label = json['label'];
+    isActive = json['isActive'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
   }
 
   Map<String, dynamic> toJson() {
@@ -45,6 +58,9 @@ class Products {
     data['name'] = this.name;
     data['description'] = this.description;
     data['label'] = this.label;
+    data['isActive'] = this.isActive;
+    data['createdAt'] = this.createdAt;
+    data['updatedAt'] = this.updatedAt;
     return data;
   }
 }

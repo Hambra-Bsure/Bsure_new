@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
+import '../../../Assets/Update_asset_screens/Bank_Account_Edit.dart';
 import '../../../Repositary/Models/Digital_will/Witness1Res.dart';
 import '../../../Repositary/Models/Digital_will/witness1_req.dart';
 import 'get_witness_list.dart';
@@ -84,31 +84,31 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
 
       Uri apiUrl = Uri.parse('https://dev.bsure.live/v2/will/witness');
 
-      final response = await http.post(
-        apiUrl,
-        body: jsonEncode(body),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': token!,
-        },
-      );
+      try {
+        final response = await http.post(
+          apiUrl,
+          body: jsonEncode(body),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': token!,
+          },
+        );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
-      if (response.statusCode == 201) {
-        Witness1Res witness1Res =
-        Witness1Res.fromJson(jsonDecode(response.body));
-        if (witness1Res.witness != null && witness1Res.witness!.isNotEmpty) {
-          setState(() {
-            _witnessId = witness1Res.witness!.first.id.toString();
-          });
-          await _sendOtp(_witnessId!);
+        if (response.statusCode == 201) {
+          Witness1Res witness1Res = Witness1Res.fromJson(jsonDecode(response.body));
+          if (witness1Res.witness != null && witness1Res.witness!.isNotEmpty) {
+            setState(() {
+              _witnessId = witness1Res.witness!.first.id.toString();
+            });
+            await _sendOtp(_witnessId!);
+          } else {
+            _showSnackbar('Witness data is empty or null');
+          }
         } else {
-          print('Witness data is empty or null');
+          _showSnackbar('Failed to submit witness data');
         }
-      } else {
-        print('Failed to submit witness data');
+      } catch (e) {
+        _showSnackbar('Error submitting witness data: $e');
       }
     }
   }
@@ -130,12 +130,12 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
         setState(() {
           _isOtpFieldVisible = true;
         });
-        print('OTP sent successfully');
+        _showSnackbar('OTP sent successfully');
       } else {
-        print('Failed to send OTP');
+        _showSnackbar('Failed to send OTP');
       }
     } catch (e) {
-      print('Error sending OTP: $e');
+      _showSnackbar('Error sending OTP: $e');
     }
   }
 
@@ -168,18 +168,22 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
               builder: (context) => DigitalWillGetWitness(),
             ),
           );
-          print("OTP verified successfully");
+          _showSnackbar("OTP verified successfully");
         } else {
-          print("Failed to verify OTP: ${response.data}");
+          _showSnackbar("Failed to verify OTP: ${response.data}");
         }
       } catch (e) {
-        print("Exception occurred: $e");
+        _showSnackbar("Exception occurred: $e");
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid OTP.')),
-      );
+      _showSnackbar('Please enter a valid OTP.');
     }
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   String? _validateFirstName(String? value) {
@@ -254,90 +258,62 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
                 const SizedBox(height: 30),
                 _buildTextField(
                   controller: _controller1,
-                  labelText: 'First name',
+                  labelText: 'First Name',
                   validator: _validateFirstName,
-                  mandatory: true,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller2,
-                  labelText: 'Last name',
+                  labelText: 'Last Name',
                   validator: _validateLastName,
-                  mandatory: true,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller3,
                   labelText: 'Age',
-                //  validator: _validateAge,
-                  isNumeric: true,
+                  validator: _validateAge,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller4,
-                  labelText: 'Mobile no',
+                  labelText: 'Mobile Number',
                   validator: _validateMobileNumber,
-                  mandatory: true,
-                  isNumeric: true,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller5,
-                  labelText: 'Email id',
-                 // validator: _validateEmail,
+                  labelText: 'Email Address',
+                  validator: _validateEmail,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller6,
                   labelText: 'Address',
                   validator: _validateAddress,
-                  mandatory: true,
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _submit,
+                  child: const Text("Submit"),
+                ),
+                const SizedBox(height: 20),
                 if (_isOtpFieldVisible)
                   Column(
                     children: [
                       _buildTextField(
                         controller: _otpController,
                         labelText: 'Enter OTP',
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter OTP';
-                          }
-                          return null;
-                        },
-                        isNumeric: true,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       ),
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: _verifyOtp,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff429bb8),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 15),
-                          textStyle: const TextStyle(fontSize: 18),
-                        ),
-                        child: const Text(
-                          'Verify OTP',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        child: const Text("Verify OTP"),
                       ),
-                      const SizedBox(height: 15),
                     ],
                   ),
-                ElevatedButton(
-                  onPressed: _submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff429bb8),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 15),
-                    textStyle: const TextStyle(fontSize: 18),
-                  ),
-                  child: const Text(
-                    'Submit',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
               ],
             ),
           ),
@@ -346,65 +322,23 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     );
   }
 
-  Widget _buildTextField({
+  TextFormField _buildTextField({
     required TextEditingController controller,
     required String labelText,
-    bool mandatory = false,
-    bool isNumeric = false,
     String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              labelText,
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            if (mandatory)
-              const Text(
-                ' *',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-          ],
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: const TextStyle(
+          color: Colors.black,
         ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          validator: validator,
-          inputFormatters: isNumeric
-              ? [
-            FilteringTextInputFormatter.digitsOnly,
-            NoLeadingSpaceFormatter(),
-          ]
-              : [NoLeadingSpaceFormatter()],
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            contentPadding:
-            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-          ),
-          keyboardType:
-          isNumeric ? TextInputType.number : TextInputType.text,
-        ),
-      ],
+        border: const OutlineInputBorder(),
+      ),
+      validator: validator,
+      inputFormatters: inputFormatters,
     );
-  }
-}
-
-class NoLeadingSpaceFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    if (newValue.text.startsWith(' ')) {
-      return oldValue;
-    }
-    return newValue;
   }
 }
