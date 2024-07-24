@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:Bsure_devapp/Screens/Assets/post_asset_addition/post_asset_response.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/BankAccountRequest.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/BankAccountResponse.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/BondRequest.dart';
@@ -78,13 +79,11 @@ abstract class NodeClient {
   @POST("/v2/auth/verify")
   Future<VerifyResponse> verifyotp(@Body() VerifyRequest req);
 
-
   //user account deletion
   //
   @DELETE("/v2/users")
   Future<userAccountDeleteResponse> deleteAccount(
       @Header('Authorization') String token);
-
 
   //get all Categorys
 
@@ -109,7 +108,7 @@ abstract class NodeClient {
   //Categories
 
   @POST("/v2/asset")
-  Future<BankAccountResponse> CreateBankAccount(
+  Future<PostAssetResponse> CreateBankAccount(
       @Header('Authorization') String token, @Body() BankAccountRequest req);
 
   @POST("/v2/asset")
@@ -178,14 +177,14 @@ abstract class NodeClient {
   Future<EsopResponse> CreateEsop(
       @Header('Authorization') String token, @Body() EsopRequest req);
 
-
   //Nudge
 
   @POST("/payment/nudge-plans")
   Future<PlanDetailsResponseBean> getPlanDetails();
 
   @POST("/account/user/redeemCode")
-  Future<UserdiscountResponsebean> userdiscount(@Body() UserDiscountRequest request);
+  Future<UserdiscountResponsebean> userdiscount(
+      @Body() UserDiscountRequest request);
 
   //Digitalwil
 

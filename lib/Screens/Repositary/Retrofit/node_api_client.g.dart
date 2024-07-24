@@ -195,7 +195,7 @@ class _NodeClient implements NodeClient {
   }
 
   @override
-  Future<BankAccountResponse> CreateBankAccount(
+  Future<PostAssetResponse> CreateBankAccount(
     String token,
     BankAccountRequest req,
   ) async {
@@ -205,8 +205,8 @@ class _NodeClient implements NodeClient {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<BankAccountResponse>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -222,7 +222,7 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = BankAccountResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 

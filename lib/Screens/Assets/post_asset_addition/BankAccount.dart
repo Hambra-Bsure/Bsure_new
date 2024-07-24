@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:Bsure_devapp/Screens/Assets/post_asset_addition/post_asset_response.dart';
 import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
@@ -46,12 +47,12 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   File? file;
   String? fileName;
   String? downloadUrl;
-  String? assetId;
+  int? assetId;
 
   Color color1 = const Color(0xff429bb8);
   String url = "";
   var name;
-  var proof;
+  PlatformFile? proof;
 
   @override
   void initState() {
@@ -63,7 +64,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xff429bb8),
+        backgroundColor: color1,
         title:
             const Text('Bank account', style: TextStyle(color: Colors.white)),
       ),
@@ -100,16 +101,16 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                 mandatory: false,
               ),
               const SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff429bb8),
-                  ),
-                  child:
-                      const Text('Save', style: TextStyle(color: Colors.white)),
-                ),
-              ),
+              // Center(
+              //   child: ElevatedButton(
+              //     onPressed: _submitForm,
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: const Color(0xff429bb8),
+              //     ),
+              //     child:
+              //         const Text('Save', style: TextStyle(color: Colors.white)),
+              //   ),
+              // ),
               Column(
                 children: [
                   Row(
@@ -121,7 +122,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                             focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Color(0xff429bb8)),
                             ),
-                            hintText: "Select File",
+                            hintText: "Attachemnt you want to upload(optional)",
                             hintStyle: TextStyle(fontSize: 16),
                           ),
                           readOnly: true,
@@ -144,7 +145,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                           ),
                         ),
                         child: const Text(
-                          'File',
+                          'Choose file',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -157,7 +158,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
-                      await submitImage();
+                      await _submitForm();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff429bb8),
@@ -298,6 +299,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
     var token = prefs.getString("token");
 
     if (token == null || token.isEmpty) {
+      // TODO: redirect user to login page
       return;
     }
 
@@ -315,17 +317,17 @@ class _BankAccountAddState extends State<BankAccountAdd> {
       branchName: _branchNameController.value.text.trim(),
       accountType: accountType,
       comments: _commentsController.value.text.trim(),
-      attachment:
-          downloadUrl ?? '', // Use the file URL obtained from the server
+      // TODO: remove attachemnt field from all the assets
     );
 
     try {
-      final BankAccountResponse response =
+      final PostAssetResponse response =
           await client.CreateBankAccount(token, req);
 
-      setState(() {
-        assetId = response.asset!.bankAccount!.assetId?.toString();
-      });
+      assetId = response.asset.assetId;
+      if (assetId != null) {
+        _submitImage();
+      }
 
       // Now you can use the assetId as needed
       print('Asset ID: $assetId');
@@ -345,14 +347,15 @@ class _BankAccountAddState extends State<BankAccountAdd> {
     if (result != null) {
       setState(() {
         proof = result.files.single;
-        _attachmentController.text = proof.name;
+        _attachmentController.text = proof!.name;
       });
     } else {
       // Handle error when no file is selected.
     }
   }
 
-  Future<void> submitImage() async {
+  // Work in this function
+  Future<void> _submitImage() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
@@ -383,8 +386,8 @@ class _BankAccountAddState extends State<BankAccountAdd> {
       if (proof != null) {
         request.files.add(http.MultipartFile.fromBytes(
           "attachment",
-          proof.bytes!,
-          filename: proof.name,
+          proof!.bytes!,
+          filename: proof!.name,
         ));
       }
 
@@ -395,8 +398,9 @@ class _BankAccountAddState extends State<BankAccountAdd> {
         DisplayUtils.showToast("Bank details added successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
+        // returned key is "attachmentUrl"
         var fileUrl = jsonResponse[
-            'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+            'attachmentUrl']; // Assuming the server returns the file URL in 'fileUrl' key
         var returnedAssetId = jsonResponse[
             'assetId']; // Assuming the server returns the asset ID in 'assetId' key
         // Handle the file URL and asset ID
