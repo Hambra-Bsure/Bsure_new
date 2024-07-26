@@ -134,7 +134,7 @@ class _EsopEditState extends State<EsopEdit> {
 
                   final updatedEsop = Esop(
                     companyName: companyName,
-                    numberOfStocks: int.tryParse(numberOfStocks),
+                    numberOfStocks: int.tryParse(numberOfStocks) ?? 0,
                     optionPrice: int.tryParse(optionPrice),
                     expiryDate: formatDate(expiryDate),
                     // Format DateTime to String for API
@@ -308,7 +308,7 @@ class _EsopEditState extends State<EsopEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -329,7 +329,7 @@ class _EsopEditState extends State<EsopEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -376,6 +376,8 @@ class _EsopEditState extends State<EsopEdit> {
             .toJson(), // Convert Esop object to JSON and send as request body
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
         return Esop.fromJson(jsonDecode(response.data));
       } else {
@@ -383,6 +385,31 @@ class _EsopEditState extends State<EsopEdit> {
       }
     } catch (e) {
       return null; // Return null if an error occurs
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.esop.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

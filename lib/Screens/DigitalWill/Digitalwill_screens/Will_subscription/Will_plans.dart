@@ -55,6 +55,7 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Digital Will Plans',
             style: TextStyle(color: Colors.white)),
@@ -77,8 +78,7 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
               itemCount: snapshot.data!.product!.plans!.length,
               itemBuilder: (context, index) {
                 final plan = snapshot.data!.product!.plans![index];
-                final formattedPrice =
-                    (plan.priceInPaisa! / 100).toStringAsFixed(2);
+                final formattedPrice = (plan.priceInPaisa! / 100).toStringAsFixed(2);
 
                 return GestureDetector(
                   onTap: () {
@@ -88,10 +88,8 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
                     });
                   },
                   child: Card(
+                    color: Colors.white,
                     margin: const EdgeInsets.all(8.0),
-                    color: _selectedPlanId == plan.id
-                        ? Colors.blue.withOpacity(0.1)
-                        : null,
                     child: ListTile(
                       title: Text(plan.name ?? 'N/A'),
                       subtitle: Text(

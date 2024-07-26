@@ -35,8 +35,8 @@ class _StockBrokerEditState extends State<StockBrokerEdit> {
     super.initState();
     brokerName = widget.broker.brokerName;
     dematAccountNumber = widget.broker.dematAccountNumber;
-    comments = widget.broker.comments;
-    attachment = widget.broker.attachment;
+    comments = widget.broker.comments ?? "";
+    attachment = widget.broker.attachment ?? "";
   }
 
   @override
@@ -188,7 +188,7 @@ class _StockBrokerEditState extends State<StockBrokerEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -209,7 +209,7 @@ class _StockBrokerEditState extends State<StockBrokerEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -255,6 +255,8 @@ class _StockBrokerEditState extends State<StockBrokerEdit> {
         data: broker.toJson(),
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
         // DisplayUtils.showToast("StockBroker Details Updated Successfully");
       } else {
@@ -262,6 +264,31 @@ class _StockBrokerEditState extends State<StockBrokerEdit> {
       }
     } catch (e) {
       // Handle error
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.broker.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

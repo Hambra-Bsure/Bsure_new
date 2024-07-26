@@ -171,7 +171,7 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
                 const SizedBox(height: 16.0),
                 buildTextFormField(_lastNameController, 'Last name', false, true),
                 const SizedBox(height: 16.0),
-                buildTextFormField(_mobileNumberController, 'Mobile number', true, true, keyboardType: TextInputType.phone),
+                buildTextFormField(_mobileNumberController, 'Mobile number', false, false, keyboardType: TextInputType.phone),
                 const SizedBox(height: 16.0),
                 DropdownButtonFormField<Relation>(
                   value: _selectedRelation,
@@ -368,7 +368,7 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        DisplayUtils.showToast("Nominee updated successfully");
+        //DisplayUtils.showToast("Nominee updated successfully");
         return EditNomineeRes.fromJson(response.data);
       } else {
         print("Failed with status code: ${response.statusCode}");

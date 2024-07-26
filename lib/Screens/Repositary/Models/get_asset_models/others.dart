@@ -21,8 +21,8 @@ class Other with _$Other {
   factory Other({
     required String category,
     required String assetName,
-    required String comments,
-    required String attachment,
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _Other;
 

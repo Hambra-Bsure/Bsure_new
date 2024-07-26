@@ -21,12 +21,11 @@ class Vehicle with _$Vehicle {
     required String category,
     required String vehicleType,
     required String brandName,
-    required String modelName,
+    required String? modelName,
     required String registrationNumber,
-    required String chassisNumber,
-    required String comments,
-
-    required String attachment,
+    required String? chassisNumber,
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _Vehicle;
 

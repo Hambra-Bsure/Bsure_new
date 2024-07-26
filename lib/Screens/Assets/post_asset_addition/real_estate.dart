@@ -152,17 +152,6 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                 labelText: 'Comments ',
                 mandatory: false,
               ),
-              const SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff429bb8),
-                  ),
-                  child:
-                  const Text('Save', style: TextStyle(color: Colors.white)),
-                ),
-              ),
               const SizedBox(height: 20),
               Column(
                 children: [
@@ -175,7 +164,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                             focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Color(0xff429bb8)),
                             ),
-                            hintText: "Select file",
+                            hintText: "Attachemnt you want to upload(optional)",
                             hintStyle: TextStyle(fontSize: 16),
                           ),
                           readOnly: true,
@@ -197,7 +186,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                           ),
                         ),
                         child: const Text(
-                          'File',
+                          'Choose file',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -210,7 +199,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
-                      await submitImage();
+                      _submitForm();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff429bb8),
@@ -234,11 +223,10 @@ class _RealEstateAddState extends State<RealEstateAdd> {
     if (result != null) {
       setState(() {
         proof = result.files.single;
-        _attachmentController.text = proof!.name;
+        _attachmentController.text = proof.name;
       });
     } else {
       // Handle error when no file is selected.
-      print('No file selected.');
     }
   }
 
@@ -246,18 +234,6 @@ class _RealEstateAddState extends State<RealEstateAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (proof == null || token == null || token.isEmpty || assetId == null) {
-      // If any of the conditions are not met, return and navigate to the next screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RealEstateScreen(
-            assetType: widget.assetType,
-          ),
-        ),
-      );
-      return;
-    }
 
     try {
       var uri = Uri.parse(
@@ -265,7 +241,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
-      request.headers['Authorization'] = token;
+      request.headers['Authorization'] = token.toString();
 
       // Add asset ID as a field
       request.fields['assetId'] = assetId!;
@@ -273,7 +249,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
       if (proof != null) {
         request.files.add(http.MultipartFile.fromBytes(
           "attachment",
-          proof!.bytes!,
+          proof.bytes!,
           filename: proof!.name,
         ));
       }
@@ -281,6 +257,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
       var response = await request.send();
 
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse[
@@ -431,9 +408,10 @@ class _RealEstateAddState extends State<RealEstateAdd> {
     try {
       final response = await client.CreateRealEstate(token, request);
 
-      setState(() {
-        assetId = response.asset?.realEstate?.assetId.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
       // Handle the response data
 
       if (response.success == 200) {

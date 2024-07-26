@@ -21,10 +21,10 @@ class Golds with _$Golds {
     required String category,
     required String metalType,
     required String type,
-    required int? weightInGrams,
-    required String whereItIsKept, // Change type to String
-    required String comments,
-    required String attachment,
+    required int weightInGrams,
+    required String? whereItIsKept, // Change type to String
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _Golds;
 

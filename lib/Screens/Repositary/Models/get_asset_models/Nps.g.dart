@@ -25,8 +25,8 @@ Map<String, dynamic> _$$NPSResponseImplToJson(_$NPSResponseImpl instance) =>
 _$NPSImpl _$$NPSImplFromJson(Map<String, dynamic> json) => _$NPSImpl(
       category: json['category'] as String,
       pranNumber: json['pranNumber'] as String,
-      comments: json['comments'] as String,
-      attachment: json['attachment'] as String,
+      comments: json['comments'] as String?,
+      attachment: json['attachment'] as String?,
       assetId: (json['assetId'] as num).toInt(),
     );
 

@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../Repositary/Models/Digital_will/Subscriptions/Will_ececutor_res.dart';
-import 'willpdf_download.dart';
-import '../../../Repositary/Models/Digital_will/Subscriptions/Will_executor_req.dart';
+import '../../../../Repositary/Models/Digital_will/Subscriptions/Will_ececutor_res.dart';
+import '../../../../Repositary/Models/Digital_will/Subscriptions/Will_executor_req.dart';
+import 'GetExecutor.dart';
 
 class WillExecutorScreen extends StatefulWidget {
   const WillExecutorScreen({Key? key}) : super(key: key);
@@ -27,52 +28,8 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
   @override
   void initState() {
     super.initState();
-    _checkExecutorExists();
   }
 
-  Future<void> _checkExecutorExists() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    const url = 'https://dev.bsure.live/v2/will/executor';
-
-    try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Authorization': token.toString(),
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final executorData = jsonDecode(response.body);
-        if (executorData != null) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => PdfDownloadScreen()),
-          );
-        }
-      } else if (response.statusCode == 404) {
-        setState(() {
-          _errorMessage = 'Executor data not found.';
-        });
-      } else if (response.statusCode == 403) {
-        setState(() {
-          _errorMessage = 'Access forbidden. Please check your credentials.';
-        });
-      } else {
-        setState(() {
-          _errorMessage = 'Failed to check executor data. Status code: ${response.statusCode}';
-        });
-        _showErrorMessage('Failed to check executor data. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Error checking executor data: $e';
-      });
-      _showErrorMessage('Error checking executor data: $e');
-    }
-  }
 
   Future<void> _saveData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -100,10 +57,11 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
         },
       );
 
-      if (response.statusCode == 204) {
+      if (response.statusCode == 200) {
+        DisplayUtils.showToast("Executor successfully created");
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PdfDownloadScreen()),
+          MaterialPageRoute(builder: (context) => GetExecutor()),
         );
       } else {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
@@ -339,3 +297,5 @@ class NoLeadingSpaceFormatter extends TextInputFormatter {
     return newValue;
   }
 }
+
+

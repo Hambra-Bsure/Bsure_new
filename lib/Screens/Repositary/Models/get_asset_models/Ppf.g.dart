@@ -26,8 +26,8 @@ _$PPfImpl _$$PPfImplFromJson(Map<String, dynamic> json) => _$PPfImpl(
       category: json['category'] as String,
       ppfAccountNumber: json['ppfAccountNumber'] as String,
       institutionName: json['institutionName'] as String,
-      comments: json['comments'] as String,
-      attachment: json['attachment'] as String,
+      comments: json['comments'] as String?,
+      attachment: json['attachment'] as String?,
       assetId: (json['assetId'] as num).toInt(),
     );
 

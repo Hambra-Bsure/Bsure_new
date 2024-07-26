@@ -44,6 +44,9 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
   AccountType? _selectedAccountType;
   String? assetId;
 
+  var proof;
+  var name;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,17 +74,6 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
             buildTextField(
               controller: _commentsController,
               labelText: 'Comments',
-            ),
-            const SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff429bb8),
-                ),
-                child:
-                const Text('Save', style: TextStyle(color: Colors.white)),
-              ),
             ),
             const SizedBox(height: 20),
             buildFilePicker(),
@@ -203,7 +195,7 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -224,7 +216,7 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -236,7 +228,7 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
         ),
         const SizedBox(height: 20),
         ElevatedButton(
-          onPressed: submitImage,
+          onPressed: _submitForm,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xff429bb8),
           ),
@@ -252,9 +244,11 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
 
     if (result != null) {
       setState(() {
-        file = File(result.files.single.path!);
-        _attachmentController.text = result.files.single.name;
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
       });
+    } else {
+      // Handle error when no file is selected.
     }
   }
 
@@ -262,36 +256,24 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (file == null || token == null || token.isEmpty || assetId == null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PostofficeAccountScreen(
-            assetType: widget.assetType,
-          ),
-        ),
-      );
-      return;
-    }
-
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment');
       var request = http.MultipartRequest('POST', uri);
 
-      request.headers['Authorization'] = 'Bearer $token';
+      request.headers['Authorization'] = token.toString();
       request.fields['assetId'] = assetId.toString();
 
-      if (file != null) {
-        request.files.add(await http.MultipartFile.fromPath(
+      if (proof != null) {
+        request.files.add(http.MultipartFile.fromBytes(
           "attachment",
-          file!.path,
-          filename: file!.path.split('/').last,
+          proof.bytes!,
+          filename: proof.name,
         ));
       }
 
       var response = await request.send();
-
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse['fileUrl'];
@@ -365,9 +347,10 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
     try {
       final response = await client.CreatePostOfficeAccount(token, request);
 
-      setState(() {
-        assetId = response.asset!.postOfficeAccount!.assetId?.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
 
       if (response.success == 200) {
         DisplayUtils.showToast(

@@ -52,6 +52,7 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor : Colors.white,
       appBar: AppBar(
         title: const Text('Digital Will Products', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xff429bb8),
@@ -80,10 +81,11 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
                     print("Selected product label: ${product.label}");
                   },
                   child: Card(
+                    color: Colors.white,
                     margin: const EdgeInsets.all(8.0),
-                    color: _selectedProductLabel == product.label
-                        ? Colors.blue.withOpacity(0.1)
-                        : null,
+                    // color: _selectedProductLabel == product.label
+                    //     ? Colors.blue.withOpacity(0.1)
+                    //     : null,
                     child: ListTile(
                       title: Text(
                         product.name ?? 'N/A',

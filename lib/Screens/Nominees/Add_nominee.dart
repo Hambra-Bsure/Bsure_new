@@ -40,13 +40,15 @@ class _AddNomineeState extends State<AddNominee> {
   TextEditingController ageController = TextEditingController();
   TextEditingController guardianNameController = TextEditingController();
   TextEditingController guardianMobileNumberController =
-      TextEditingController();
+  TextEditingController();
   TextEditingController attachmentController = TextEditingController();
   TextEditingController photoController = TextEditingController();
 
   late int age;
   bool isGuardianVisible = false;
   var proof;
+  var photo;
+  var name;
 
   List<Contact> _contacts = [];
   bool _isLoading = false;
@@ -98,7 +100,8 @@ class _AddNomineeState extends State<AddNominee> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Create nominee', style: TextStyle(color: Colors.white)),
+        title:
+        const Text('Create nominee', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -157,23 +160,23 @@ class _AddNomineeState extends State<AddNominee> {
                 _isLoading
                     ? const CircularProgressIndicator()
                     : ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: _contacts.length,
-                        itemBuilder: (context, index) {
-                          final contact = _contacts[index];
-                          return ListTile(
-                            title: Text(contact.displayName ?? ''),
-                            onTap: () => _selectContact(contact),
-                            trailing: Checkbox(
-                              value: _selectedContacts.contains(contact),
-                              onChanged: (bool? value) {
-                                _selectContact(contact);
-                              },
-                            ),
-                          );
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: _contacts.length,
+                  itemBuilder: (context, index) {
+                    final contact = _contacts[index];
+                    return ListTile(
+                      title: Text(contact.displayName ?? ''),
+                      onTap: () => _selectContact(contact),
+                      trailing: Checkbox(
+                        value: _selectedContacts.contains(contact),
+                        onChanged: (bool? value) {
+                          _selectContact(contact);
                         },
                       ),
+                    );
+                  },
+                ),
                 const SizedBox(height: 10),
                 _buildTextField(addressController, 'Address', mandatory: true),
                 const SizedBox(height: 10),
@@ -254,7 +257,7 @@ class _AddNomineeState extends State<AddNominee> {
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Color(0xff429bb8)),
                           ),
-                          hintText: "Select File",
+                          hintText: "Attachemnt you want to upload(optional)",
                           hintStyle: TextStyle(fontSize: 16),
                         ),
                         readOnly: true,
@@ -275,7 +278,7 @@ class _AddNomineeState extends State<AddNominee> {
                         ),
                       ),
                       child: const Text(
-                        'File',
+                        'Choose file',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -290,15 +293,15 @@ class _AddNomineeState extends State<AddNominee> {
                   children: [
                     Expanded(
                       child: TextFormField(
+                        controller: photoController,
                         decoration: const InputDecoration(
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Color(0xff429bb8)),
                           ),
-                          hintText: "Upload Photo",
+                          hintText: "Attachemnt you want to upload(optional)",
                           hintStyle: TextStyle(fontSize: 16),
                         ),
                         readOnly: true,
-                        controller: photoController,
                         onTap: uploadphoto,
                       ),
                     ),
@@ -316,7 +319,7 @@ class _AddNomineeState extends State<AddNominee> {
                         ),
                       ),
                       child: const Text(
-                        'Upload',
+                        'Choose photo',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -359,7 +362,6 @@ class _AddNomineeState extends State<AddNominee> {
       ),
     );
   }
-
 
   Widget _buildTextField(
       TextEditingController controller,
@@ -422,39 +424,54 @@ class _AddNomineeState extends State<AddNominee> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    // Prepare the body of the request
-    Map<String, dynamic> body = {
-      "firstName": firstNameController.text,
-      "lastName": lastNameController.text,
-      "address": addressController.text,
-      "relation": _selectedRelation?.name.toLowerCase(),
-      "age": age,
-    };
+    // Prepare the request
+    final uri = Uri.parse('https://dev.bsure.live/v2/nominee/add');
+    final request = http.MultipartRequest('POST', uri)
+      ..headers['Authorization'] = token.toString();
+
+    // Add form fields
+    request.fields['firstName'] = firstNameController.text;
+    request.fields['lastName'] = lastNameController.text;
+    request.fields['address'] = addressController.text;
+    request.fields['relation'] = _selectedRelation?.name.toLowerCase() ?? '';
+    request.fields['age'] = age.toString();
 
     if (emailController.text.isNotEmpty) {
-      body['email'] = emailController.text;
+      request.fields['email'] = emailController.text;
     }
     if (mobileNumberController.text.isNotEmpty) {
-      body['mobileNumber'] = mobileNumberController.text;
+      request.fields['mobileNumber'] = mobileNumberController.text;
     }
-    // Add guardian fields conditionally
-    if (isGuardianVisible && guardianNameController.text.isNotEmpty) {
-      body['guardianName'] = guardianNameController.text;
+
+    if (isGuardianVisible) {
+      if (guardianNameController.text.isNotEmpty) {
+        request.fields['guardianName'] = guardianNameController.text;
+      }
+      if (guardianMobileNumberController.text.isNotEmpty) {
+        request.fields['guardianMobileNumber'] =
+            guardianMobileNumberController.text;
+      }
     }
-    if (isGuardianVisible && guardianMobileNumberController.text.isNotEmpty) {
-      body['guardianMobileNumber'] = guardianMobileNumberController.text;
+
+    // Add files
+    if (proof != null) {
+      request.files.add(http.MultipartFile.fromBytes(
+        'proof',
+        proof.bytes!,
+        filename: proof.name,
+      ));
+      request.files.add(http.MultipartFile.fromBytes(
+        'photo',
+        proof.bytes!,
+        filename: proof.name,
+      ));
     }
 
     try {
-      final response = await http.post(
-        Uri.parse('https://dev.bsure.live/v2/nominee'),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token.toString(),
-        },
-        body: jsonEncode(body),
-      );
+      final response = await request.send();
 
+      // Read the response
+      final responseData = await response.stream.bytesToString();
       if (response.statusCode == 200) {
         // Handle success case
         DisplayUtils.showToast("Nominee added successfully");
@@ -467,8 +484,8 @@ class _AddNomineeState extends State<AddNominee> {
         );
       } else {
         // Handle error case
-        final responseData = json.decode(response.body);
-        final errorMessage = responseData['message'] ?? 'An error occurred';
+        final responseJson = json.decode(responseData);
+        final errorMessage = responseJson['message'] ?? 'An error occurred';
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -541,17 +558,17 @@ class _AddNomineeState extends State<AddNominee> {
             mainAxisSize: MainAxisSize.min,
             children: _selectedContacts
                 .map((contact) => ListTile(
-                      title: Text(contact.displayName ?? ''),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          setState(() {
-                            _selectedContacts.remove(contact);
-                          });
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ))
+              title: Text(contact.displayName ?? ''),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  setState(() {
+                    _selectedContacts.remove(contact);
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ))
                 .toList(),
           ),
           actions: [
@@ -568,24 +585,33 @@ class _AddNomineeState extends State<AddNominee> {
   }
 
   Future<void> uploadFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
 
     if (result != null) {
-      proof = result.files.first;
+      setState(() {
+        proof = result.files.single;
+        attachmentController.text = proof.name;
+      });
+    } else {
+      // Handle error when no file is selected.
     }
   }
 
   Future<void> uploadphoto() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.image, allowMultiple: false);
 
     if (result != null) {
       setState(() {
-        photoController.text = result.files.first.name;
+        proof = result.files.single;
+        photoController.text = proof.name;
       });
+    } else {
+      // Handle error when no file is selected.
     }
   }
 }
-
 
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override

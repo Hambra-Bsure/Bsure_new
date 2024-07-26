@@ -303,7 +303,7 @@ class _BondEditState extends State<BondEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -324,7 +324,7 @@ class _BondEditState extends State<BondEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -371,6 +371,8 @@ class _BondEditState extends State<BondEdit> {
             .toJson(), // Convert bond object to JSON and send as request body
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
         // Parse and return updated bond details
         return Bond.fromJson(jsonDecode(response.data));
@@ -379,6 +381,31 @@ class _BondEditState extends State<BondEdit> {
       }
     } catch (e) {
       return null; // Return null if an error occurs
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.bond.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

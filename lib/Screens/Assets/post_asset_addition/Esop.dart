@@ -37,6 +37,9 @@ class _EsopAddState extends State<EsopAdd> {
   String? assetId;
   DateTime? _selectedDate;
 
+  var name;
+  var proof;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,17 +91,6 @@ class _EsopAddState extends State<EsopAdd> {
               labelText: 'Comments',
               mandatory: false,
             ),
-            const SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff429bb8),
-                ),
-                child:
-                    const Text('Save', style: TextStyle(color: Colors.white)),
-              ),
-            ),
             const SizedBox(height: 20),
             Column(
               children: [
@@ -111,7 +103,7 @@ class _EsopAddState extends State<EsopAdd> {
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Color(0xff429bb8)),
                           ),
-                          hintText: "Select file",
+                          hintText: "Attachemnt you want to upload(optional)",
                           hintStyle: TextStyle(fontSize: 16),
                         ),
                         readOnly: true,
@@ -132,7 +124,7 @@ class _EsopAddState extends State<EsopAdd> {
                         ),
                       ),
                       child: const Text(
-                        'File',
+                        'Choose file',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -144,7 +136,7 @@ class _EsopAddState extends State<EsopAdd> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: submitImage,
+                  onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff429bb8),
                   ),
@@ -165,12 +157,11 @@ class _EsopAddState extends State<EsopAdd> {
 
     if (result != null) {
       setState(() {
-        file = File(result.files.single.path!);
-        _attachmentController.text = result.files.single.name;
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
       });
     } else {
       // Handle error when no file is selected.
-      print('No file selected.');
     }
   }
 
@@ -178,67 +169,70 @@ class _EsopAddState extends State<EsopAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
+
     try {
-      var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment');
+      var uri = Uri.parse(
+          'https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
       request.headers['Authorization'] = token.toString();
 
       // Add asset ID as a field
-      request.fields['assetId'] = assetId!;
+      request.fields['assetId'] = assetId.toString();
 
-      // Add file as a MultipartFile
-      request.files.add(await http.MultipartFile.fromPath(
-        'attachment',
-        file!.path,
-        filename: _attachmentController.text,
-      ));
+      if (proof != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          "attachment",
+          proof.bytes!,
+          filename: proof.name,
+        ));
+      }
 
       var response = await request.send();
-      print("Response: ${response.statusCode}");
+      print(response);
 
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse[
-            'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+        'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
         var returnedAssetId = jsonResponse[
-            'assetId']; // Assuming the server returns the asset ID in 'assetId' key
+        'assetId']; // Assuming the server returns the asset ID in 'assetId' key
         // Handle the file URL and asset ID
         print('File URL: $fileUrl');
         print('Asset ID: $returnedAssetId');
 
-        // Show success message and navigate to the EsopScreen
-        DisplayUtils.showToast("File uploaded successfully");
+        // Navigate to the BankAccountsScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => EsopScreen(assetType: widget.assetType),
+            builder: (context) => EsopScreen(assetType: widget.assetType
+            ),
           ),
         );
       } else {
         // Handle error response
         print('Failed to upload file: ${response.statusCode}');
-        print(await response.stream.bytesToString());
-        // Show error message and navigate to the EsopScreen even if upload fails
-        DisplayUtils.showToast("Failed to upload file");
+        // Navigate to the BankAccountsScreen even if upload fails
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => EsopScreen(assetType: widget.assetType),
+            builder: (context) => EsopScreen(assetType: widget.assetType
+            ),
           ),
         );
       }
     } catch (e) {
       // Handle exception
       print('Error uploading file: $e');
-      // Show error message and navigate to the EsopScreen in case of error
-      DisplayUtils.showToast("Error uploading file: $e");
+      // Navigate to the BankAccountsScreen in case of error
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => EsopScreen(assetType: widget.assetType),
+          builder: (context) => EsopScreen(assetType: widget.assetType
+          ),
         ),
       );
     }
@@ -403,9 +397,11 @@ class _EsopAddState extends State<EsopAdd> {
     try {
       final response = await client.CreateEsop(token!, esopRequest);
 
-      setState(() {
-        assetId = response.asset?.esop?.assetId.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
+
       // Handle the response as needed
       if (response.success == 200) {
         DisplayUtils.showToast("Esop details added successfully");

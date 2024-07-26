@@ -20,8 +20,8 @@ class PF with _$PF {
   factory PF({
     required String category,
     required String uanNumber,
-    required String comments,
-    required String attachment,
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _PF;
 

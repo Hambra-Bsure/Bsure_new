@@ -1,58 +1,34 @@
-class BankAccountResponse {
-  Asset? asset;
+class GetBankResponse {
   bool? success;
   String? message;
+  List<Assets>? assets;
 
-  BankAccountResponse({this.asset, this.success, this.message});
+  GetBankResponse({this.success, this.message, this.assets});
 
-  BankAccountResponse.fromJson(Map<String, dynamic> json) {
-    asset = json['asset'] != null ? Asset.fromJson(json['asset']) : null;
+  GetBankResponse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
+    if (json['assets'] != null) {
+      assets = <Assets>[];
+      json['assets'].forEach((v) {
+        assets!.add(Assets.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (asset != null) {
-      data['asset'] = asset!.toJson();
-    }
     data['success'] = success;
     data['message'] = message;
-    return data;
-  }
-}
-
-class Asset {
-  int? id;
-  int? userId;
-  String? category;
-  BankAccount? bankAccount;
-
-  Asset({this.id, this.userId, this.category, this.bankAccount});
-
-  Asset.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    userId = json['userId'];
-    category = json['category'];
-    bankAccount = json['BankAccount'] != null
-        ? BankAccount.fromJson(json['BankAccount'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['userId'] = userId;
-    data['category'] = category;
-    if (bankAccount != null) {
-      data['BankAccount'] = bankAccount!.toJson();
+    if (assets != null) {
+      data['assets'] = assets!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class BankAccount {
-  int? id;
+class Assets {
+  String? category;
   String? bankName;
   String? accountNumber;
   String? ifscCode;
@@ -62,8 +38,8 @@ class BankAccount {
   String? attachment;
   int? assetId;
 
-  BankAccount(
-      {this.id,
+  Assets(
+      {this.category,
         this.bankName,
         this.accountNumber,
         this.ifscCode,
@@ -73,8 +49,8 @@ class BankAccount {
         this.attachment,
         this.assetId});
 
-  BankAccount.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+  Assets.fromJson(Map<String, dynamic> json) {
+    category = json['category'];
     bankName = json['bankName'];
     accountNumber = json['accountNumber'];
     ifscCode = json['ifscCode'];
@@ -87,7 +63,7 @@ class BankAccount {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    data['category'] = category;
     data['bankName'] = bankName;
     data['accountNumber'] = accountNumber;
     data['ifscCode'] = ifscCode;

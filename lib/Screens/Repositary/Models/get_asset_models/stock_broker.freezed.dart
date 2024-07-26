@@ -118,9 +118,7 @@ class __$$StockBrokerResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$StockBrokerResponseImpl
-    with DiagnosticableTreeMixin
-    implements _StockBrokerResponse {
+class _$StockBrokerResponseImpl implements _StockBrokerResponse {
   _$StockBrokerResponseImpl(
       {required this.success,
       required this.message,
@@ -143,18 +141,8 @@ class _$StockBrokerResponseImpl
   }
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'StockBrokerResponse(success: $success, message: $message, assets: $assets)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'StockBrokerResponse'))
-      ..add(DiagnosticsProperty('success', success))
-      ..add(DiagnosticsProperty('message', message))
-      ..add(DiagnosticsProperty('assets', assets));
   }
 
   @override
@@ -217,8 +205,10 @@ mixin _$StockBroker {
   String get category => throw _privateConstructorUsedError;
   String get brokerName => throw _privateConstructorUsedError;
   String get dematAccountNumber => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
+  String? get attachment =>
+      throw _privateConstructorUsedError; // Make this field optional
+  String? get comments =>
+      throw _privateConstructorUsedError; // Make this field optional
   int get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -237,8 +227,8 @@ abstract class $StockBrokerCopyWith<$Res> {
       {String category,
       String brokerName,
       String dematAccountNumber,
-      String attachment,
-      String comments,
+      String? attachment,
+      String? comments,
       int assetId});
 }
 
@@ -258,8 +248,8 @@ class _$StockBrokerCopyWithImpl<$Res, $Val extends StockBroker>
     Object? category = null,
     Object? brokerName = null,
     Object? dematAccountNumber = null,
-    Object? attachment = null,
-    Object? comments = null,
+    Object? attachment = freezed,
+    Object? comments = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -275,14 +265,14 @@ class _$StockBrokerCopyWithImpl<$Res, $Val extends StockBroker>
           ? _value.dematAccountNumber
           : dematAccountNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      attachment: null == attachment
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -303,8 +293,8 @@ abstract class _$$StockBrokerImplCopyWith<$Res>
       {String category,
       String brokerName,
       String dematAccountNumber,
-      String attachment,
-      String comments,
+      String? attachment,
+      String? comments,
       int assetId});
 }
 
@@ -322,8 +312,8 @@ class __$$StockBrokerImplCopyWithImpl<$Res>
     Object? category = null,
     Object? brokerName = null,
     Object? dematAccountNumber = null,
-    Object? attachment = null,
-    Object? comments = null,
+    Object? attachment = freezed,
+    Object? comments = freezed,
     Object? assetId = null,
   }) {
     return _then(_$StockBrokerImpl(
@@ -339,14 +329,14 @@ class __$$StockBrokerImplCopyWithImpl<$Res>
           ? _value.dematAccountNumber
           : dematAccountNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      attachment: null == attachment
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -357,13 +347,13 @@ class __$$StockBrokerImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$StockBrokerImpl with DiagnosticableTreeMixin implements _StockBroker {
+class _$StockBrokerImpl implements _StockBroker {
   _$StockBrokerImpl(
       {required this.category,
       required this.brokerName,
       required this.dematAccountNumber,
-      required this.attachment,
-      required this.comments,
+      this.attachment,
+      this.comments,
       required this.assetId});
 
   factory _$StockBrokerImpl.fromJson(Map<String, dynamic> json) =>
@@ -376,28 +366,17 @@ class _$StockBrokerImpl with DiagnosticableTreeMixin implements _StockBroker {
   @override
   final String dematAccountNumber;
   @override
-  final String attachment;
+  final String? attachment;
+// Make this field optional
   @override
-  final String comments;
+  final String? comments;
+// Make this field optional
   @override
   final int assetId;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'StockBroker(category: $category, brokerName: $brokerName, dematAccountNumber: $dematAccountNumber, attachment: $attachment, comments: $comments, assetId: $assetId)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'StockBroker'))
-      ..add(DiagnosticsProperty('category', category))
-      ..add(DiagnosticsProperty('brokerName', brokerName))
-      ..add(DiagnosticsProperty('dematAccountNumber', dematAccountNumber))
-      ..add(DiagnosticsProperty('attachment', attachment))
-      ..add(DiagnosticsProperty('comments', comments))
-      ..add(DiagnosticsProperty('assetId', assetId));
   }
 
   @override
@@ -442,8 +421,8 @@ abstract class _StockBroker implements StockBroker {
       {required final String category,
       required final String brokerName,
       required final String dematAccountNumber,
-      required final String attachment,
-      required final String comments,
+      final String? attachment,
+      final String? comments,
       required final int assetId}) = _$StockBrokerImpl;
 
   factory _StockBroker.fromJson(Map<String, dynamic> json) =
@@ -456,10 +435,10 @@ abstract class _StockBroker implements StockBroker {
   @override
   String get dematAccountNumber;
   @override
-  String get attachment;
-  @override
-  String get comments;
-  @override
+  String? get attachment;
+  @override // Make this field optional
+  String? get comments;
+  @override // Make this field optional
   int get assetId;
   @override
   @JsonKey(ignore: true)

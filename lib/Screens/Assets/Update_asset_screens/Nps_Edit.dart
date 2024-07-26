@@ -31,8 +31,8 @@ class _NPSEditState extends State<NpsEdit> {
     super.initState();
     // Initialize the local variables with the current values
     pranNumber = widget.nps.pranNumber;
-    comments = widget.nps.comments;
-    attachment = widget.nps.attachment;
+    comments = widget.nps.comments ?? "";
+    attachment = widget.nps.attachment ?? "";
   }
 
   @override
@@ -173,7 +173,7 @@ class _NPSEditState extends State<NpsEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -194,7 +194,7 @@ class _NPSEditState extends State<NpsEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -241,6 +241,8 @@ class _NPSEditState extends State<NpsEdit> {
             .toJson(), // Convert account object to JSON and send as request body
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
        // DisplayUtils.showToast("Nps Details Updated Successfully");
         return NPS.fromJson(jsonDecode(response.data));
@@ -249,6 +251,31 @@ class _NPSEditState extends State<NpsEdit> {
       }
     } catch (e) {
       return null; // Return null if an error occurs
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.nps.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
@@ -30,8 +29,9 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
   final TextEditingController _attachmentController = TextEditingController();
 
   DateTime? _selectedDate;
-  File? proof;
   String? assetId;
+  var name;
+  var proof;
 
   @override
   Widget build(BuildContext context) {
@@ -72,16 +72,6 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
               labelText: 'Comments',
               mandatory: false,
             ),
-            const SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff429bb8),
-                ),
-                child: const Text('Save', style: TextStyle(color: Colors.white)),
-              ),
-            ),
             const SizedBox(height: 20),
             Column(
               children: [
@@ -94,7 +84,7 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Color(0xff429bb8)),
                           ),
-                          hintText: "Select file",
+                          hintText: "Attachemnt you want to upload(optional)",
                           hintStyle: TextStyle(fontSize: 16),
                         ),
                         readOnly: true,
@@ -115,7 +105,7 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
                         ),
                       ),
                       child: const Text(
-                        'File',
+                        'Choose file',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -127,7 +117,7 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: submitImage,
+                  onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff429bb8),
                   ),
@@ -142,16 +132,16 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
   }
 
   Future<void> uploadFile() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.any, allowMultiple: false);
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
 
     if (result != null) {
       setState(() {
-        proof = File(result.files.single.path!);
-        _attachmentController.text = result.files.single.name;
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
       });
     } else {
       // Handle error when no file is selected.
-      print('No file selected.');
     }
   }
 
@@ -159,39 +149,29 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (proof == null || token == null || token.isEmpty || assetId == null) {
-      // If any of the conditions are not met, return and navigate to the next screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoanGivenScreen(assetType: widget.assetType),
-        ),
-      );
-      return;
-    }
-
 
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment');
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
-      request.headers['Authorization'] = token!;
+      request.headers['Authorization'] = token.toString();
 
       // Add asset ID as a field
-      request.fields['assetId'] = assetId!;
+      request.fields['assetId'] = assetId.toString();
 
       if (proof != null) {
         request.files.add(http.MultipartFile.fromBytes(
           "attachment",
-          await proof!.readAsBytes(),
-          filename: proof!.path.split('/').last,
+          proof.bytes!,
+          filename: proof.name,
         ));
       }
 
       var response = await request.send();
 
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse['fileUrl'];
@@ -379,9 +359,10 @@ class _LoanGivenAddState extends State<LoanGivenAdd> {
     try {
       final response = await client.CreateLoanGiven(token!, request);
 
-      setState(() {
-        assetId = response.asset?.loanGiven?.assetId.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
 
       if (response.success == 200) {
         DisplayUtils.showToast("Loan given details added successfully");

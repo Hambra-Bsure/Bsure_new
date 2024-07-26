@@ -28,11 +28,11 @@ _$LoanGivenImpl _$$LoanGivenImplFromJson(Map<String, dynamic> json) =>
     _$LoanGivenImpl(
       category: json['category'] as String,
       borrowerName: json['borrowerName'] as String,
-      loanAmount: (json['loanAmount'] as num?)?.toInt(),
-      loanGivenDate: json['loanGivenDate'] as String,
+      loanAmount: (json['loanAmount'] as num).toInt(),
+      loanGivenDate: json['loanGivenDate'] as String?,
       interestRate: (json['interestRate'] as num?)?.toInt(),
-      comments: json['comments'] as String,
-      attachment: json['attachment'] as String,
+      comments: json['comments'] as String?,
+      attachment: json['attachment'] as String?,
       assetId: (json['assetId'] as num).toInt(),
     );
 

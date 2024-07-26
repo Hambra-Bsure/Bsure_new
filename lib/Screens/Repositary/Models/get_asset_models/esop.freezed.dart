@@ -213,15 +213,15 @@ Esop _$EsopFromJson(Map<String, dynamic> json) {
 mixin _$Esop {
   String get category => throw _privateConstructorUsedError;
   String get companyName => throw _privateConstructorUsedError;
-  int? get numberOfStocks =>
+  int get numberOfStocks =>
       throw _privateConstructorUsedError; // Change type to int
   int? get optionPrice => throw _privateConstructorUsedError;
-  String get expiryDate => throw _privateConstructorUsedError;
+  String? get expiryDate => throw _privateConstructorUsedError;
   int? get totalSharesAvailableForIssue =>
       throw _privateConstructorUsedError; // Change type to int
   int? get issuePricePerShare => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
+  String? get comments => throw _privateConstructorUsedError;
+  String? get attachment => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -237,13 +237,13 @@ abstract class $EsopCopyWith<$Res> {
   $Res call(
       {String category,
       String companyName,
-      int? numberOfStocks,
+      int numberOfStocks,
       int? optionPrice,
-      String expiryDate,
+      String? expiryDate,
       int? totalSharesAvailableForIssue,
       int? issuePricePerShare,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -262,13 +262,13 @@ class _$EsopCopyWithImpl<$Res, $Val extends Esop>
   $Res call({
     Object? category = null,
     Object? companyName = null,
-    Object? numberOfStocks = freezed,
+    Object? numberOfStocks = null,
     Object? optionPrice = freezed,
-    Object? expiryDate = null,
+    Object? expiryDate = freezed,
     Object? totalSharesAvailableForIssue = freezed,
     Object? issuePricePerShare = freezed,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -280,18 +280,18 @@ class _$EsopCopyWithImpl<$Res, $Val extends Esop>
           ? _value.companyName
           : companyName // ignore: cast_nullable_to_non_nullable
               as String,
-      numberOfStocks: freezed == numberOfStocks
+      numberOfStocks: null == numberOfStocks
           ? _value.numberOfStocks
           : numberOfStocks // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       optionPrice: freezed == optionPrice
           ? _value.optionPrice
           : optionPrice // ignore: cast_nullable_to_non_nullable
               as int?,
-      expiryDate: null == expiryDate
+      expiryDate: freezed == expiryDate
           ? _value.expiryDate
           : expiryDate // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       totalSharesAvailableForIssue: freezed == totalSharesAvailableForIssue
           ? _value.totalSharesAvailableForIssue
           : totalSharesAvailableForIssue // ignore: cast_nullable_to_non_nullable
@@ -300,14 +300,14 @@ class _$EsopCopyWithImpl<$Res, $Val extends Esop>
           ? _value.issuePricePerShare
           : issuePricePerShare // ignore: cast_nullable_to_non_nullable
               as int?,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -326,13 +326,13 @@ abstract class _$$EsopImplCopyWith<$Res> implements $EsopCopyWith<$Res> {
   $Res call(
       {String category,
       String companyName,
-      int? numberOfStocks,
+      int numberOfStocks,
       int? optionPrice,
-      String expiryDate,
+      String? expiryDate,
       int? totalSharesAvailableForIssue,
       int? issuePricePerShare,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -348,13 +348,13 @@ class __$$EsopImplCopyWithImpl<$Res>
   $Res call({
     Object? category = null,
     Object? companyName = null,
-    Object? numberOfStocks = freezed,
+    Object? numberOfStocks = null,
     Object? optionPrice = freezed,
-    Object? expiryDate = null,
+    Object? expiryDate = freezed,
     Object? totalSharesAvailableForIssue = freezed,
     Object? issuePricePerShare = freezed,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_$EsopImpl(
@@ -366,18 +366,18 @@ class __$$EsopImplCopyWithImpl<$Res>
           ? _value.companyName
           : companyName // ignore: cast_nullable_to_non_nullable
               as String,
-      numberOfStocks: freezed == numberOfStocks
+      numberOfStocks: null == numberOfStocks
           ? _value.numberOfStocks
           : numberOfStocks // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       optionPrice: freezed == optionPrice
           ? _value.optionPrice
           : optionPrice // ignore: cast_nullable_to_non_nullable
               as int?,
-      expiryDate: null == expiryDate
+      expiryDate: freezed == expiryDate
           ? _value.expiryDate
           : expiryDate // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       totalSharesAvailableForIssue: freezed == totalSharesAvailableForIssue
           ? _value.totalSharesAvailableForIssue
           : totalSharesAvailableForIssue // ignore: cast_nullable_to_non_nullable
@@ -386,14 +386,14 @@ class __$$EsopImplCopyWithImpl<$Res>
           ? _value.issuePricePerShare
           : issuePricePerShare // ignore: cast_nullable_to_non_nullable
               as int?,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -425,21 +425,21 @@ class _$EsopImpl with DiagnosticableTreeMixin implements _Esop {
   @override
   final String companyName;
   @override
-  final int? numberOfStocks;
+  final int numberOfStocks;
 // Change type to int
   @override
   final int? optionPrice;
   @override
-  final String expiryDate;
+  final String? expiryDate;
   @override
   final int? totalSharesAvailableForIssue;
 // Change type to int
   @override
   final int? issuePricePerShare;
   @override
-  final String comments;
+  final String? comments;
   @override
-  final String attachment;
+  final String? attachment;
   @override
   final int assetId;
 
@@ -527,13 +527,13 @@ abstract class _Esop implements Esop {
   factory _Esop(
       {required final String category,
       required final String companyName,
-      required final int? numberOfStocks,
+      required final int numberOfStocks,
       required final int? optionPrice,
-      required final String expiryDate,
+      required final String? expiryDate,
       required final int? totalSharesAvailableForIssue,
       required final int? issuePricePerShare,
-      required final String comments,
-      required final String attachment,
+      required final String? comments,
+      required final String? attachment,
       required final int assetId}) = _$EsopImpl;
 
   factory _Esop.fromJson(Map<String, dynamic> json) = _$EsopImpl.fromJson;
@@ -543,19 +543,19 @@ abstract class _Esop implements Esop {
   @override
   String get companyName;
   @override
-  int? get numberOfStocks;
+  int get numberOfStocks;
   @override // Change type to int
   int? get optionPrice;
   @override
-  String get expiryDate;
+  String? get expiryDate;
   @override
   int? get totalSharesAvailableForIssue;
   @override // Change type to int
   int? get issuePricePerShare;
   @override
-  String get comments;
+  String? get comments;
   @override
-  String get attachment;
+  String? get attachment;
   @override
   int get assetId;
   @override

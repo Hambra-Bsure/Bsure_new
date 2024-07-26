@@ -214,8 +214,8 @@ mixin _$BankAccount {
   String get category => throw _privateConstructorUsedError;
   String get bankName => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
+  String? get attachment => throw _privateConstructorUsedError;
+  String? get comments => throw _privateConstructorUsedError;
   String get accountType => throw _privateConstructorUsedError;
   String get branchName => throw _privateConstructorUsedError;
   String? get ifscCode => throw _privateConstructorUsedError;
@@ -237,8 +237,8 @@ abstract class $BankAccountCopyWith<$Res> {
       {String category,
       String bankName,
       int assetId,
-      String attachment,
-      String comments,
+      String? attachment,
+      String? comments,
       String accountType,
       String branchName,
       String? ifscCode,
@@ -261,8 +261,8 @@ class _$BankAccountCopyWithImpl<$Res, $Val extends BankAccount>
     Object? category = null,
     Object? bankName = null,
     Object? assetId = null,
-    Object? attachment = null,
-    Object? comments = null,
+    Object? attachment = freezed,
+    Object? comments = freezed,
     Object? accountType = null,
     Object? branchName = null,
     Object? ifscCode = freezed,
@@ -281,14 +281,14 @@ class _$BankAccountCopyWithImpl<$Res, $Val extends BankAccount>
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
               as int,
-      attachment: null == attachment
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       accountType: null == accountType
           ? _value.accountType
           : accountType // ignore: cast_nullable_to_non_nullable
@@ -321,8 +321,8 @@ abstract class _$$AssetImplCopyWith<$Res>
       {String category,
       String bankName,
       int assetId,
-      String attachment,
-      String comments,
+      String? attachment,
+      String? comments,
       String accountType,
       String branchName,
       String? ifscCode,
@@ -343,8 +343,8 @@ class __$$AssetImplCopyWithImpl<$Res>
     Object? category = null,
     Object? bankName = null,
     Object? assetId = null,
-    Object? attachment = null,
-    Object? comments = null,
+    Object? attachment = freezed,
+    Object? comments = freezed,
     Object? accountType = null,
     Object? branchName = null,
     Object? ifscCode = freezed,
@@ -363,14 +363,14 @@ class __$$AssetImplCopyWithImpl<$Res>
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
               as int,
-      attachment: null == attachment
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       accountType: null == accountType
           ? _value.accountType
           : accountType // ignore: cast_nullable_to_non_nullable
@@ -415,9 +415,9 @@ class _$AssetImpl with DiagnosticableTreeMixin implements _Asset {
   @override
   final int assetId;
   @override
-  final String attachment;
+  final String? attachment;
   @override
-  final String comments;
+  final String? comments;
   @override
   final String accountType;
   @override
@@ -496,8 +496,8 @@ abstract class _Asset implements BankAccount {
       {required final String category,
       required final String bankName,
       required final int assetId,
-      required final String attachment,
-      required final String comments,
+      required final String? attachment,
+      required final String? comments,
       required final String accountType,
       required final String branchName,
       required final String? ifscCode,
@@ -512,9 +512,9 @@ abstract class _Asset implements BankAccount {
   @override
   int get assetId;
   @override
-  String get attachment;
+  String? get attachment;
   @override
-  String get comments;
+  String? get comments;
   @override
   String get accountType;
   @override

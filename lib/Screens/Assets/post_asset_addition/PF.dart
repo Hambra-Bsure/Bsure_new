@@ -24,8 +24,10 @@ class _PfAddState extends State<PfAdd> {
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
 
-  FilePickerResult? proof;
+  //FilePickerResult? proof;
   String? assetId;
+  var name;
+  var proof;
 
   @override
   Widget build(BuildContext context) {
@@ -50,16 +52,6 @@ class _PfAddState extends State<PfAdd> {
               labelText: 'Comments',
               mandatory: false,
             ),
-            const SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff429bb8),
-                ),
-                child: const Text('Save', style: TextStyle(color: Colors.white)),
-              ),
-            ),
             const SizedBox(height: 20),
             Column(
               children: [
@@ -72,7 +64,7 @@ class _PfAddState extends State<PfAdd> {
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Color(0xff429bb8)),
                           ),
-                          hintText: "Select file",
+                          hintText: "Attachemnt you want to upload(optional)",
                           hintStyle: TextStyle(fontSize: 16),
                         ),
                         readOnly: true,
@@ -93,7 +85,7 @@ class _PfAddState extends State<PfAdd> {
                         ),
                       ),
                       child: const Text(
-                        'File',
+                        'Choose file',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -105,7 +97,7 @@ class _PfAddState extends State<PfAdd> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: submitImage,
+                  onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff429bb8),
                   ),
@@ -120,16 +112,16 @@ class _PfAddState extends State<PfAdd> {
   }
 
   Future<void> uploadFile() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.any, allowMultiple: false);
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
 
     if (result != null) {
       setState(() {
-        proof = result;
-        _attachmentController.text = proof!.files.single.name;
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
       });
     } else {
       // Handle error when no file is selected.
-      print('No file selected.');
     }
   }
 
@@ -137,23 +129,12 @@ class _PfAddState extends State<PfAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (proof == null || token == null || token.isEmpty || assetId == null) {
-      // If any of the conditions are not met, return and navigate to the next screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PfScreen(assetType: widget.assetType),
-        ),
-      );
-      return;
-    }
-
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
-      request.headers['Authorization'] = token!;
+      request.headers['Authorization'] = token.toString();
 
       // Add asset ID as a field
       request.fields['assetId'] = assetId!;
@@ -161,14 +142,15 @@ class _PfAddState extends State<PfAdd> {
       if (proof != null) {
         request.files.add(http.MultipartFile.fromBytes(
           "attachment",
-          proof!.files.single.bytes!,
-          filename: proof!.files.single.name,
+          proof.bytes!,
+          filename: proof.name,
         ));
       }
 
       var response = await request.send();
 
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse['fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
@@ -284,11 +266,12 @@ class _PfAddState extends State<PfAdd> {
     );
 
     try {
-      final response = await client.CreatePf(token!, request);
+      final response = await client.CreatePf(token, request);
 
-      setState(() {
-        assetId = response.asset?.id?.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
 
       if (response.success == 200) {
         DisplayUtils.showToast("Pf details added successfully");

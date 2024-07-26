@@ -215,8 +215,8 @@ Other _$OtherFromJson(Map<String, dynamic> json) {
 mixin _$Other {
   String get category => throw _privateConstructorUsedError;
   String get assetName => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
+  String? get comments => throw _privateConstructorUsedError;
+  String? get attachment => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -232,8 +232,8 @@ abstract class $OtherCopyWith<$Res> {
   $Res call(
       {String category,
       String assetName,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -252,8 +252,8 @@ class _$OtherCopyWithImpl<$Res, $Val extends Other>
   $Res call({
     Object? category = null,
     Object? assetName = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -265,14 +265,14 @@ class _$OtherCopyWithImpl<$Res, $Val extends Other>
           ? _value.assetName
           : assetName // ignore: cast_nullable_to_non_nullable
               as String,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -291,8 +291,8 @@ abstract class _$$OtherImplCopyWith<$Res> implements $OtherCopyWith<$Res> {
   $Res call(
       {String category,
       String assetName,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -309,8 +309,8 @@ class __$$OtherImplCopyWithImpl<$Res>
   $Res call({
     Object? category = null,
     Object? assetName = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_$OtherImpl(
@@ -322,14 +322,14 @@ class __$$OtherImplCopyWithImpl<$Res>
           ? _value.assetName
           : assetName // ignore: cast_nullable_to_non_nullable
               as String,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -356,9 +356,9 @@ class _$OtherImpl with DiagnosticableTreeMixin implements _Other {
   @override
   final String assetName;
   @override
-  final String comments;
+  final String? comments;
   @override
-  final String attachment;
+  final String? attachment;
   @override
   final int assetId;
 
@@ -418,8 +418,8 @@ abstract class _Other implements Other {
   factory _Other(
       {required final String category,
       required final String assetName,
-      required final String comments,
-      required final String attachment,
+      required final String? comments,
+      required final String? attachment,
       required final int assetId}) = _$OtherImpl;
 
   factory _Other.fromJson(Map<String, dynamic> json) = _$OtherImpl.fromJson;
@@ -429,9 +429,9 @@ abstract class _Other implements Other {
   @override
   String get assetName;
   @override
-  String get comments;
+  String? get comments;
   @override
-  String get attachment;
+  String? get attachment;
   @override
   int get assetId;
   @override

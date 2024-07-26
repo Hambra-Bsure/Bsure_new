@@ -157,7 +157,7 @@ class _WillScreenState extends State<WillScreen> {
                         ),
                       ),
                       TextSpan(
-                        text: "to know the Benefits of Asset Sharing",
+                        text: "to know the Benefits of Will Sharing",
                         style: TextStyle(
                           fontSize: 16 * scaleFactor,
                           color: Colors.black,

@@ -21,8 +21,8 @@ class PPf with _$PPf {
     required String category,
     required String ppfAccountNumber,
     required String institutionName,
-    required String comments, // Making comments field nullable if it's not always present
-    required String attachment, // Making attachment field nullable if it's not always present
+    required String? comments, // Making comments field nullable if it's not always present
+    required String? attachment, // Making attachment field nullable if it's not always present
     required int assetId,
   }) = _PPf;
 

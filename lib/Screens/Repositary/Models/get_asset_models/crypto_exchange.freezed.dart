@@ -223,9 +223,9 @@ mixin _$CryptoExchange {
   String get category => throw _privateConstructorUsedError;
   String get exchangeName => throw _privateConstructorUsedError;
   String get accountNumber => throw _privateConstructorUsedError;
-  String get walletAddress => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
+  String? get walletAddress => throw _privateConstructorUsedError;
+  String? get comments => throw _privateConstructorUsedError;
+  String? get attachment => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -244,9 +244,9 @@ abstract class $CryptoExchangeCopyWith<$Res> {
       {String category,
       String exchangeName,
       String accountNumber,
-      String walletAddress,
-      String comments,
-      String attachment,
+      String? walletAddress,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -266,9 +266,9 @@ class _$CryptoExchangeCopyWithImpl<$Res, $Val extends CryptoExchange>
     Object? category = null,
     Object? exchangeName = null,
     Object? accountNumber = null,
-    Object? walletAddress = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? walletAddress = freezed,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -284,18 +284,18 @@ class _$CryptoExchangeCopyWithImpl<$Res, $Val extends CryptoExchange>
           ? _value.accountNumber
           : accountNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      walletAddress: null == walletAddress
+      walletAddress: freezed == walletAddress
           ? _value.walletAddress
           : walletAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -316,9 +316,9 @@ abstract class _$$CryptoExchangeImplCopyWith<$Res>
       {String category,
       String exchangeName,
       String accountNumber,
-      String walletAddress,
-      String comments,
-      String attachment,
+      String? walletAddress,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -336,9 +336,9 @@ class __$$CryptoExchangeImplCopyWithImpl<$Res>
     Object? category = null,
     Object? exchangeName = null,
     Object? accountNumber = null,
-    Object? walletAddress = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? walletAddress = freezed,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_$CryptoExchangeImpl(
@@ -354,18 +354,18 @@ class __$$CryptoExchangeImplCopyWithImpl<$Res>
           ? _value.accountNumber
           : accountNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      walletAddress: null == walletAddress
+      walletAddress: freezed == walletAddress
           ? _value.walletAddress
           : walletAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -398,11 +398,11 @@ class _$CryptoExchangeImpl
   @override
   final String accountNumber;
   @override
-  final String walletAddress;
+  final String? walletAddress;
   @override
-  final String comments;
+  final String? comments;
   @override
-  final String attachment;
+  final String? attachment;
   @override
   final int assetId;
 
@@ -470,9 +470,9 @@ abstract class _CryptoExchange implements CryptoExchange {
       {required final String category,
       required final String exchangeName,
       required final String accountNumber,
-      required final String walletAddress,
-      required final String comments,
-      required final String attachment,
+      required final String? walletAddress,
+      required final String? comments,
+      required final String? attachment,
       required final int assetId}) = _$CryptoExchangeImpl;
 
   factory _CryptoExchange.fromJson(Map<String, dynamic> json) =
@@ -485,11 +485,11 @@ abstract class _CryptoExchange implements CryptoExchange {
   @override
   String get accountNumber;
   @override
-  String get walletAddress;
+  String? get walletAddress;
   @override
-  String get comments;
+  String? get comments;
   @override
-  String get attachment;
+  String? get attachment;
   @override
   int get assetId;
   @override

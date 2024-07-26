@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Add this import for FilteringTextInputFormatter
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repositary/Models/get_asset_models/bank_account.dart';
 import '../../Utils/DisplayUtils.dart';
@@ -46,8 +46,8 @@ class _BankAccountEditState extends State<BankAccountEdit> {
     ifscCode = widget.account.ifscCode ?? "";
     branchName = widget.account.branchName;
     accountType = parseAccountType(widget.account.accountType);
-    comments = widget.account.comments;
-    attachment = widget.account.attachment;
+    comments = widget.account.comments ?? "";
+    attachment = widget.account.attachment ?? "";
   }
 
   @override
@@ -74,15 +74,13 @@ class _BankAccountEditState extends State<BankAccountEdit> {
                 labelText: 'Account number',
                 initialValue: accountNumber,
                 onChanged: (value) => setState(() => accountNumber = value),
-                isMandatory: false,
-                isNumeric: true, // Define isNumeric as true for numeric input
+                isNumeric: true,
               ),
               const SizedBox(height: 12.0),
               buildTextField(
                 labelText: 'IFSC code',
                 initialValue: ifscCode,
                 onChanged: (value) => setState(() => ifscCode = value),
-                isMandatory: false,
               ),
               const SizedBox(height: 12.0),
               buildTextField(
@@ -103,50 +101,7 @@ class _BankAccountEditState extends State<BankAccountEdit> {
               buildAttachmentField(),
               const SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: () async {
-                  // Validate form fields
-                  if (bankName.isEmpty) {
-                    DisplayUtils.showToast('Please enter Bank name.');
-                    return;
-                  }
-                  if (branchName.isEmpty) {
-                    DisplayUtils.showToast('Please enter Branch name.');
-                    return;
-                  }
-                  if (accountType == null) {
-                    DisplayUtils.showToast('Please select Account type.');
-                    return;
-                  }
-
-                  final updatedAccount = BankAccount(
-                    bankName: bankName,
-                    accountNumber: accountNumber,
-                    ifscCode: ifscCode,
-                    branchName: branchName,
-                    accountType: accountType.toString().split('.').last,
-                    comments: comments,
-                    attachment: attachment,
-                    assetId: widget.account.assetId,
-                    category: widget.assetType,
-                  );
-                  final response = await updateBankAccount(updatedAccount);
-
-                  if (response != null) {
-                    DisplayUtils.showToast('Bank account Updated Successfully');
-                  } else {
-                    DisplayUtils.showToast('Failed to update Bank account');
-                  }
-
-                  Navigator.pop(context);
-                  Navigator.pushReplacement<void, void>(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => BankAccountsScreen(
-                        assetType: widget.assetType,
-                      ),
-                    ),
-                  );
-                },
+                onPressed: _updateBankAccount,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
                 ),
@@ -164,7 +119,7 @@ class _BankAccountEditState extends State<BankAccountEdit> {
     required String initialValue,
     required Function(String) onChanged,
     bool isMandatory = false,
-    bool isNumeric = false, // Define isNumeric parameter with default value
+    bool isNumeric = false,
   }) {
     return TextFormField(
       initialValue: initialValue,
@@ -188,26 +143,15 @@ class _BankAccountEditState extends State<BankAccountEdit> {
         border: const OutlineInputBorder(),
       ),
       onChanged: (value) {
-        // Trim leading and trailing spaces
         final trimmedValue = value.trim();
         onChanged(trimmedValue);
-      },
-      validator: (value) {
-        if (isMandatory && value!.isEmpty) {
-          return 'Please enter $labelText.';
-        }
-        return null;
       },
       inputFormatters: isNumeric
           ? <TextInputFormatter>[
         FilteringTextInputFormatter.digitsOnly,
         LengthLimitingTextInputFormatter(10),
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-        NoLeadingSpaceFormatter(),
       ]
-          : <TextInputFormatter>[
-        NoLeadingSpaceFormatter(),
-      ], // Empty list for non-numeric input formatters
+          : <TextInputFormatter>[],
     );
   }
 
@@ -223,17 +167,16 @@ class _BankAccountEditState extends State<BankAccountEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachment you want to upload (optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
-                onTap: uploadFile,
+                onTap: _uploadFile,
               ),
             ),
             const SizedBox(width: 10),
-            // Change the label for picking a file
             ElevatedButton(
-              onPressed: uploadFile,
+              onPressed: _uploadFile,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff429bb8),
                 shape: RoundedRectangleBorder(
@@ -245,7 +188,7 @@ class _BankAccountEditState extends State<BankAccountEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -259,17 +202,14 @@ class _BankAccountEditState extends State<BankAccountEdit> {
     );
   }
 
-  Future<void> uploadFile() async {
-    final result = await FilePicker.platform
-        .pickFiles(type: FileType.any, allowMultiple: false);
+  Future<void> _uploadFile() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.any, allowMultiple: false);
 
     if (result != null) {
       setState(() {
         proof = result.files.single;
         _attachmentController.text = proof.name;
       });
-    } else {
-      // Handle error when no file is selected.
     }
   }
 
@@ -302,14 +242,8 @@ class _BankAccountEditState extends State<BankAccountEdit> {
             ],
           ),
         ),
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
       ),
-      validator: (value) {
-        if (value == null) {
-          return 'Account Type is required';
-        }
-        return null;
-      },
     );
   }
 
@@ -326,7 +260,48 @@ class _BankAccountEditState extends State<BankAccountEdit> {
     }
   }
 
-  Future<BankAccount?> updateBankAccount(BankAccount account) async {
+  Future<void> _updateBankAccount() async {
+    if (bankName.isEmpty) {
+      DisplayUtils.showToast('Please enter Bank name.');
+      return;
+    }
+    if (branchName.isEmpty) {
+      DisplayUtils.showToast('Please enter Branch name.');
+      return;
+    }
+
+    final updatedAccount = BankAccount(
+      bankName: bankName,
+      accountNumber: accountNumber,
+      ifscCode: ifscCode,
+      branchName: branchName,
+      accountType: accountType.toString().split('.').last,
+      comments: comments,
+      attachment: attachment,
+      assetId: widget.account.assetId,
+      category: widget.assetType,
+    );
+
+    final response = await _performUpdate(updatedAccount);
+
+    if (response != null) {
+      DisplayUtils.showToast('Bank account details Updated Successfully');
+    } else {
+      DisplayUtils.showToast('Failed to update Bank account');
+    }
+
+    Navigator.pop(context);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BankAccountsScreen(
+          assetType: widget.assetType,
+        ),
+      ),
+    );
+  }
+
+  Future<BankAccount?> _performUpdate(BankAccount account) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -343,8 +318,9 @@ class _BankAccountEditState extends State<BankAccountEdit> {
         data: account.toJson(),
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
-        //DisplayUtils.showToast("Bank Details Updated Successfully");
         return BankAccount.fromJson(jsonDecode(response.data));
       } else {
         return null;
@@ -353,15 +329,29 @@ class _BankAccountEditState extends State<BankAccountEdit> {
       return null;
     }
   }
-}
 
-class NoLeadingSpaceFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    if (newValue.text.startsWith(' ')) {
-      return oldValue;
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
     }
-    return newValue;
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.account.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
+    }
   }
 }

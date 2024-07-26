@@ -26,10 +26,10 @@ _$GoldsImpl _$$GoldsImplFromJson(Map<String, dynamic> json) => _$GoldsImpl(
       category: json['category'] as String,
       metalType: json['metalType'] as String,
       type: json['type'] as String,
-      weightInGrams: (json['weightInGrams'] as num?)?.toInt(),
-      whereItIsKept: json['whereItIsKept'] as String,
-      comments: json['comments'] as String,
-      attachment: json['attachment'] as String,
+      weightInGrams: (json['weightInGrams'] as num).toInt(),
+      whereItIsKept: json['whereItIsKept'] as String?,
+      comments: json['comments'] as String?,
+      attachment: json['attachment'] as String?,
       assetId: (json['assetId'] as num).toInt(),
     );
 

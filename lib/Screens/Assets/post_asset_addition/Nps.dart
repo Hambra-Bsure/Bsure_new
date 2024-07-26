@@ -24,8 +24,10 @@ class _NpsAddState extends State<NpsAdd> {
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
 
-  PlatformFile? proof;
+  //PlatformFile? proof;
   String? assetId;
+  var name;
+  var proof;
 
   @override
   Widget build(BuildContext context) {
@@ -48,16 +50,6 @@ class _NpsAddState extends State<NpsAdd> {
             labelText: 'Comments',
             mandatory: false,
           ),
-          const SizedBox(height: 10),
-          Center(
-            child: ElevatedButton(
-              onPressed: _submitForm,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff429bb8),
-              ),
-              child: const Text('Save', style: TextStyle(color: Colors.white)),
-            ),
-          ),
           const SizedBox(height: 20),
           Column(
             children: [
@@ -70,7 +62,7 @@ class _NpsAddState extends State<NpsAdd> {
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Color(0xff429bb8)),
                         ),
-                        hintText: "Select file",
+                        hintText: "Attachemnt you want to upload(optional)",
                         hintStyle: TextStyle(fontSize: 16),
                       ),
                       readOnly: true,
@@ -91,7 +83,7 @@ class _NpsAddState extends State<NpsAdd> {
                       ),
                     ),
                     child: const Text(
-                      'File',
+                      'Choose file',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -104,7 +96,7 @@ class _NpsAddState extends State<NpsAdd> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  await submitImage();
+                  _submitForm();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
@@ -119,16 +111,16 @@ class _NpsAddState extends State<NpsAdd> {
   }
 
   Future<void> uploadFile() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.any, allowMultiple: false);
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
 
     if (result != null) {
       setState(() {
         proof = result.files.single;
-        _attachmentController.text = proof!.name;
+        _attachmentController.text = proof.name;
       });
     } else {
       // Handle error when no file is selected.
-      print('No file selected.');
     }
   }
 
@@ -136,23 +128,12 @@ class _NpsAddState extends State<NpsAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (proof == null || token == null || token.isEmpty || assetId == null) {
-      // If any of the conditions are not met, return and navigate to the next screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NpsScreen(assetType: widget.assetType),
-        ),
-      );
-      return;
-    }
-
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
-      request.headers['Authorization'] = token;
+      request.headers['Authorization'] = token.toString();
 
       // Add asset ID as a field
       request.fields['assetId'] = assetId!;
@@ -168,6 +149,7 @@ class _NpsAddState extends State<NpsAdd> {
       var response = await request.send();
 
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse['fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
@@ -285,9 +267,10 @@ class _NpsAddState extends State<NpsAdd> {
     try {
       final response = await client.CreateNps(token, request);
 
-      setState(() {
-        assetId = response.asset?.id?.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
 
       if (response.success == 200) {
         DisplayUtils.showToast("Nps details added successfully");

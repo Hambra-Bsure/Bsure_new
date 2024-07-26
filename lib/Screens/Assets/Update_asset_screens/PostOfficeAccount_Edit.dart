@@ -34,10 +34,10 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
   void initState() {
     super.initState();
     branchName = widget.postOffice.branchName;
-    accountNumber = widget.postOffice.accountNumber;
+    accountNumber = widget.postOffice.accountNumber ?? "";
     _selectedAccountType = stringToAccountType(widget.postOffice.accountType);
-    comments = widget.postOffice.comments;
-    attachment = widget.postOffice.attachment;
+    comments = widget.postOffice.comments ?? "";
+    attachment = widget.postOffice.attachment ?? "";
   }
 
   @override
@@ -194,7 +194,7 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -215,7 +215,7 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -315,6 +315,8 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
             .toJson(), // Convert account object to JSON and send as request body
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
         //DisplayUtils.showToast("PostOfficeAccount Details Updated Successfully");
         return PostOfficeAccount.fromJson(jsonDecode(response.data));
@@ -323,6 +325,31 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
       }
     } catch (e) {
       return null; // Handle error
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.postOffice.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

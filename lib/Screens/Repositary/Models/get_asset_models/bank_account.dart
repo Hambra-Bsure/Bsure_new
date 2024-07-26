@@ -22,8 +22,8 @@ class BankAccount with _$BankAccount {
     required String category,
     required String bankName,
     required int assetId,
-    required String attachment,
-    required String comments,
+    required String? attachment,
+    required String? comments,
     required String accountType,
     required String branchName,
     required String? ifscCode,
@@ -33,15 +33,4 @@ class BankAccount with _$BankAccount {
   factory BankAccount.fromJson(Map<String, Object?> json) =>
       _$BankAccountFromJson(json);
 }
-/*  {
-            "category": "BankAccount",
-            "bankName": "hdfc",
-            "accountNumber": "1234",
-            "ifscCode": "hdfc123",
-            "branchName": "kadapa",
-            "accountType": "Saving",
-            "comments": "jhdgf",
-            "attachment": "jgca",
-            "assetId": 49
-        },
- */
+

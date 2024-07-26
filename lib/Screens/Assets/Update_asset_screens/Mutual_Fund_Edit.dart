@@ -29,18 +29,21 @@ class _MutualFundEditState extends State<MutualFundEdit> {
   late String attachment;
   File? selectedFile;
 
+  var proof;
+  var name;
+
   final TextEditingController _attachmentController = TextEditingController();
   final String category = 'MutualFund';
 
   @override
   void initState() {
     super.initState();
-    amcName = widget.fund.amcName!;
-    schemeName = widget.fund.schemeName!;
-    folioNumber = widget.fund.folioNumber!;
-    fundType = widget.fund.fundType!;
-    comments = widget.fund.comments!;
-    attachment = widget.fund.attachment!;
+    amcName = widget.fund.amcName ?? "";
+    schemeName = widget.fund.schemeName ?? "";
+    folioNumber = widget.fund.folioNumber ?? "";
+    fundType = widget.fund.fundType ?? "";
+    comments = widget.fund.comments ?? "";
+    attachment = widget.fund.attachment ?? "";
   }
 
   Future<void> _uploadFile(String assetId, String token) async {
@@ -91,6 +94,8 @@ class _MutualFundEditState extends State<MutualFundEdit> {
         'http://43.205.12.154:8080/v2/asset/${fund.assetId}',
         data: fund.toJson(),
       );
+
+      await _submitImage();
 
       if (response.statusCode == 200) {
         if (selectedFile != null) {
@@ -270,7 +275,7 @@ class _MutualFundEditState extends State<MutualFundEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -291,7 +296,7 @@ class _MutualFundEditState extends State<MutualFundEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -315,6 +320,31 @@ class _MutualFundEditState extends State<MutualFundEdit> {
       });
     } else {
       DisplayUtils.showToast("No file selected");
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.fund.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

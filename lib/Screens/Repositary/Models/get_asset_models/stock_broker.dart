@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter/foundation.dart';
+
 part 'stock_broker.freezed.dart';
-part 'stock_broker.g.dart'; // This line is necessary for code generation
+part 'stock_broker.g.dart';
 
 @freezed
 class StockBrokerResponse with _$StockBrokerResponse {
@@ -21,8 +21,8 @@ class StockBroker with _$StockBroker {
     required String category,
     required String brokerName,
     required String dematAccountNumber,
-    required String attachment,
-    required String comments,
+    String? attachment, // Make this field optional
+    String? comments,   // Make this field optional
     required int assetId,
   }) = _StockBroker;
 

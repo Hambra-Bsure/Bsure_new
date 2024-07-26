@@ -21,10 +21,10 @@ class NonLifeInsurance with _$NonLifeInsurance {
     required String category,
     required String insuranceCompanyName,
     required String typeOfInsurance,
-    required String policyName,
-    required String policyNumber,
-    required String comments,
-    required String attachment,
+    required String? policyName,
+    required String? policyNumber,
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _NonLifeInsurance;
 

@@ -5,7 +5,7 @@ import '../../../Repositary/Models/Digital_will/witness_get_res.dart';
 import '../../../Repositary/Retrofit/node_api_client.dart';
 import 'DigitalWitness1.dart';
 import 'Edit_witness.dart';
-import 'Executor.dart';
+import 'Executor/GetExecutor.dart';
 import 'willpdf_download.dart';
 
 class DigitalWillGetWitness extends StatefulWidget {
@@ -31,7 +31,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     }
 
     Dio dio = Dio();
-    dio.options.headers["Authorization"] = '$token';
+    dio.options.headers["Authorization"] = token;
 
     NodeClient nodeClient = NodeClient(dio);
 
@@ -87,15 +87,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     try {
       final data = await fetchData();
       final executorExists = await _checkExecutorExists();
-
-      if (data.witnesses.length >= 2 && executorExists) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PdfDownloadScreen()),
-        );
-      } else {
         _showOptionsDialog(data.witnesses.length, executorExists);
-      }
     } catch (e) {
       print('Error in navigation check: $e');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -126,7 +118,6 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
                     );
                   },
                 ),
-              // if (!executorExists)
               ListTile(
                 leading: const Icon(Icons.person),
                 title: const Text('Add executor'),
@@ -135,7 +126,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const WillExecutorScreen()),
+                        builder: (context) => GetExecutor()),
                   );
                 },
               ),
@@ -264,6 +255,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
       itemBuilder: (context, index) {
         final witness = witnesses[index];
         return Card(
+          color: Colors.white,
           margin: const EdgeInsets.all(8.0),
           child: ListTile(
             title: Text('Name: ${witness.firstName} ${witness.lastName}'),

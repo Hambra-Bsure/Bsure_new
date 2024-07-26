@@ -29,8 +29,8 @@ _$StockBrokerImpl _$$StockBrokerImplFromJson(Map<String, dynamic> json) =>
       category: json['category'] as String,
       brokerName: json['brokerName'] as String,
       dematAccountNumber: json['dematAccountNumber'] as String,
-      attachment: json['attachment'] as String,
-      comments: json['comments'] as String,
+      attachment: json['attachment'] as String?,
+      comments: json['comments'] as String?,
       assetId: (json['assetId'] as num).toInt(),
     );
 

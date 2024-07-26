@@ -1,13 +1,16 @@
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Repositary/Models/Digital_will/Subscriptions/CouponcodeResponse.dart';
 import 'Will_payments.dart';
 
 class WillBillingScreen extends StatefulWidget {
   final int planId;
   final int price;
 
-  const WillBillingScreen({Key? key, required this.planId, required this.price}) : super(key: key);
+  const WillBillingScreen({Key? key, required this.planId, required this.price})
+      : super(key: key);
 
   @override
   _WillBillingScreenState createState() => _WillBillingScreenState();
@@ -20,7 +23,6 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
   int? _gstAmount;
   String? _couponError;
   String? _couponSuccess;
-  double _discountPercentage = 40.0; // Fixed discount percentage
   bool _isTemporaryGst = true; // Flag to control the temporary GST display
 
   @override
@@ -28,6 +30,15 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
     super.initState();
     _finalPrice = widget.price;
     _calculateGST();
+    _loadCoupon();
+  }
+
+  Future<void> _loadCoupon() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedCoupon = prefs.getString('savedCoupon');
+    if (savedCoupon != null && savedCoupon.isNotEmpty) {
+      _couponController.text = savedCoupon;
+    }
   }
 
   Future<void> _applyCoupon() async {
@@ -40,32 +51,55 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
       return;
     }
 
-    // Simulate API response for fixed 40% discount
-    await Future.delayed(Duration(seconds: 1));
-    if (couponCode == "VALID40") {
-      _discountAmount = (widget.price * _discountPercentage / 100).round();
-      _finalPrice = widget.price - _discountAmount!;
-      _isTemporaryGst = false; // Update the flag to show the actual GST amount
-      _calculateGST();
+    final url = Uri.parse(
+        'http://43.205.12.154:8080/v2/subscription/discounted-price?planId=${widget.planId}&couponCode=$couponCode');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        final couponResponse = CouponResponse.fromJson(responseBody);
+
+        if (couponResponse.success == true) {
+          _discountAmount =
+              widget.price - couponResponse.discountedPriceInPaisa!;
+          _finalPrice = couponResponse.discountedPriceInPaisa;
+          _isTemporaryGst =
+              false; // Update the flag to show the actual GST amount
+          _calculateGST();
+
+          setState(() {
+            _couponError = null;
+            _couponSuccess =
+                'Coupon applied successfully! Discount: ₹${(_discountAmount! / 100).toStringAsFixed(2)}';
+          });
+        } else {
+          setState(() {
+            _couponError = 'Invalid coupon code';
+            _couponSuccess = null;
+          });
+        }
+      } else {
+        setState(() {
+          _couponError = 'Failed to apply coupon. Please try again.';
+          _couponSuccess = null;
+        });
+      }
+    } catch (e) {
       setState(() {
-        _couponError = null;
-        _couponSuccess = 'Coupon applied successfully! Discount: ₹${(_discountAmount! / 100).toStringAsFixed(2)}';
-      });
-    } else {
-      setState(() {
-        _couponError = 'Invalid coupon code';
+        _couponError = 'Error: $e';
         _couponSuccess = null;
       });
     }
   }
 
   void _calculateGST() {
-    // Calculate GST based on the final price after discount
     if (_isTemporaryGst) {
       _gstAmount = 0;
     } else {
-      _gstAmount = (_finalPrice! * 0.18).round();
-      _finalPrice = _finalPrice! + _gstAmount!;
+      //_gstAmount = (_finalPrice! * 0.18).round();
+      //_finalPrice = _finalPrice! + _gstAmount!;
     }
   }
 
@@ -73,12 +107,17 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
   Widget build(BuildContext context) {
     final formattedInitialPrice = (widget.price / 100).toStringAsFixed(2);
     final formattedFinalPrice = (_finalPrice! / 100).toStringAsFixed(2);
-    final formattedDiscountAmount = (_discountAmount != null ? (_discountAmount! / 100).toStringAsFixed(2) : "0.00");
-    final formattedGSTAmount = (_gstAmount != null ? (_gstAmount! / 100).toStringAsFixed(2) : "0.00");
+    final formattedDiscountAmount = (_discountAmount != null
+        ? (_discountAmount! / 100).toStringAsFixed(2)
+        : "0.00");
+    final formattedGSTAmount =
+        (_gstAmount != null ? (_gstAmount! / 100).toStringAsFixed(2) : "0.00");
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Bsure', style: TextStyle(color: Colors.white, fontSize: 25)),
+        title: const Text('Bsure',
+            style: TextStyle(color: Colors.white, fontSize: 25)),
         backgroundColor: const Color(0xff429bb8),
       ),
       body: SingleChildScrollView(
@@ -88,7 +127,7 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
           children: [
             _buildSectionTitle("Plan Selected:"),
             _buildPlanDetails(formattedInitialPrice),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             _buildSectionTitle("Apply Coupon:"),
             _buildCouponCodeInput(),
             const SizedBox(height: 10),
@@ -102,12 +141,13 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
                 _couponError!,
                 style: const TextStyle(color: Colors.red, fontSize: 16),
               ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             _buildSectionTitle("Price Details:"),
-            _buildBillingDetails(formattedInitialPrice, formattedDiscountAmount, formattedGSTAmount),
+            _buildBillingDetails(formattedInitialPrice, formattedDiscountAmount,
+                formattedGSTAmount),
             const Divider(color: Color(0xff429bb8)),
             _buildTotalAmount(formattedFinalPrice),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
             _buildProceedToPayButton(),
           ],
         ),
@@ -118,7 +158,7 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
   Widget _buildSectionTitle(String title) {
     return Container(
       padding: const EdgeInsets.all(10),
-      color: Colors.grey[300],
+      color: Colors.grey[100],
       child: Text(
         title,
         style: const TextStyle(
@@ -132,6 +172,7 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
 
   Widget _buildPlanDetails(String priceWithText) {
     return Card(
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -153,6 +194,7 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
 
   Widget _buildCouponCodeInput() {
     return Card(
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -193,8 +235,10 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
     );
   }
 
-  Widget _buildBillingDetails(String priceWithText, String discountAmount, String gstAmount) {
+  Widget _buildBillingDetails(
+      String priceWithText, String discountAmount, String gstAmount) {
     return Card(
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -231,25 +275,19 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
 
   Widget _buildTotalAmount(String priceWithText) {
     return Card(
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              "Total Amount:",
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xff429bb8),
-                fontWeight: FontWeight.bold,
-              ),
+              "Total Amount",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(
               "₹$priceWithText",
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -259,20 +297,26 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
 
   Widget _buildProceedToPayButton() {
     return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WillPaymentsScreen(planId: widget.planId, price: _finalPrice!),
-          ),
-        );
-      },
+      onPressed: _navigateToPaymentsScreen,
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xff429bb8),
       ),
       child: const Text(
-        'Proceed to Payment',
+        'Proceed to Pay',
         style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  void _navigateToPaymentsScreen() {
+    print(_finalPrice);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WillPaymentsScreen(
+          planId: widget.planId,
+          finalPrice: _finalPrice ?? widget.price, // Use default price if null
+        ),
       ),
     );
   }

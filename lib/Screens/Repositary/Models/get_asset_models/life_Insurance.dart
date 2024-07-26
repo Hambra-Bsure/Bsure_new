@@ -20,12 +20,12 @@ class LifeInsurance with _$LifeInsurance {
   factory LifeInsurance({
     required String category,
     required String insuranceCompanyName,
-    required String policyName,
-    required String policyNumber,
+    required String? policyName,
+    required String? policyNumber,
     required int? coverageAmount, // Assuming coverageAmount is an integer
     required String? maturityDate,
-    required String comments,
-    required String attachment,
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _LifeInsurance;
 

@@ -223,10 +223,10 @@ mixin _$NonLifeInsurance {
   String get category => throw _privateConstructorUsedError;
   String get insuranceCompanyName => throw _privateConstructorUsedError;
   String get typeOfInsurance => throw _privateConstructorUsedError;
-  String get policyName => throw _privateConstructorUsedError;
-  String get policyNumber => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
+  String? get policyName => throw _privateConstructorUsedError;
+  String? get policyNumber => throw _privateConstructorUsedError;
+  String? get comments => throw _privateConstructorUsedError;
+  String? get attachment => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -245,10 +245,10 @@ abstract class $NonLifeInsuranceCopyWith<$Res> {
       {String category,
       String insuranceCompanyName,
       String typeOfInsurance,
-      String policyName,
-      String policyNumber,
-      String comments,
-      String attachment,
+      String? policyName,
+      String? policyNumber,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -268,10 +268,10 @@ class _$NonLifeInsuranceCopyWithImpl<$Res, $Val extends NonLifeInsurance>
     Object? category = null,
     Object? insuranceCompanyName = null,
     Object? typeOfInsurance = null,
-    Object? policyName = null,
-    Object? policyNumber = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? policyName = freezed,
+    Object? policyNumber = freezed,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -287,22 +287,22 @@ class _$NonLifeInsuranceCopyWithImpl<$Res, $Val extends NonLifeInsurance>
           ? _value.typeOfInsurance
           : typeOfInsurance // ignore: cast_nullable_to_non_nullable
               as String,
-      policyName: null == policyName
+      policyName: freezed == policyName
           ? _value.policyName
           : policyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      policyNumber: null == policyNumber
+              as String?,
+      policyNumber: freezed == policyNumber
           ? _value.policyNumber
           : policyNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -323,10 +323,10 @@ abstract class _$$NonLifeInsuranceImplCopyWith<$Res>
       {String category,
       String insuranceCompanyName,
       String typeOfInsurance,
-      String policyName,
-      String policyNumber,
-      String comments,
-      String attachment,
+      String? policyName,
+      String? policyNumber,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -344,10 +344,10 @@ class __$$NonLifeInsuranceImplCopyWithImpl<$Res>
     Object? category = null,
     Object? insuranceCompanyName = null,
     Object? typeOfInsurance = null,
-    Object? policyName = null,
-    Object? policyNumber = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? policyName = freezed,
+    Object? policyNumber = freezed,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_$NonLifeInsuranceImpl(
@@ -363,22 +363,22 @@ class __$$NonLifeInsuranceImplCopyWithImpl<$Res>
           ? _value.typeOfInsurance
           : typeOfInsurance // ignore: cast_nullable_to_non_nullable
               as String,
-      policyName: null == policyName
+      policyName: freezed == policyName
           ? _value.policyName
           : policyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      policyNumber: null == policyNumber
+              as String?,
+      policyNumber: freezed == policyNumber
           ? _value.policyNumber
           : policyNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -412,13 +412,13 @@ class _$NonLifeInsuranceImpl
   @override
   final String typeOfInsurance;
   @override
-  final String policyName;
+  final String? policyName;
   @override
-  final String policyNumber;
+  final String? policyNumber;
   @override
-  final String comments;
+  final String? comments;
   @override
-  final String attachment;
+  final String? attachment;
   @override
   final int assetId;
 
@@ -489,10 +489,10 @@ abstract class _NonLifeInsurance implements NonLifeInsurance {
       {required final String category,
       required final String insuranceCompanyName,
       required final String typeOfInsurance,
-      required final String policyName,
-      required final String policyNumber,
-      required final String comments,
-      required final String attachment,
+      required final String? policyName,
+      required final String? policyNumber,
+      required final String? comments,
+      required final String? attachment,
       required final int assetId}) = _$NonLifeInsuranceImpl;
 
   factory _NonLifeInsurance.fromJson(Map<String, dynamic> json) =
@@ -505,13 +505,13 @@ abstract class _NonLifeInsurance implements NonLifeInsurance {
   @override
   String get typeOfInsurance;
   @override
-  String get policyName;
+  String? get policyName;
   @override
-  String get policyNumber;
+  String? get policyNumber;
   @override
-  String get comments;
+  String? get comments;
   @override
-  String get attachment;
+  String? get attachment;
   @override
   int get assetId;
   @override

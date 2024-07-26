@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import '../../Repositary/Models/AssetModels/NonLifeInsuranceRequest.dart';
@@ -42,6 +41,9 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
   String? downloadUrl;
   String? assetId;
 
+  var proof;
+  var name;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,17 +79,6 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
               controller: _commentsController,
               labelText: 'Comments',
             ),
-            const SizedBox(height: 16),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff429bb8),
-                ),
-                child:
-                    const Text('Save', style: TextStyle(color: Colors.white)),
-              ),
-            ),
             const SizedBox(height: 20),
             Column(
               children: [
@@ -100,7 +91,7 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Color(0xff429bb8)),
                           ),
-                          hintText: "Select file",
+                          hintText: "Attachemnt you want to upload(optional)",
                           hintStyle: TextStyle(fontSize: 16),
                         ),
                         readOnly: true,
@@ -121,7 +112,7 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
                         ),
                       ),
                       child: const Text(
-                        'File',
+                        'Choose file',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -134,7 +125,7 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
-                    await submitImage();
+                    _submitForm();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff429bb8),
@@ -262,10 +253,11 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
 
     if (result != null) {
       setState(() {
-        file = File(result.files.single.path!);
-        fileName = result.files.single.name;
-        _attachmentController.text = fileName!;
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
       });
+    } else {
+      // Handle error when no file is selected.
     }
   }
 
@@ -273,33 +265,25 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (file == null || token == null || token.isEmpty || assetId == null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NonLifeInsuranceScreen(
-            assetType: widget.assetType,
-          ),
-        ),
-      );
-      return;
-    }
-
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment');
       var request = http.MultipartRequest('POST', uri);
 
-      request.headers['Authorization'] = token;
+      request.headers['Authorization'] = token.toString();
       request.fields['assetId'] = assetId.toString();
 
-      if (file != null) {
-        request.files
-            .add(await http.MultipartFile.fromPath("attachment", file!.path));
+      if (proof != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          "attachment",
+          proof.bytes!,
+          filename: proof.name,
+        ));
       }
 
       var response = await request.send();
 
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse['fileUrl'];
@@ -374,9 +358,10 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
         ),
       );
 
-      setState(() {
-        assetId = response.asset!.nonLifeInsurance!.assetId?.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
 
       if (response.success == 200) {
         DisplayUtils.showToast("Non-Life insurance details added successfully");
@@ -389,12 +374,6 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
           ),
         );
       }
-
-      _insuranceCompanyNameController.clear();
-      _policyNameController.clear();
-      _policyNumberController.clear();
-      _commentsController.clear();
-      _attachmentController.clear();
 
       setState(() {
         _selectedDropdownValue = null;

@@ -220,13 +220,13 @@ LifeInsurance _$LifeInsuranceFromJson(Map<String, dynamic> json) {
 mixin _$LifeInsurance {
   String get category => throw _privateConstructorUsedError;
   String get insuranceCompanyName => throw _privateConstructorUsedError;
-  String get policyName => throw _privateConstructorUsedError;
-  String get policyNumber => throw _privateConstructorUsedError;
+  String? get policyName => throw _privateConstructorUsedError;
+  String? get policyNumber => throw _privateConstructorUsedError;
   int? get coverageAmount =>
       throw _privateConstructorUsedError; // Assuming coverageAmount is an integer
   String? get maturityDate => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
+  String? get comments => throw _privateConstructorUsedError;
+  String? get attachment => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -244,12 +244,12 @@ abstract class $LifeInsuranceCopyWith<$Res> {
   $Res call(
       {String category,
       String insuranceCompanyName,
-      String policyName,
-      String policyNumber,
+      String? policyName,
+      String? policyNumber,
       int? coverageAmount,
       String? maturityDate,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -268,12 +268,12 @@ class _$LifeInsuranceCopyWithImpl<$Res, $Val extends LifeInsurance>
   $Res call({
     Object? category = null,
     Object? insuranceCompanyName = null,
-    Object? policyName = null,
-    Object? policyNumber = null,
+    Object? policyName = freezed,
+    Object? policyNumber = freezed,
     Object? coverageAmount = freezed,
     Object? maturityDate = freezed,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -285,14 +285,14 @@ class _$LifeInsuranceCopyWithImpl<$Res, $Val extends LifeInsurance>
           ? _value.insuranceCompanyName
           : insuranceCompanyName // ignore: cast_nullable_to_non_nullable
               as String,
-      policyName: null == policyName
+      policyName: freezed == policyName
           ? _value.policyName
           : policyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      policyNumber: null == policyNumber
+              as String?,
+      policyNumber: freezed == policyNumber
           ? _value.policyNumber
           : policyNumber // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       coverageAmount: freezed == coverageAmount
           ? _value.coverageAmount
           : coverageAmount // ignore: cast_nullable_to_non_nullable
@@ -301,14 +301,14 @@ class _$LifeInsuranceCopyWithImpl<$Res, $Val extends LifeInsurance>
           ? _value.maturityDate
           : maturityDate // ignore: cast_nullable_to_non_nullable
               as String?,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -328,12 +328,12 @@ abstract class _$$LifeInsuranceImplCopyWith<$Res>
   $Res call(
       {String category,
       String insuranceCompanyName,
-      String policyName,
-      String policyNumber,
+      String? policyName,
+      String? policyNumber,
       int? coverageAmount,
       String? maturityDate,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -350,12 +350,12 @@ class __$$LifeInsuranceImplCopyWithImpl<$Res>
   $Res call({
     Object? category = null,
     Object? insuranceCompanyName = null,
-    Object? policyName = null,
-    Object? policyNumber = null,
+    Object? policyName = freezed,
+    Object? policyNumber = freezed,
     Object? coverageAmount = freezed,
     Object? maturityDate = freezed,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_$LifeInsuranceImpl(
@@ -367,14 +367,14 @@ class __$$LifeInsuranceImplCopyWithImpl<$Res>
           ? _value.insuranceCompanyName
           : insuranceCompanyName // ignore: cast_nullable_to_non_nullable
               as String,
-      policyName: null == policyName
+      policyName: freezed == policyName
           ? _value.policyName
           : policyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      policyNumber: null == policyNumber
+              as String?,
+      policyNumber: freezed == policyNumber
           ? _value.policyNumber
           : policyNumber // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       coverageAmount: freezed == coverageAmount
           ? _value.coverageAmount
           : coverageAmount // ignore: cast_nullable_to_non_nullable
@@ -383,14 +383,14 @@ class __$$LifeInsuranceImplCopyWithImpl<$Res>
           ? _value.maturityDate
           : maturityDate // ignore: cast_nullable_to_non_nullable
               as String?,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -423,18 +423,18 @@ class _$LifeInsuranceImpl
   @override
   final String insuranceCompanyName;
   @override
-  final String policyName;
+  final String? policyName;
   @override
-  final String policyNumber;
+  final String? policyNumber;
   @override
   final int? coverageAmount;
 // Assuming coverageAmount is an integer
   @override
   final String? maturityDate;
   @override
-  final String comments;
+  final String? comments;
   @override
-  final String attachment;
+  final String? attachment;
   @override
   final int assetId;
 
@@ -515,12 +515,12 @@ abstract class _LifeInsurance implements LifeInsurance {
   factory _LifeInsurance(
       {required final String category,
       required final String insuranceCompanyName,
-      required final String policyName,
-      required final String policyNumber,
+      required final String? policyName,
+      required final String? policyNumber,
       required final int? coverageAmount,
       required final String? maturityDate,
-      required final String comments,
-      required final String attachment,
+      required final String? comments,
+      required final String? attachment,
       required final int assetId}) = _$LifeInsuranceImpl;
 
   factory _LifeInsurance.fromJson(Map<String, dynamic> json) =
@@ -531,17 +531,17 @@ abstract class _LifeInsurance implements LifeInsurance {
   @override
   String get insuranceCompanyName;
   @override
-  String get policyName;
+  String? get policyName;
   @override
-  String get policyNumber;
+  String? get policyNumber;
   @override
   int? get coverageAmount;
   @override // Assuming coverageAmount is an integer
   String? get maturityDate;
   @override
-  String get comments;
+  String? get comments;
   @override
-  String get attachment;
+  String? get attachment;
   @override
   int get assetId;
   @override

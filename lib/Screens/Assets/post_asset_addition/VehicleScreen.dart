@@ -98,17 +98,6 @@ class _VehicleAddState extends State<VehicleAdd> {
               labelText: 'Comments',
               mandatory: false,
             ),
-            const SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff429bb8),
-                ),
-                child:
-                const Text('Save', style: TextStyle(color: Colors.white)),
-              ),
-            ),
             const SizedBox(height: 20),
             Column(
               children: [
@@ -121,7 +110,7 @@ class _VehicleAddState extends State<VehicleAdd> {
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Color(0xff429bb8)),
                           ),
-                          hintText: "Select File",
+                          hintText: "Attachemnt you want to upload(optional)",
                           hintStyle: TextStyle(fontSize: 16),
                         ),
                         readOnly: true,
@@ -142,7 +131,7 @@ class _VehicleAddState extends State<VehicleAdd> {
                         ),
                       ),
                       child: const Text(
-                        'File',
+                        'Choose file',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -154,7 +143,7 @@ class _VehicleAddState extends State<VehicleAdd> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: submitImage,
+                  onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff429bb8),
                   ),
@@ -170,19 +159,16 @@ class _VehicleAddState extends State<VehicleAdd> {
   }
 
   Future<void> uploadFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-      allowMultiple: false,
-    );
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
 
     if (result != null) {
       setState(() {
         proof = result.files.single;
-        _attachmentController.text = proof!.name;
+        _attachmentController.text = proof.name;
       });
     } else {
       // Handle error when no file is selected.
-      print('No file selected.');
     }
   }
 
@@ -190,29 +176,16 @@ class _VehicleAddState extends State<VehicleAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (proof == null || token == null || token.isEmpty || assetId == null) {
-      // If any of the conditions are not met, return and navigate to the next screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VehicleScreen(
-            assetType: widget.assetType,
-          ),
-        ),
-      );
-      return;
-    }
-
     try {
       var uri = Uri.parse(
           'https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
-      request.headers['Authorization'] = token;
+      request.headers['Authorization'] = token.toString();
 
       // Add asset ID as a field
-      request.fields['assetId'] = assetId!;
+      request.fields['assetId'] = assetId.toString();
 
       if (proof != null) {
         request.files.add(http.MultipartFile.fromBytes(
@@ -226,6 +199,7 @@ class _VehicleAddState extends State<VehicleAdd> {
       print("Response: ${response.statusCode}");
 
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse[
@@ -413,9 +387,10 @@ class _VehicleAddState extends State<VehicleAdd> {
     try {
       final response = await client.CreateVehicle(token, request);
 
-      setState(() {
-        assetId = response.asset?.vehicle?.assetId.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
 
       if (response.success == 200) {
         DisplayUtils.showToast("Vehicle details added successfully");

@@ -214,11 +214,11 @@ mixin _$Golds {
   String get category => throw _privateConstructorUsedError;
   String get metalType => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
-  int? get weightInGrams => throw _privateConstructorUsedError;
-  String get whereItIsKept =>
+  int get weightInGrams => throw _privateConstructorUsedError;
+  String? get whereItIsKept =>
       throw _privateConstructorUsedError; // Change type to String
-  String get comments => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
+  String? get comments => throw _privateConstructorUsedError;
+  String? get attachment => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -235,10 +235,10 @@ abstract class $GoldsCopyWith<$Res> {
       {String category,
       String metalType,
       String type,
-      int? weightInGrams,
-      String whereItIsKept,
-      String comments,
-      String attachment,
+      int weightInGrams,
+      String? whereItIsKept,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -258,10 +258,10 @@ class _$GoldsCopyWithImpl<$Res, $Val extends Golds>
     Object? category = null,
     Object? metalType = null,
     Object? type = null,
-    Object? weightInGrams = freezed,
-    Object? whereItIsKept = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? weightInGrams = null,
+    Object? whereItIsKept = freezed,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -277,22 +277,22 @@ class _$GoldsCopyWithImpl<$Res, $Val extends Golds>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
-      weightInGrams: freezed == weightInGrams
+      weightInGrams: null == weightInGrams
           ? _value.weightInGrams
           : weightInGrams // ignore: cast_nullable_to_non_nullable
-              as int?,
-      whereItIsKept: null == whereItIsKept
+              as int,
+      whereItIsKept: freezed == whereItIsKept
           ? _value.whereItIsKept
           : whereItIsKept // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -312,10 +312,10 @@ abstract class _$$GoldsImplCopyWith<$Res> implements $GoldsCopyWith<$Res> {
       {String category,
       String metalType,
       String type,
-      int? weightInGrams,
-      String whereItIsKept,
-      String comments,
-      String attachment,
+      int weightInGrams,
+      String? whereItIsKept,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -333,10 +333,10 @@ class __$$GoldsImplCopyWithImpl<$Res>
     Object? category = null,
     Object? metalType = null,
     Object? type = null,
-    Object? weightInGrams = freezed,
-    Object? whereItIsKept = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? weightInGrams = null,
+    Object? whereItIsKept = freezed,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_$GoldsImpl(
@@ -352,22 +352,22 @@ class __$$GoldsImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
-      weightInGrams: freezed == weightInGrams
+      weightInGrams: null == weightInGrams
           ? _value.weightInGrams
           : weightInGrams // ignore: cast_nullable_to_non_nullable
-              as int?,
-      whereItIsKept: null == whereItIsKept
+              as int,
+      whereItIsKept: freezed == whereItIsKept
           ? _value.whereItIsKept
           : whereItIsKept // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -399,14 +399,14 @@ class _$GoldsImpl with DiagnosticableTreeMixin implements _Golds {
   @override
   final String type;
   @override
-  final int? weightInGrams;
+  final int weightInGrams;
   @override
-  final String whereItIsKept;
+  final String? whereItIsKept;
 // Change type to String
   @override
-  final String comments;
+  final String? comments;
   @override
-  final String attachment;
+  final String? attachment;
   @override
   final int assetId;
 
@@ -475,10 +475,10 @@ abstract class _Golds implements Golds {
       {required final String category,
       required final String metalType,
       required final String type,
-      required final int? weightInGrams,
-      required final String whereItIsKept,
-      required final String comments,
-      required final String attachment,
+      required final int weightInGrams,
+      required final String? whereItIsKept,
+      required final String? comments,
+      required final String? attachment,
       required final int assetId}) = _$GoldsImpl;
 
   factory _Golds.fromJson(Map<String, dynamic> json) = _$GoldsImpl.fromJson;
@@ -490,13 +490,13 @@ abstract class _Golds implements Golds {
   @override
   String get type;
   @override
-  int? get weightInGrams;
+  int get weightInGrams;
   @override
-  String get whereItIsKept;
+  String? get whereItIsKept;
   @override // Change type to String
-  String get comments;
+  String? get comments;
   @override
-  String get attachment;
+  String? get attachment;
   @override
   int get assetId;
   @override

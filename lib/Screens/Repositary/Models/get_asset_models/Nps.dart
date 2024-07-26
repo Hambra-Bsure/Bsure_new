@@ -20,8 +20,8 @@ class NPS with _$NPS {
   factory NPS({
     required String category,
     required String pranNumber,
-    required String comments,
-    required String attachment,
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _NPS;
 

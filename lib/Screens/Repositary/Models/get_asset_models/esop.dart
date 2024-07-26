@@ -20,13 +20,13 @@ class Esop with _$Esop {
   factory Esop({
     required String category,
     required String companyName,
-    required int? numberOfStocks, // Change type to int
+    required int numberOfStocks, // Change type to int
     required int? optionPrice,
-    required String expiryDate,
+    required String? expiryDate,
     required int? totalSharesAvailableForIssue, // Change type to int
     required int? issuePricePerShare,
-    required String comments,
-    required String attachment,
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _Esop;
 

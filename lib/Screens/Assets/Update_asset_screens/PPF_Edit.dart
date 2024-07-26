@@ -33,8 +33,8 @@ class _PpfEditState extends State<PpfEdit> {
     // Initialize the local variables with the current values
     ppfAccountNumber = widget.ppf.ppfAccountNumber;
     institutionName = widget.ppf.institutionName;
-    comments = widget.ppf.comments;
-    attachment = widget.ppf.attachment;
+    comments = widget.ppf.comments ?? "";
+    attachment = widget.ppf.attachment ?? "";
   }
 
   @override
@@ -189,7 +189,7 @@ class _PpfEditState extends State<PpfEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -210,7 +210,7 @@ class _PpfEditState extends State<PpfEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -257,6 +257,8 @@ class _PpfEditState extends State<PpfEdit> {
             .toJson(), // Convert account object to JSON and send as request body
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
        // DisplayUtils.showToast("Ppf Details Updated Successfully");
         return PPf.fromJson(jsonDecode(response.data));
@@ -265,6 +267,31 @@ class _PpfEditState extends State<PpfEdit> {
       }
     } catch (e) {
       return null; // Return null if an error occurs
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.ppf.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

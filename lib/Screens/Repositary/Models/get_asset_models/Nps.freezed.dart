@@ -213,8 +213,8 @@ NPS _$NPSFromJson(Map<String, dynamic> json) {
 mixin _$NPS {
   String get category => throw _privateConstructorUsedError;
   String get pranNumber => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
+  String? get comments => throw _privateConstructorUsedError;
+  String? get attachment => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -230,8 +230,8 @@ abstract class $NPSCopyWith<$Res> {
   $Res call(
       {String category,
       String pranNumber,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -249,8 +249,8 @@ class _$NPSCopyWithImpl<$Res, $Val extends NPS> implements $NPSCopyWith<$Res> {
   $Res call({
     Object? category = null,
     Object? pranNumber = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -262,14 +262,14 @@ class _$NPSCopyWithImpl<$Res, $Val extends NPS> implements $NPSCopyWith<$Res> {
           ? _value.pranNumber
           : pranNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -287,8 +287,8 @@ abstract class _$$NPSImplCopyWith<$Res> implements $NPSCopyWith<$Res> {
   $Res call(
       {String category,
       String pranNumber,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -303,8 +303,8 @@ class __$$NPSImplCopyWithImpl<$Res> extends _$NPSCopyWithImpl<$Res, _$NPSImpl>
   $Res call({
     Object? category = null,
     Object? pranNumber = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_$NPSImpl(
@@ -316,14 +316,14 @@ class __$$NPSImplCopyWithImpl<$Res> extends _$NPSCopyWithImpl<$Res, _$NPSImpl>
           ? _value.pranNumber
           : pranNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -350,9 +350,9 @@ class _$NPSImpl with DiagnosticableTreeMixin implements _NPS {
   @override
   final String pranNumber;
   @override
-  final String comments;
+  final String? comments;
   @override
-  final String attachment;
+  final String? attachment;
   @override
   final int assetId;
 
@@ -412,8 +412,8 @@ abstract class _NPS implements NPS {
   factory _NPS(
       {required final String category,
       required final String pranNumber,
-      required final String comments,
-      required final String attachment,
+      required final String? comments,
+      required final String? attachment,
       required final int assetId}) = _$NPSImpl;
 
   factory _NPS.fromJson(Map<String, dynamic> json) = _$NPSImpl.fromJson;
@@ -423,9 +423,9 @@ abstract class _NPS implements NPS {
   @override
   String get pranNumber;
   @override
-  String get comments;
+  String? get comments;
   @override
-  String get attachment;
+  String? get attachment;
   @override
   int get assetId;
   @override

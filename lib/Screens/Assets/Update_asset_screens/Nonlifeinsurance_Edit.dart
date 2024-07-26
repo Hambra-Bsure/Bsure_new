@@ -46,10 +46,10 @@ class _NonLifeInsuranceEditState extends State<NonLifeInsuranceEdit> {
     insuranceCompanyName = widget.nonlifeinsurance.insuranceCompanyName;
     typeOfInsurance = widget.nonlifeinsurance.typeOfInsurance;
     _selectedDropdownValue = typeOfInsurance;
-    policyName = widget.nonlifeinsurance.policyName;
-    policyNumber = widget.nonlifeinsurance.policyNumber;
-    comments = widget.nonlifeinsurance.comments;
-    attachment = widget.nonlifeinsurance.attachment;
+    policyName = widget.nonlifeinsurance.policyName ?? "";
+    policyNumber = widget.nonlifeinsurance.policyNumber ?? "";
+    comments = widget.nonlifeinsurance.comments ?? "";
+    attachment = widget.nonlifeinsurance.attachment ?? "";
   }
 
   @override
@@ -268,7 +268,7 @@ class _NonLifeInsuranceEditState extends State<NonLifeInsuranceEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -289,7 +289,7 @@ class _NonLifeInsuranceEditState extends State<NonLifeInsuranceEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -337,6 +337,8 @@ class _NonLifeInsuranceEditState extends State<NonLifeInsuranceEdit> {
             .toJson(), // Convert account object to JSON and send as request body
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
         return NonLifeInsurance.fromJson(jsonDecode(response.data));
       } else {
@@ -344,6 +346,31 @@ class _NonLifeInsuranceEditState extends State<NonLifeInsuranceEdit> {
       }
     } catch (e) {
       return null; // Return null if an error occurs
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.nonlifeinsurance.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

@@ -311,7 +311,7 @@ class _RealEstateEditState extends State<RealEstateEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -332,7 +332,7 @@ class _RealEstateEditState extends State<RealEstateEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -378,6 +378,8 @@ class _RealEstateEditState extends State<RealEstateEdit> {
         data: realEstate.toJson(), // Convert real estate object to JSON and send as request body
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
         return RealEstate.fromJson(jsonDecode(response.data));
       } else {
@@ -385,6 +387,31 @@ class _RealEstateEditState extends State<RealEstateEdit> {
       }
     } catch (e) {
       return null; // Return null if an error occurs
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.realestate.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

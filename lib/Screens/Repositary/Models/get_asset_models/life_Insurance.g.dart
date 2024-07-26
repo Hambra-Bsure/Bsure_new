@@ -28,12 +28,12 @@ _$LifeInsuranceImpl _$$LifeInsuranceImplFromJson(Map<String, dynamic> json) =>
     _$LifeInsuranceImpl(
       category: json['category'] as String,
       insuranceCompanyName: json['insuranceCompanyName'] as String,
-      policyName: json['policyName'] as String,
-      policyNumber: json['policyNumber'] as String,
+      policyName: json['policyName'] as String?,
+      policyNumber: json['policyNumber'] as String?,
       coverageAmount: (json['coverageAmount'] as num?)?.toInt(),
       maturityDate: json['maturityDate'] as String?,
-      comments: json['comments'] as String,
-      attachment: json['attachment'] as String,
+      comments: json['comments'] as String?,
+      attachment: json['attachment'] as String?,
       assetId: (json['assetId'] as num).toInt(),
     );
 

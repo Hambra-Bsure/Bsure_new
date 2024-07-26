@@ -288,7 +288,7 @@ class _GoldEditState extends State<GoldEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -310,7 +310,7 @@ class _GoldEditState extends State<GoldEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -357,6 +357,8 @@ class _GoldEditState extends State<GoldEdit> {
             .toJson(), // Convert gold object to JSON and send as request body
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
         //  DisplayUtils.showToast("Gold Details Updated Successfully");
         return Golds.fromJson(jsonDecode(response.data));
@@ -365,6 +367,31 @@ class _GoldEditState extends State<GoldEdit> {
       }
     } catch (e) {
       return null; // Return null if an error occurs
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.gold.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

@@ -25,8 +25,8 @@ Map<String, dynamic> _$$OtherResponseImplToJson(_$OtherResponseImpl instance) =>
 _$OtherImpl _$$OtherImplFromJson(Map<String, dynamic> json) => _$OtherImpl(
       category: json['category'] as String,
       assetName: json['assetName'] as String,
-      comments: json['comments'] as String,
-      attachment: json['attachment'] as String,
+      comments: json['comments'] as String?,
+      attachment: json['attachment'] as String?,
       assetId: (json['assetId'] as num).toInt(),
     );
 

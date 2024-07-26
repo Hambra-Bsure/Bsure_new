@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../Repositary/Models/get_asset_models/stock_broker.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../Update_asset_screens/Stock_Broker_Edit.dart';
@@ -21,7 +20,6 @@ class StockBrokerScreen extends StatefulWidget {
 class _StockBrokerScreenState extends State<StockBrokerScreen> {
   List<StockBroker> stockbrokers = [];
   bool isLoading = false;
-
   final String category = 'StockBroker';
 
   @override
@@ -36,30 +34,43 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.get("token");
+    final token = prefs.getString("token");
 
-    final url =
-    Uri.parse('https://dev.bsure.live/v2/asset/category/StockBroker');
+    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/StockBroker');
     final response = await http.get(url, headers: {
-      "Authorization": token.toString(),
+      "Authorization": token ?? '',
       "ngrok-skip-browser-warning": "69420",
     });
 
     if (response.statusCode == 200) {
-      final data = StockBrokerResponse.fromJson(jsonDecode(response.body));
-      if (data.success) {
-        setState(() {
-          stockbrokers = data.assets;
-          isLoading = false;
-        });
-      } else {
+      try {
+        final responseData = jsonDecode(response.body);
+        final stockBrokerResponse = StockBrokerResponse.fromJson(responseData);
+
+        if (stockBrokerResponse.success) {
+          setState(() {
+            stockbrokers = stockBrokerResponse.assets;
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(stockBrokerResponse.message),
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      } catch (e) {
         setState(() {
           isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(data.message),
-            duration: const Duration(seconds: 3),
+            content: Text('Failed to parse response: $e'),
+            duration: Duration(seconds: 3),
           ),
         );
       }
@@ -76,19 +87,20 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title:
-        const Text('Stock broker', style: TextStyle(color: Colors.white)),
+        title: const Text('Stock broker', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : stockbrokers.isEmpty
           ? const Center(
-        child: Text("No assets found",
+        child: Text(
+          "No assets found",
           style: TextStyle(fontSize: 20.0),
         ),
       )
@@ -107,7 +119,7 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.edit,color: Color(0xff429bb8)),
+                        icon: const Icon(Icons.edit, color: Color(0xff429bb8)),
                         onPressed: () async {
                           final updatedBroker = await Navigator.push(
                             context,
@@ -121,9 +133,7 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                           if (updatedBroker != null) {
                             setState(() {
                               final index = stockbrokers.indexWhere(
-                                      (element) =>
-                                  element.assetId ==
-                                      updatedBroker.assetId);
+                                      (element) => element.assetId == updatedBroker.assetId);
                               if (index != -1) {
                                 stockbrokers[index] = updatedBroker;
                               }
@@ -133,13 +143,13 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                       ),
                     ],
                   ),
-                  buildInfoRow('Broker name:', broker.brokerName),
+                  buildInfoRow('Broker name', broker.brokerName),
                   const SizedBox(height: 8.0),
-                  buildInfoRow('Demat account number:', broker.dematAccountNumber),
+                  buildInfoRow('Demat account number', broker.dematAccountNumber),
                   const SizedBox(height: 8.0),
-                  buildInfoRow('Comments:', broker.comments),
+                  buildInfoRow('Comments', broker.comments),
                   const SizedBox(height: 8.0),
-                  buildInfoRow('Attachment:', broker.attachment),
+                  buildInfoRow('Attachment', broker.attachment),
                   const SizedBox(height: 8.0),
                   ElevatedButton(
                     onPressed: () {
@@ -148,8 +158,7 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text("Delete asset?"),
-                            content: const Text(
-                                "Are you sure you want to delete this Asset?"),
+                            content: const Text("Are you sure you want to delete this Asset?"),
                             actions: <Widget>[
                               TextButton(
                                 child: const Text(
@@ -172,10 +181,8 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                                 onPressed: () async {
                                   Navigator.of(context).pop();
                                   deleteAssetStatus(index);
-                                  List<StockBroker> newStockBrokers =
-                                  <StockBroker>[];
-                                  newStockBrokers
-                                      .addAll(stockbrokers);
+                                  List<StockBroker> newStockBrokers = <StockBroker>[];
+                                  newStockBrokers.addAll(stockbrokers);
                                   newStockBrokers.removeAt(index);
                                   setState(() {
                                     stockbrokers = newStockBrokers;
@@ -198,8 +205,7 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                       children: [
                         Icon(Icons.delete, color: Colors.white),
                         SizedBox(width: 5),
-                        Text("Delete",
-                            style: TextStyle(color: Colors.white)),
+                        Text("Delete", style: TextStyle(color: Colors.white)),
                       ],
                     ),
                   ),
@@ -263,9 +269,11 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
       if (response.statusCode == 200) {
         DisplayUtils.showToast("Stock Broker successfully deleted.");
       }
-    } catch (e) {}
+    } catch (e) {
+      print("Error deleting stock broker: $e");
+      DisplayUtils.showToast("Failed to delete Stock Broker.");
+    }
   }
-
 
   Widget buildInfoRow(String label, String? value) {
     return Padding(

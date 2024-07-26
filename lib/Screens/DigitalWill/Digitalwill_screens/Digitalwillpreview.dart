@@ -33,7 +33,7 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
     }
 
     Dio dio = Dio();
-    dio.options.headers["Authorization"] = 'Bearer $token'; // Ensure Bearer token format
+    dio.options.headers["Authorization"] = token; // Ensure Bearer token format
 
     NodeClient nodeClient = NodeClient(dio);
 

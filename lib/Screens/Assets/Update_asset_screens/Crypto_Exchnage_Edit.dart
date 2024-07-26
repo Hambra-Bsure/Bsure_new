@@ -35,9 +35,9 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
     // Initialize the local variables with the current values
     exchangeName = widget.cryptoexchange.exchangeName;
     accountNumber = widget.cryptoexchange.accountNumber;
-    walletAddress = widget.cryptoexchange.walletAddress;
-    comments = widget.cryptoexchange.comments;
-    attachment = widget.cryptoexchange.attachment;
+    walletAddress = widget.cryptoexchange.walletAddress ?? "";
+    comments = widget.cryptoexchange.comments ?? "";
+    attachment = widget.cryptoexchange.attachment ?? "";
   }
 
   @override
@@ -200,7 +200,7 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -221,7 +221,7 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -270,15 +270,40 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
             .toJson(), // Convert account object to JSON and send as request body
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
-        //DisplayUtils.showToast("CryptoExchange Details Updated Successfully");
-        // Parse and return updated bank account details
         return CryptoExchange.fromJson(jsonDecode(response.data));
       } else {
         return null; // Return null if update fails
       }
     } catch (e) {
       return null; // Return null if an error occurs
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.cryptoexchange.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

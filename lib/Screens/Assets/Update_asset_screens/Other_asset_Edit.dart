@@ -32,8 +32,8 @@ class _OtherEditState extends State<OtherEdit> {
     super.initState();
     // Initialize the local variables with the current values
     assetName = widget.others.assetName;
-    comments = widget.others.comments;
-    attachment = widget.others.attachment;
+    comments = widget.others.comments ?? "";
+    attachment = widget.others.attachment ?? "";
   }
 
   @override
@@ -174,7 +174,7 @@ class _OtherEditState extends State<OtherEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -195,7 +195,7 @@ class _OtherEditState extends State<OtherEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -242,6 +242,8 @@ class _OtherEditState extends State<OtherEdit> {
             .toJson(), // Convert account object to JSON and send as request body
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
         // DisplayUtils.showToast("OtherAsset Details Updated Successfully");
         return Other.fromJson(jsonDecode(response.data));
@@ -250,6 +252,31 @@ class _OtherEditState extends State<OtherEdit> {
       }
     } catch (e) {
       return null; // Return null if an error occurs
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.others.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

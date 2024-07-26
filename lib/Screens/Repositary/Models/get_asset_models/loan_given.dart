@@ -21,11 +21,11 @@ class LoanGiven with _$LoanGiven {
   factory LoanGiven({
     required String category,
     required String borrowerName,
-    required int? loanAmount,
-    required String loanGivenDate,
+    required int loanAmount,
+    required String? loanGivenDate,
     required int? interestRate, // Updated to be nullable
-    required String comments,
-    required String attachment,
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _LoanGiven;
 

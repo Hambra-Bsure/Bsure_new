@@ -173,6 +173,14 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
                                 onPressed: () async {
                                   Navigator.of(context).pop();
                                   await deleteAssetStatus(index);
+                                  List<MutualFund> newMutualFunds =
+                                  <MutualFund>[];
+                                  newMutualFunds
+                                      .addAll(mutualFunds);
+                                  newMutualFunds.removeAt(index);
+                                  setState(() {
+                                   mutualFunds = newMutualFunds;
+                                  });
                                 },
                               ),
                             ],

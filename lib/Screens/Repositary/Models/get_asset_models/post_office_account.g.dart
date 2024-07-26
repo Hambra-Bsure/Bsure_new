@@ -29,10 +29,10 @@ _$PostOfficeAccountImpl _$$PostOfficeAccountImplFromJson(
     _$PostOfficeAccountImpl(
       category: json['category'] as String,
       branchName: json['branchName'] as String,
-      accountNumber: json['accountNumber'] as String,
+      accountNumber: json['accountNumber'] as String?,
       accountType: json['accountType'] as String,
-      comments: json['comments'] as String,
-      attachment: json['attachment'] as String,
+      comments: json['comments'] as String?,
+      attachment: json['attachment'] as String?,
       assetId: (json['assetId'] as num).toInt(),
     );
 

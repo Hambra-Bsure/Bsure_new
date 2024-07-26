@@ -138,7 +138,7 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
         width: MediaQuery.of(context).size.width * 0.9,
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: const Color(0xffd9d9d9),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(
@@ -192,13 +192,13 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
         },
         //errorAnimationController: errorController, // Add error controller
         animationType: AnimationType.fade,
-        validator: (v) {
-          if (v!.length < 5) {
-            return "Please enter valid OTP";
-          } else {
-            return null;
-          }
-        },
+        // validator: (v) {
+        //   if (v!.length < 5) {
+        //     return "Please enter valid OTP";
+        //   } else {
+        //     return null;
+        //   }
+        // },
       ),
     );
   }

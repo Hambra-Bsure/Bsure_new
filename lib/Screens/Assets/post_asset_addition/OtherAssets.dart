@@ -25,7 +25,8 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
 
-  File? proof;
+  var proof;
+  var name;
   String? assetId;
 
   @override
@@ -50,16 +51,6 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
               labelText: 'Comments',
               mandatory: false,
             ),
-            const SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff429bb8),
-                ),
-                child: const Text('Save', style: TextStyle(color: Colors.white)),
-              ),
-            ),
             const SizedBox(height: 20),
             Column(
               children: [
@@ -72,7 +63,7 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Color(0xff429bb8)),
                           ),
-                          hintText: "Select file",
+                          hintText: "Attachemnt you want to upload(optional)",
                           hintStyle: TextStyle(fontSize: 16),
                         ),
                         readOnly: true,
@@ -93,7 +84,7 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
                         ),
                       ),
                       child: const Text(
-                        'File',
+                        'Choose file',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -105,7 +96,7 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: submitImage,
+                  onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff429bb8),
                   ),
@@ -125,12 +116,11 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
 
     if (result != null) {
       setState(() {
-        proof = File(result.files.single.path!);
-        _attachmentController.text = result.files.single.name;
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
       });
     } else {
       // Handle error when no file is selected.
-      print('No file selected.');
     }
   }
 
@@ -138,35 +128,21 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (proof == null || token == null || token.isEmpty || assetId == null) {
-      // If any of the conditions are not met, navigate to the next screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => OtherScreen(
-            assetType: widget.assetType,
-          ),
-        ),
-      );
-      return;
-    }
-
 
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment');
       var request = http.MultipartRequest('POST', uri);
 
-      // Set headers
-      request.headers['Authorization'] = token!;
+      request.headers['Authorization'] = token.toString();
 
       // Add asset ID as a field
-      request.fields['assetId'] = assetId!;
+      request.fields['assetId'] = assetId.toString();
 
       if (proof != null) {
         request.files.add(http.MultipartFile.fromBytes(
           "attachment",
-          proof!.readAsBytesSync(),
-          filename: proof!.path.split('/').last,
+          proof.bytes!,
+          filename: proof.name,
         ));
       }
 
@@ -174,6 +150,7 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
       print("Response: ${response.statusCode}");
 
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse['fileUrl'];
@@ -301,9 +278,11 @@ class _OtherAssetAddState extends State<OtherAssetAdd> {
     try {
       final response = await client.CreateOtherAsset(token!, request);
 
-      setState(() {
-        assetId = response.asset?.otherAssets?.assetId.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
+
 
       if (response.success == 200) {
         DisplayUtils.showToast("Other asset details added successfully");

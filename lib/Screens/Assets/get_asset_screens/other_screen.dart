@@ -176,6 +176,14 @@ class _OtherScreenState extends State<OtherScreen> {
                                 onPressed: () async {
                                   Navigator.of(context).pop();
                                   deleteAssetStatus(index);
+                                  List<Other> newOthers =
+                                  <Other>[];
+                                  newOthers
+                                      .addAll(others);
+                                  newOthers.removeAt(index);
+                                  setState(() {
+                                    others = newOthers;
+                                  });
                                 },
                               ),
                             ],

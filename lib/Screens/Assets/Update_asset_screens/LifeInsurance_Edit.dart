@@ -40,8 +40,8 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
     super.initState();
     // Initialize the local variables with the current values
     insuranceCompanyName = widget.insurance.insuranceCompanyName;
-    policyName = widget.insurance.policyName;
-    policyNumber = widget.insurance.policyNumber;
+    policyName = widget.insurance.policyName ?? "";
+    policyNumber = widget.insurance.policyNumber ?? "";
     coverageAmount = widget.insurance.coverageAmount != null
         ? widget.insurance.coverageAmount.toString()
         : ''; // Initialize coverage amount with empty string if null
@@ -49,8 +49,8 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
         ? DateTime.parse(widget.insurance.maturityDate!)
         : null; // Use null as default value
     _maturityDateController.text = maturityDate != null ? formatDate(maturityDate!) : ''; // Format DateTime to string
-    comments = widget.insurance.comments;
-    attachment = widget.insurance.attachment;
+    comments = widget.insurance.comments ?? "";
+    attachment = widget.insurance.attachment ?? "";
   }
 
   @override
@@ -305,7 +305,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff429bb8)),
                   ),
-                  hintText: "Select File",
+                  hintText: "Attachemnt you want to upload(optional)",
                   hintStyle: TextStyle(fontSize: 16),
                 ),
                 readOnly: true,
@@ -326,7 +326,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
                 ),
               ),
               child: const Text(
-                'File',
+                'Choose file',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -372,6 +372,8 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
         data: insurance.toJson(),
       );
 
+      await _submitImage();
+
       if (response.statusCode == 200) {
         // Assuming the API returns the updated insurance details in the response
         final responseData = response.data;
@@ -388,6 +390,31 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
     } catch (e) {
       print('Dio error: $e');
       return null;
+    }
+  }
+
+  Future<void> _submitImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (proof == null || token == null) {
+      return;
+    }
+
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(proof.path),
+    });
+
+    final dio = Dio();
+    dio.options.headers["Authorization"] = token;
+
+    try {
+      await dio.post(
+        "https://dev.bsure.live/v2/asset/${widget.insurance.assetId}/upload",
+        data: formData,
+      );
+    } catch (e) {
+      DisplayUtils.showToast('Failed to upload file');
     }
   }
 }

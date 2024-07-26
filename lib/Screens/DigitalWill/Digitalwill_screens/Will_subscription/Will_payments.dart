@@ -7,15 +7,14 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show File, Platform;
-
 import 'Will_plans.dart';
 
 class WillPaymentsScreen extends StatefulWidget {
   final int planId;
-  final int price;
+  final int finalPrice;
 
   const WillPaymentsScreen(
-      {required this.planId, Key? key, required this.price})
+      {required this.planId, Key? key, required this.finalPrice})
       : super(key: key);
 
   @override
@@ -30,15 +29,15 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
   void initState() {
     super.initState();
 
-    double priceInRupees = widget.price / 100.0; // Convert price to rupees
+    double priceInRupees = widget.finalPrice / 100.0; // Convert price to rupees
     String formattedPrice = NumberFormat.currency(locale: 'en_IN', symbol: '₹')
         .format(priceInRupees); // Format price with currency symbol
 
     print('Formatted Price: $formattedPrice');
 
-    print("subba");
+    print("subba reddy");
     print('Plan ID: ${widget.planId}');
-    print('Price: ${widget.price}');
+    print('Price: ${widget.finalPrice}');
 
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
@@ -61,8 +60,7 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
         },
         body: jsonEncode({
           'planId': widget.planId,
-          'amount': (widget.price * 100).toInt(),
-          // Convert price to paise (multiply by 100 for INR) and cast to integer
+          'amount': (widget.finalPrice * 100).toInt(), // Convert price to paise
         }),
       );
 
@@ -70,9 +68,24 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
         final orderData = jsonDecode(response.body);
         final orderOptions = orderData['options'];
 
+        final amountInPaise = (widget.finalPrice * 100).toInt();
+        // final amountInRupees = amountInPaise / 100.0; // Convert paise to rupees
+
+        // Format amount with currency symbol
+        // String formattedAmount = NumberFormat.currency(locale: 'en_IN', symbol: '₹')
+        //     .format(amountInRupees);
+        //
+        // print('Formatted Amount: $formattedAmount'); // Print the formatted amount
+
+        double priceInRupees = widget.finalPrice / 100.0;
+        String formattedPrice = NumberFormat.currency(locale: 'en_IN', symbol: '₹')
+            .format(priceInRupees);
+
+        print('Formatted Price: $formattedPrice');
+
         final options = {
           'key': orderOptions['key'],
-          'amount': (widget.price * 100).toInt(),
+          'amount': formattedPrice, // Amount in paise as a string
           'name': orderOptions['name'],
           'description': 'Payment',
           'order_id': orderOptions['order_id'],
@@ -82,8 +95,10 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
           },
           'external': {
             'wallets': ['paytm']
-          },
+          }, // Use the formatted price for display
         };
+
+        print('Options: $options');
 
         if (Platform.isAndroid || Platform.isIOS) {
           _razorpay.open(options);
@@ -103,6 +118,7 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
     }
   }
 
+
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     print('Payment success: ${response.paymentId}');
     Navigator.pushReplacement(
@@ -110,7 +126,7 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
       MaterialPageRoute(
         builder: (context) => PaymentSuccessScreen(
           transactionId: response.paymentId!,
-          amount: widget.price / 100.0,
+          amount: widget.finalPrice / 100.0,
         ),
       ),
     );
@@ -142,6 +158,7 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title:
             const Text('Will Payment', style: TextStyle(color: Colors.white)),

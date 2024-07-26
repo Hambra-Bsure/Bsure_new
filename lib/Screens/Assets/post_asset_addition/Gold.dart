@@ -34,7 +34,8 @@ class _GoldAddState extends State<GoldAdd> {
   MetalType? _selectedMetalType;
   Type? _selectedType;
 
-  File? proof;
+  var proof;
+  var name;
   String? assetId;
 
   @override
@@ -96,17 +97,6 @@ class _GoldAddState extends State<GoldAdd> {
               labelText: 'Comments',
               mandatory: false,
             ),
-            const SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff429bb8),
-                ),
-                child:
-                const Text('Save', style: TextStyle(color: Colors.white)),
-              ),
-            ),
             const SizedBox(height: 20),
             Column(
               children: [
@@ -119,7 +109,7 @@ class _GoldAddState extends State<GoldAdd> {
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Color(0xff429bb8)),
                           ),
-                          hintText: "Select file",
+                          hintText: "Attachemnt you want to upload(optional)",
                           hintStyle: TextStyle(fontSize: 16),
                         ),
                         readOnly: true,
@@ -140,7 +130,7 @@ class _GoldAddState extends State<GoldAdd> {
                         ),
                       ),
                       child: const Text(
-                        'File',
+                        'Choose file',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -153,7 +143,7 @@ class _GoldAddState extends State<GoldAdd> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
-                    await submitImage();
+                    _submitForm();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff429bb8),
@@ -175,11 +165,11 @@ class _GoldAddState extends State<GoldAdd> {
 
     if (result != null) {
       setState(() {
-        proof = File(result.files.single.path!);
-        _attachmentController.text = result.files.single.name;
+        proof = result.files.single;
+        _attachmentController.text = proof.name;
       });
     } else {
-      print('No file selected.');
+      // Handle error when no file is selected.
     }
   }
 
@@ -187,45 +177,42 @@ class _GoldAddState extends State<GoldAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (proof == null || token == null || token.isEmpty || assetId == null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => GoldScreen(
-            assetType: widget.assetType,
-          ),
-        ),
-      );
-      return;
-    }
 
     try {
       var uri = Uri.parse(
-          'https://dev.bsure.live/v2/asset/attachment');
+          'https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
-      request.headers['Authorization'] = token;
+      // Set headers
+      request.headers['Authorization'] = token.toString();
 
-      request.fields['assetId'] = assetId!;
+      // Add asset ID as a field
+      request.fields['assetId'] = assetId.toString();
 
       if (proof != null) {
         request.files.add(http.MultipartFile.fromBytes(
           "attachment",
-          proof!.readAsBytesSync(),
-          filename: proof!.path.split('/').last,
+          proof.bytes!,
+          filename: proof.name,
         ));
       }
 
       var response = await request.send();
-      print("Response: ${response.statusCode}");
+      print(response);
 
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
+        var fileUrl = jsonResponse[
+        'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+        var returnedAssetId = jsonResponse[
+        'assetId']; // Assuming the server returns the asset ID in 'assetId' key
+        // Handle the file URL and asset ID
+        print('File URL: $fileUrl');
+        print('Asset ID: $returnedAssetId');
 
-        print('File URL: ${jsonResponse['fileUrl']}');
-        print('Asset ID: ${jsonResponse['assetId']}');
-
+        // Navigate to the BankAccountsScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -235,9 +222,9 @@ class _GoldAddState extends State<GoldAdd> {
           ),
         );
       } else {
+        // Handle error response
         print('Failed to upload file: ${response.statusCode}');
-        print(await response.stream.bytesToString());
-
+        // Navigate to the BankAccountsScreen even if upload fails
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -248,8 +235,9 @@ class _GoldAddState extends State<GoldAdd> {
         );
       }
     } catch (e) {
+      // Handle exception
       print('Error uploading file: $e');
-
+      // Navigate to the BankAccountsScreen in case of error
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -260,6 +248,7 @@ class _GoldAddState extends State<GoldAdd> {
       );
     }
   }
+
 
   Widget buildTextField({
     required TextEditingController controller,
@@ -358,6 +347,7 @@ class _GoldAddState extends State<GoldAdd> {
     );
   }
 
+
   void _submitForm() async {
     if (_selectedMetalType == null ||
         _selectedType == null ||
@@ -401,9 +391,11 @@ class _GoldAddState extends State<GoldAdd> {
     try {
       final response = await client.CreateGold(token, request);
 
-      setState(() {
-        assetId = response.asset!.gold!.assetId.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
+
 
       if (response.success == 200) {
         DisplayUtils.showToast("Gold details added successfully");

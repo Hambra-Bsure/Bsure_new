@@ -30,10 +30,10 @@ _$NonLifeInsuranceImpl _$$NonLifeInsuranceImplFromJson(
       category: json['category'] as String,
       insuranceCompanyName: json['insuranceCompanyName'] as String,
       typeOfInsurance: json['typeOfInsurance'] as String,
-      policyName: json['policyName'] as String,
-      policyNumber: json['policyNumber'] as String,
-      comments: json['comments'] as String,
-      attachment: json['attachment'] as String,
+      policyName: json['policyName'] as String?,
+      policyNumber: json['policyNumber'] as String?,
+      comments: json['comments'] as String?,
+      attachment: json['attachment'] as String?,
       assetId: (json['assetId'] as num).toInt(),
     );
 

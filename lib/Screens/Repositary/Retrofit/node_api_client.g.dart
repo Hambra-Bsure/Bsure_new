@@ -227,7 +227,7 @@ class _NodeClient implements NodeClient {
   }
 
   @override
-  Future<MutualFundResponse> CreateMutualFund(
+  Future<PostAssetResponse> CreateMutualFund(
     String token,
     MutualFundRequest req,
   ) async {
@@ -238,7 +238,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<MutualFundResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -254,12 +254,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = MutualFundResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<StockBrokerResponse> CreateStockBroker(
+  Future<PostAssetResponse> CreateStockBroker(
     String token,
     StockBrokerRequest req,
   ) async {
@@ -269,8 +269,8 @@ class _NodeClient implements NodeClient {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<StockBrokerResponse>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -286,12 +286,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = StockBrokerResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<LifeInsuranceResponse> CreateLifeInsurance(
+  Future<PostAssetResponse> CreateLifeInsurance(
     String token,
     LifeInsuranceRequest req,
   ) async {
@@ -301,8 +301,8 @@ class _NodeClient implements NodeClient {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<LifeInsuranceResponse>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -318,12 +318,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = LifeInsuranceResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<NonLifeInsuranceResponse> CreateNonLifeInsurance(
+  Future<PostAssetResponse> CreateNonLifeInsurance(
     String token,
     NonLifeInsuranceRequest req,
   ) async {
@@ -333,8 +333,8 @@ class _NodeClient implements NodeClient {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<NonLifeInsuranceResponse>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -350,12 +350,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = NonLifeInsuranceResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<PostOfficeAccountResponse> CreatePostOfficeAccount(
+  Future<PostAssetResponse> CreatePostOfficeAccount(
     String token,
     PostOfficeAccountRequest req,
   ) async {
@@ -365,8 +365,8 @@ class _NodeClient implements NodeClient {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<PostOfficeAccountResponse>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -382,12 +382,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = PostOfficeAccountResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<CryptoExchangeResponse> CreateCryptoExchange(
+  Future<PostAssetResponse> CreateCryptoExchange(
     String token,
     CryptoExchangeRequest req,
   ) async {
@@ -397,8 +397,8 @@ class _NodeClient implements NodeClient {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<CryptoExchangeResponse>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -414,12 +414,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = CryptoExchangeResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<NpsResponse> CreateNps(
+  Future<PostAssetResponse> CreateNps(
     String token,
     NpsRequest req,
   ) async {
@@ -430,7 +430,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<NpsResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -446,12 +446,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = NpsResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<PpfResponse> CreatePpf(
+  Future<PostAssetResponse> CreatePpf(
     String token,
     PpfRequest req,
   ) async {
@@ -462,7 +462,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<PpfResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -478,12 +478,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = PpfResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<PfResponse> CreatePf(
+  Future<PostAssetResponse> CreatePf(
     String token,
     PfRequest req,
   ) async {
@@ -494,7 +494,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<PfResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -510,12 +510,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = PfResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<RealEstateResponse> CreateRealEstate(
+  Future<PostAssetResponse> CreateRealEstate(
     String token,
     RealEstateRequest req,
   ) async {
@@ -526,7 +526,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<RealEstateResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -542,12 +542,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = RealEstateResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<OtherAssetResponse> CreateOtherAsset(
+  Future<PostAssetResponse> CreateOtherAsset(
     String token,
     OtherAssetRequest req,
   ) async {
@@ -558,7 +558,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<OtherAssetResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -574,12 +574,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = OtherAssetResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<LoanGivenResponse> CreateLoanGiven(
+  Future<PostAssetResponse> CreateLoanGiven(
     String token,
     LoanGivenRequest req,
   ) async {
@@ -590,7 +590,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<LoanGivenResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -606,12 +606,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = LoanGivenResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<VehicleResponse> CreateVehicle(
+  Future<PostAssetResponse> CreateVehicle(
     String token,
     VehicleRequest req,
   ) async {
@@ -622,7 +622,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<VehicleResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -638,12 +638,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = VehicleResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<GoldResponse> CreateGold(
+  Future<PostAssetResponse> CreateGold(
     String token,
     GoldRequest req,
   ) async {
@@ -654,7 +654,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<GoldResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -670,12 +670,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = GoldResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<BondResponse> CreateBond(
+  Future<PostAssetResponse> CreateBond(
     String token,
     BondRequest req,
   ) async {
@@ -686,7 +686,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<BondResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -702,12 +702,12 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = BondResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 
   @override
-  Future<EsopResponse> CreateEsop(
+  Future<PostAssetResponse> CreateEsop(
     String token,
     EsopRequest req,
   ) async {
@@ -718,7 +718,7 @@ class _NodeClient implements NodeClient {
     final _data = <String, dynamic>{};
     _data.addAll(req.toJson());
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<EsopResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<PostAssetResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -734,7 +734,7 @@ class _NodeClient implements NodeClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = EsopResponse.fromJson(_result.data!);
+    final _value = PostAssetResponse.fromJson(_result.data!);
     return _value;
   }
 

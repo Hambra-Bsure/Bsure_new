@@ -71,16 +71,6 @@ class _MutualFundAddState extends State<MutualFundAdd> {
               labelText: 'Comments',
             ),
             const SizedBox(height: 16),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff429bb8),
-                ),
-                child: const Text('Save', style: TextStyle(color: Colors.white)),
-              ),
-            ),
-            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -90,7 +80,7 @@ class _MutualFundAddState extends State<MutualFundAdd> {
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Color(0xff429bb8)),
                       ),
-                      hintText: "Select file",
+                      hintText: "Attachemnt you want to upload(optional)",
                       hintStyle: TextStyle(fontSize: 16),
                     ),
                     readOnly: true,
@@ -111,7 +101,7 @@ class _MutualFundAddState extends State<MutualFundAdd> {
                     ),
                   ),
                   child: const Text(
-                    'File',
+                    'Choose file',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -125,7 +115,7 @@ class _MutualFundAddState extends State<MutualFundAdd> {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  await submitImage();
+                   _submitForm();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
@@ -157,23 +147,12 @@ class _MutualFundAddState extends State<MutualFundAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (proof == null || token == null || token.isEmpty || assetId == null) {
-      // If any of the conditions are not met, return and navigate to the next screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MutualFundScreen(assetType: widget.assetType),
-        ),
-      );
-      return;
-    }
-
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
-      request.headers['Authorization'] = token;
+      request.headers['Authorization'] = token.toString();
 
       // Add asset ID as a field
       request.fields['assetId'] = assetId.toString();
@@ -189,6 +168,7 @@ class _MutualFundAddState extends State<MutualFundAdd> {
       var response = await request.send();
 
       if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse['fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
@@ -317,9 +297,10 @@ class _MutualFundAddState extends State<MutualFundAdd> {
     try {
       final response = await client.CreateMutualFund(token, request);
 
-      setState(() {
-        assetId = response.asset!.mutualFund!.assetId?.toString();
-      });
+      assetId = response.asset.assetId.toString();
+      if (assetId != null) {
+        submitImage();
+      }
 
       if (response.success == 200) {
         DisplayUtils.showToast("Mutual fund details added successfully");
@@ -333,15 +314,6 @@ class _MutualFundAddState extends State<MutualFundAdd> {
     } catch (e) {
       print('Error creating mutual fund: $e');
     }
-
-    // Clear text fields
-    _assetTypeController.clear();
-    _amcNameController.clear();
-    _schemeNameController.clear();
-    _folioNumberController.clear();
-    _fundTypeController.clear();
-    _commentsController.clear();
-    _attachmentController.clear();
   }
 }
 

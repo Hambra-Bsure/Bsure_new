@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:Bsure_devapp/Screens/Assets/post_asset_addition/post_asset_response.dart';
 import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
@@ -9,7 +8,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart'; // Required for TextInputFormatter
 import '../../Repositary/Models/AssetModels/BankAccountRequest.dart';
-import '../../Repositary/Models/AssetModels/BankAccountResponse.dart';
+import '../../Repositary/Models/AssetModels/PostAssetResponse.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../get_asset_screens/bank_account_screen.dart';
 
@@ -47,12 +46,12 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   File? file;
   String? fileName;
   String? downloadUrl;
-  int? assetId;
+  String? assetId;
 
   Color color1 = const Color(0xff429bb8);
   String url = "";
   var name;
-  PlatformFile? proof;
+  var proof;
 
   @override
   void initState() {
@@ -64,7 +63,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: color1,
+        backgroundColor: const Color(0xff429bb8),
         title:
             const Text('Bank account', style: TextStyle(color: Colors.white)),
       ),
@@ -101,16 +100,6 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                 mandatory: false,
               ),
               const SizedBox(height: 20),
-              // Center(
-              //   child: ElevatedButton(
-              //     onPressed: _submitForm,
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: const Color(0xff429bb8),
-              //     ),
-              //     child:
-              //         const Text('Save', style: TextStyle(color: Colors.white)),
-              //   ),
-              // ),
               Column(
                 children: [
                   Row(
@@ -141,7 +130,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                           padding: EdgeInsets.symmetric(
                             vertical: MediaQuery.of(context).size.width * 0.01,
                             horizontal:
-                                MediaQuery.of(context).size.width * 0.03,
+                            MediaQuery.of(context).size.width * 0.03,
                           ),
                         ),
                         child: const Text(
@@ -168,11 +157,11 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                   ),
                 ],
               ),
-            ],
+                ],
+              ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget buildTextField({
@@ -322,12 +311,13 @@ class _BankAccountAddState extends State<BankAccountAdd> {
 
     try {
       final PostAssetResponse response =
-          await client.CreateBankAccount(token, req);
+      await client.CreateBankAccount(token, req);
 
-      assetId = response.asset.assetId;
+      assetId = response.asset.assetId.toString();
       if (assetId != null) {
-        _submitImage();
+        submitImage();
       }
+
 
       // Now you can use the assetId as needed
       print('Asset ID: $assetId');
@@ -347,30 +337,17 @@ class _BankAccountAddState extends State<BankAccountAdd> {
     if (result != null) {
       setState(() {
         proof = result.files.single;
-        _attachmentController.text = proof!.name;
+        _attachmentController.text = proof.name;
       });
     } else {
       // Handle error when no file is selected.
     }
   }
 
-  // Work in this function
-  Future<void> _submitImage() async {
+  Future<void> submitImage() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (proof == null || token == null || token.isEmpty || assetId == null) {
-      // If any of the conditions are not met, return and navigate to the next screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BankAccountsScreen(
-            assetType: widget.assetType,
-          ),
-        ),
-      );
-      return;
-    }
 
     try {
       var uri = Uri.parse(
@@ -378,7 +355,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
-      request.headers['Authorization'] = token;
+      request.headers['Authorization'] = token.toString();
 
       // Add asset ID as a field
       request.fields['assetId'] = assetId.toString();
@@ -386,21 +363,20 @@ class _BankAccountAddState extends State<BankAccountAdd> {
       if (proof != null) {
         request.files.add(http.MultipartFile.fromBytes(
           "attachment",
-          proof!.bytes!,
-          filename: proof!.name,
+          proof.bytes!,
+          filename: proof.name,
         ));
       }
 
       var response = await request.send();
       print(response);
 
-      if (response.statusCode == 200) {
-        DisplayUtils.showToast("Bank details added successfully");
+      if (response.statusCode == 201) {
+        DisplayUtils.showToast("Attachment uploaded successfully ");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
-        // returned key is "attachmentUrl"
         var fileUrl = jsonResponse[
-            'attachmentUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+            'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
         var returnedAssetId = jsonResponse[
             'assetId']; // Assuming the server returns the asset ID in 'assetId' key
         // Handle the file URL and asset ID

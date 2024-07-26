@@ -216,12 +216,12 @@ LoanGiven _$LoanGivenFromJson(Map<String, dynamic> json) {
 mixin _$LoanGiven {
   String get category => throw _privateConstructorUsedError;
   String get borrowerName => throw _privateConstructorUsedError;
-  int? get loanAmount => throw _privateConstructorUsedError;
-  String get loanGivenDate => throw _privateConstructorUsedError;
+  int get loanAmount => throw _privateConstructorUsedError;
+  String? get loanGivenDate => throw _privateConstructorUsedError;
   int? get interestRate =>
       throw _privateConstructorUsedError; // Updated to be nullable
-  String get comments => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
+  String? get comments => throw _privateConstructorUsedError;
+  String? get attachment => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -238,11 +238,11 @@ abstract class $LoanGivenCopyWith<$Res> {
   $Res call(
       {String category,
       String borrowerName,
-      int? loanAmount,
-      String loanGivenDate,
+      int loanAmount,
+      String? loanGivenDate,
       int? interestRate,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -261,11 +261,11 @@ class _$LoanGivenCopyWithImpl<$Res, $Val extends LoanGiven>
   $Res call({
     Object? category = null,
     Object? borrowerName = null,
-    Object? loanAmount = freezed,
-    Object? loanGivenDate = null,
+    Object? loanAmount = null,
+    Object? loanGivenDate = freezed,
     Object? interestRate = freezed,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -277,26 +277,26 @@ class _$LoanGivenCopyWithImpl<$Res, $Val extends LoanGiven>
           ? _value.borrowerName
           : borrowerName // ignore: cast_nullable_to_non_nullable
               as String,
-      loanAmount: freezed == loanAmount
+      loanAmount: null == loanAmount
           ? _value.loanAmount
           : loanAmount // ignore: cast_nullable_to_non_nullable
-              as int?,
-      loanGivenDate: null == loanGivenDate
+              as int,
+      loanGivenDate: freezed == loanGivenDate
           ? _value.loanGivenDate
           : loanGivenDate // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       interestRate: freezed == interestRate
           ? _value.interestRate
           : interestRate // ignore: cast_nullable_to_non_nullable
               as int?,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -316,11 +316,11 @@ abstract class _$$LoanGivenImplCopyWith<$Res>
   $Res call(
       {String category,
       String borrowerName,
-      int? loanAmount,
-      String loanGivenDate,
+      int loanAmount,
+      String? loanGivenDate,
       int? interestRate,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -337,11 +337,11 @@ class __$$LoanGivenImplCopyWithImpl<$Res>
   $Res call({
     Object? category = null,
     Object? borrowerName = null,
-    Object? loanAmount = freezed,
-    Object? loanGivenDate = null,
+    Object? loanAmount = null,
+    Object? loanGivenDate = freezed,
     Object? interestRate = freezed,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_$LoanGivenImpl(
@@ -353,26 +353,26 @@ class __$$LoanGivenImplCopyWithImpl<$Res>
           ? _value.borrowerName
           : borrowerName // ignore: cast_nullable_to_non_nullable
               as String,
-      loanAmount: freezed == loanAmount
+      loanAmount: null == loanAmount
           ? _value.loanAmount
           : loanAmount // ignore: cast_nullable_to_non_nullable
-              as int?,
-      loanGivenDate: null == loanGivenDate
+              as int,
+      loanGivenDate: freezed == loanGivenDate
           ? _value.loanGivenDate
           : loanGivenDate // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       interestRate: freezed == interestRate
           ? _value.interestRate
           : interestRate // ignore: cast_nullable_to_non_nullable
               as int?,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -402,16 +402,16 @@ class _$LoanGivenImpl with DiagnosticableTreeMixin implements _LoanGiven {
   @override
   final String borrowerName;
   @override
-  final int? loanAmount;
+  final int loanAmount;
   @override
-  final String loanGivenDate;
+  final String? loanGivenDate;
   @override
   final int? interestRate;
 // Updated to be nullable
   @override
-  final String comments;
+  final String? comments;
   @override
-  final String attachment;
+  final String? attachment;
   @override
   final int assetId;
 
@@ -480,11 +480,11 @@ abstract class _LoanGiven implements LoanGiven {
   factory _LoanGiven(
       {required final String category,
       required final String borrowerName,
-      required final int? loanAmount,
-      required final String loanGivenDate,
+      required final int loanAmount,
+      required final String? loanGivenDate,
       required final int? interestRate,
-      required final String comments,
-      required final String attachment,
+      required final String? comments,
+      required final String? attachment,
       required final int assetId}) = _$LoanGivenImpl;
 
   factory _LoanGiven.fromJson(Map<String, dynamic> json) =
@@ -495,15 +495,15 @@ abstract class _LoanGiven implements LoanGiven {
   @override
   String get borrowerName;
   @override
-  int? get loanAmount;
+  int get loanAmount;
   @override
-  String get loanGivenDate;
+  String? get loanGivenDate;
   @override
   int? get interestRate;
   @override // Updated to be nullable
-  String get comments;
+  String? get comments;
   @override
-  String get attachment;
+  String? get attachment;
   @override
   int get assetId;
   @override

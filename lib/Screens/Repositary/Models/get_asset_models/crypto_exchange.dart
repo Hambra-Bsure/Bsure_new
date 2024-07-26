@@ -21,9 +21,9 @@ class CryptoExchange with _$CryptoExchange {
     required String category,
     required String exchangeName,
     required String accountNumber,
-    required String walletAddress,
-    required String comments,
-    required String attachment,
+    required String? walletAddress,
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _CryptoExchange;
 

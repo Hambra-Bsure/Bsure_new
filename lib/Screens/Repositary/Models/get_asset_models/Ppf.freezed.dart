@@ -214,9 +214,9 @@ mixin _$PPf {
   String get category => throw _privateConstructorUsedError;
   String get ppfAccountNumber => throw _privateConstructorUsedError;
   String get institutionName => throw _privateConstructorUsedError;
-  String get comments =>
+  String? get comments =>
       throw _privateConstructorUsedError; // Making comments field nullable if it's not always present
-  String get attachment =>
+  String? get attachment =>
       throw _privateConstructorUsedError; // Making attachment field nullable if it's not always present
   int get assetId => throw _privateConstructorUsedError;
 
@@ -234,8 +234,8 @@ abstract class $PPfCopyWith<$Res> {
       {String category,
       String ppfAccountNumber,
       String institutionName,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -254,8 +254,8 @@ class _$PPfCopyWithImpl<$Res, $Val extends PPf> implements $PPfCopyWith<$Res> {
     Object? category = null,
     Object? ppfAccountNumber = null,
     Object? institutionName = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -271,14 +271,14 @@ class _$PPfCopyWithImpl<$Res, $Val extends PPf> implements $PPfCopyWith<$Res> {
           ? _value.institutionName
           : institutionName // ignore: cast_nullable_to_non_nullable
               as String,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -297,8 +297,8 @@ abstract class _$$PPfImplCopyWith<$Res> implements $PPfCopyWith<$Res> {
       {String category,
       String ppfAccountNumber,
       String institutionName,
-      String comments,
-      String attachment,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -314,8 +314,8 @@ class __$$PPfImplCopyWithImpl<$Res> extends _$PPfCopyWithImpl<$Res, _$PPfImpl>
     Object? category = null,
     Object? ppfAccountNumber = null,
     Object? institutionName = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_$PPfImpl(
@@ -331,14 +331,14 @@ class __$$PPfImplCopyWithImpl<$Res> extends _$PPfCopyWithImpl<$Res, _$PPfImpl>
           ? _value.institutionName
           : institutionName // ignore: cast_nullable_to_non_nullable
               as String,
-      comments: null == comments
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -368,10 +368,10 @@ class _$PPfImpl with DiagnosticableTreeMixin implements _PPf {
   @override
   final String institutionName;
   @override
-  final String comments;
+  final String? comments;
 // Making comments field nullable if it's not always present
   @override
-  final String attachment;
+  final String? attachment;
 // Making attachment field nullable if it's not always present
   @override
   final int assetId;
@@ -436,8 +436,8 @@ abstract class _PPf implements PPf {
       {required final String category,
       required final String ppfAccountNumber,
       required final String institutionName,
-      required final String comments,
-      required final String attachment,
+      required final String? comments,
+      required final String? attachment,
       required final int assetId}) = _$PPfImpl;
 
   factory _PPf.fromJson(Map<String, dynamic> json) = _$PPfImpl.fromJson;
@@ -449,9 +449,9 @@ abstract class _PPf implements PPf {
   @override
   String get institutionName;
   @override
-  String get comments;
+  String? get comments;
   @override // Making comments field nullable if it's not always present
-  String get attachment;
+  String? get attachment;
   @override // Making attachment field nullable if it's not always present
   int get assetId;
   @override

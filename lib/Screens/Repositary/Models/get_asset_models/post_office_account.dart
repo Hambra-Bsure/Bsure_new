@@ -20,10 +20,10 @@ class PostOfficeAccount with _$PostOfficeAccount {
   factory PostOfficeAccount({
     required String category,
     required String branchName,
-    required String accountNumber,
+    required String? accountNumber,
     required String accountType,
-    required String comments,
-    required String attachment,
+    required String? comments,
+    required String? attachment,
     required int assetId,
   }) = _PostOfficeAccount;
 

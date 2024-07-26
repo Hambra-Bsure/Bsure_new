@@ -25,8 +25,8 @@ Map<String, dynamic> _$$PfResponseImplToJson(_$PfResponseImpl instance) =>
 _$PFImpl _$$PFImplFromJson(Map<String, dynamic> json) => _$PFImpl(
       category: json['category'] as String,
       uanNumber: json['uanNumber'] as String,
-      comments: json['comments'] as String,
-      attachment: json['attachment'] as String,
+      comments: json['comments'] as String?,
+      attachment: json['attachment'] as String?,
       assetId: (json['assetId'] as num).toInt(),
     );
 

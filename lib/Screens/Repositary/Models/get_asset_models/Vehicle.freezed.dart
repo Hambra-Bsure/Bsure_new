@@ -217,11 +217,11 @@ mixin _$Vehicle {
   String get category => throw _privateConstructorUsedError;
   String get vehicleType => throw _privateConstructorUsedError;
   String get brandName => throw _privateConstructorUsedError;
-  String get modelName => throw _privateConstructorUsedError;
+  String? get modelName => throw _privateConstructorUsedError;
   String get registrationNumber => throw _privateConstructorUsedError;
-  String get chassisNumber => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
-  String get attachment => throw _privateConstructorUsedError;
+  String? get chassisNumber => throw _privateConstructorUsedError;
+  String? get comments => throw _privateConstructorUsedError;
+  String? get attachment => throw _privateConstructorUsedError;
   int get assetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -238,11 +238,11 @@ abstract class $VehicleCopyWith<$Res> {
       {String category,
       String vehicleType,
       String brandName,
-      String modelName,
+      String? modelName,
       String registrationNumber,
-      String chassisNumber,
-      String comments,
-      String attachment,
+      String? chassisNumber,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -262,11 +262,11 @@ class _$VehicleCopyWithImpl<$Res, $Val extends Vehicle>
     Object? category = null,
     Object? vehicleType = null,
     Object? brandName = null,
-    Object? modelName = null,
+    Object? modelName = freezed,
     Object? registrationNumber = null,
-    Object? chassisNumber = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? chassisNumber = freezed,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_value.copyWith(
@@ -282,26 +282,26 @@ class _$VehicleCopyWithImpl<$Res, $Val extends Vehicle>
           ? _value.brandName
           : brandName // ignore: cast_nullable_to_non_nullable
               as String,
-      modelName: null == modelName
+      modelName: freezed == modelName
           ? _value.modelName
           : modelName // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       registrationNumber: null == registrationNumber
           ? _value.registrationNumber
           : registrationNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      chassisNumber: null == chassisNumber
+      chassisNumber: freezed == chassisNumber
           ? _value.chassisNumber
           : chassisNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -321,11 +321,11 @@ abstract class _$$VehicleImplCopyWith<$Res> implements $VehicleCopyWith<$Res> {
       {String category,
       String vehicleType,
       String brandName,
-      String modelName,
+      String? modelName,
       String registrationNumber,
-      String chassisNumber,
-      String comments,
-      String attachment,
+      String? chassisNumber,
+      String? comments,
+      String? attachment,
       int assetId});
 }
 
@@ -343,11 +343,11 @@ class __$$VehicleImplCopyWithImpl<$Res>
     Object? category = null,
     Object? vehicleType = null,
     Object? brandName = null,
-    Object? modelName = null,
+    Object? modelName = freezed,
     Object? registrationNumber = null,
-    Object? chassisNumber = null,
-    Object? comments = null,
-    Object? attachment = null,
+    Object? chassisNumber = freezed,
+    Object? comments = freezed,
+    Object? attachment = freezed,
     Object? assetId = null,
   }) {
     return _then(_$VehicleImpl(
@@ -363,26 +363,26 @@ class __$$VehicleImplCopyWithImpl<$Res>
           ? _value.brandName
           : brandName // ignore: cast_nullable_to_non_nullable
               as String,
-      modelName: null == modelName
+      modelName: freezed == modelName
           ? _value.modelName
           : modelName // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       registrationNumber: null == registrationNumber
           ? _value.registrationNumber
           : registrationNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      chassisNumber: null == chassisNumber
+      chassisNumber: freezed == chassisNumber
           ? _value.chassisNumber
           : chassisNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
+              as String?,
+      comments: freezed == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-      attachment: null == attachment
+              as String?,
+      attachment: freezed == attachment
           ? _value.attachment
           : attachment // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assetId: null == assetId
           ? _value.assetId
           : assetId // ignore: cast_nullable_to_non_nullable
@@ -415,15 +415,15 @@ class _$VehicleImpl with DiagnosticableTreeMixin implements _Vehicle {
   @override
   final String brandName;
   @override
-  final String modelName;
+  final String? modelName;
   @override
   final String registrationNumber;
   @override
-  final String chassisNumber;
+  final String? chassisNumber;
   @override
-  final String comments;
+  final String? comments;
   @override
-  final String attachment;
+  final String? attachment;
   @override
   final int assetId;
 
@@ -505,11 +505,11 @@ abstract class _Vehicle implements Vehicle {
       {required final String category,
       required final String vehicleType,
       required final String brandName,
-      required final String modelName,
+      required final String? modelName,
       required final String registrationNumber,
-      required final String chassisNumber,
-      required final String comments,
-      required final String attachment,
+      required final String? chassisNumber,
+      required final String? comments,
+      required final String? attachment,
       required final int assetId}) = _$VehicleImpl;
 
   factory _Vehicle.fromJson(Map<String, dynamic> json) = _$VehicleImpl.fromJson;
@@ -521,15 +521,15 @@ abstract class _Vehicle implements Vehicle {
   @override
   String get brandName;
   @override
-  String get modelName;
+  String? get modelName;
   @override
   String get registrationNumber;
   @override
-  String get chassisNumber;
+  String? get chassisNumber;
   @override
-  String get comments;
+  String? get comments;
   @override
-  String get attachment;
+  String? get attachment;
   @override
   int get assetId;
   @override
