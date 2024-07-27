@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import '../../../Repositary/Models/Digital_will/witness_get_res.dart';
 import '../../../Repositary/Retrofit/node_api_client.dart';
+import '../Will_subscription/Will_products.dart';
 import 'DigitalWitness1.dart';
 import 'Edit_witness.dart';
 import 'Executor/GetExecutor.dart';
@@ -139,7 +140,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => PdfDownloadScreen()),
+                          builder: (context) => WillProductsScreen()),
                     );
                   },
                 ),

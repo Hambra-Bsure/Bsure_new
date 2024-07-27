@@ -126,6 +126,43 @@ class _WillScreenState extends State<WillScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AppWidget(),
+                    ),
+                  ).catchError((error) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'An unexpected error occurred. Please try again later.',
+                        ),
+                      ),
+                    );
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 40 * scaleFactor,
+                    vertical: 20 * scaleFactor,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  backgroundColor: const Color(0xFF38B6ff),
+                ),
+                child: Text(
+                  'Edit or Update Will',
+                  style: TextStyle(
+                    fontSize: 18 * scaleFactor,
+                    color: Colors.white,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
             const SizedBox(height: 100),
             TextButton(

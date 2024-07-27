@@ -30,15 +30,6 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
     super.initState();
     _finalPrice = widget.price;
     _calculateGST();
-    _loadCoupon();
-  }
-
-  Future<void> _loadCoupon() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedCoupon = prefs.getString('savedCoupon');
-    if (savedCoupon != null && savedCoupon.isNotEmpty) {
-      _couponController.text = savedCoupon;
-    }
   }
 
   Future<void> _applyCoupon() async {
@@ -66,13 +57,17 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
               widget.price - couponResponse.discountedPriceInPaisa!;
           _finalPrice = couponResponse.discountedPriceInPaisa;
           _isTemporaryGst =
-              false; // Update the flag to show the actual GST amount
+          false; // Update the flag to show the actual GST amount
           _calculateGST();
+
+          // Save the coupon code to SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('savedCoupon', couponCode);
 
           setState(() {
             _couponError = null;
             _couponSuccess =
-                'Coupon applied successfully! Discount: ₹${(_discountAmount! / 100).toStringAsFixed(2)}';
+            'Coupon applied successfully! Discount: ₹${(_discountAmount! / 100).toStringAsFixed(2)}';
           });
         } else {
           setState(() {
@@ -111,7 +106,7 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
         ? (_discountAmount! / 100).toStringAsFixed(2)
         : "0.00");
     final formattedGSTAmount =
-        (_gstAmount != null ? (_gstAmount! / 100).toStringAsFixed(2) : "0.00");
+    (_gstAmount != null ? (_gstAmount! / 100).toStringAsFixed(2) : "0.00");
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -148,8 +143,34 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
             const Divider(color: Color(0xff429bb8)),
             _buildTotalAmount(formattedFinalPrice),
             const SizedBox(height: 10),
-            _buildProceedToPayButton(),
+            //_buildProceedToPayButton(),
           ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: () {
+// Navigate to the WillPaymentsScreen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WillPaymentsScreen(
+                  planId: widget.planId,
+                  finalPrice: _finalPrice!,
+                  couponCode: _couponController.text.trim(), // Pass the coupon code
+                ),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xff429bb8),
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+          ),
+          child: const Text(
+            'Proceed to Pay',
+            style: TextStyle(fontSize: 16, color: Colors.white),
+          ),
         ),
       ),
     );
@@ -297,25 +318,27 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
 
   Widget _buildProceedToPayButton() {
     return ElevatedButton(
-      onPressed: _navigateToPaymentsScreen,
+      onPressed: () {
+        // Navigate to the WillPaymentsScreen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WillPaymentsScreen(
+              planId: widget.planId,
+                finalPrice: _finalPrice!,
+              couponCode: _couponController.text.trim(), // Pass the coupon code
+            ),
+          ),
+        );
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xff429bb8),
       ),
-      child: const Text(
-        'Proceed to Pay',
-        style: TextStyle(color: Colors.white),
-      ),
-    );
-  }
-
-  void _navigateToPaymentsScreen() {
-    print(_finalPrice);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WillPaymentsScreen(
-          planId: widget.planId,
-          finalPrice: _finalPrice ?? widget.price, // Use default price if null
+      child: const Padding(
+        padding: EdgeInsets.all(16),
+        child: Text(
+          'Proceed to Pay',
+          style: TextStyle(fontSize: 16, color: Colors.white),
         ),
       ),
     );

@@ -1,7 +1,9 @@
+import 'package:Bsure_devapp/Screens/DigitalWill/Digitalwill_screens/witness_screens/get_witness_list.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 import '../../../Repositary/Models/Digital_will/Digitalwill_verifyotp_req.dart';
 import '../../../Repositary/Retrofit/node_api_client.dart';
 import '../../../Utils/DisplayUtils.dart';
@@ -28,18 +30,12 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
   Future<void> getData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.get("token");
+      final token = prefs.getString("token");
 
       final dio = Dio();
       final client = NodeClient(dio);
 
-      final response = await client.confirmOtp(token.toString());
-
-      if (response.isValid == true) {
-        // OTP confirmation successful
-      } else {
-        // OTP confirmation failed
-      }
+      final response = await client.confirmOtp(token!);
     } catch (e) {
       // Handle exceptions
     }
@@ -142,9 +138,12 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(
-          child: _buildText("Enter the OTP received in your mobile",
-              FontWeight.normal, Colors.black,
-              minFontSize: 10),
+          child: _buildText(
+            "Enter the OTP received in your mobile",
+            FontWeight.normal,
+            Colors.black,
+            minFontSize: 10,
+          ),
         ),
       ),
     );
@@ -202,7 +201,6 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
       ),
     );
   }
-
 
   Widget _buildTermsAndConditionsText() {
     return _buildText(
@@ -271,7 +269,8 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
         // Navigate to success message or additional confirmation screen
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const Nomineeforallassets4(), // Replace with your success message screen
+            builder: (context) =>
+                 DigitalWillGetWitness(), // Replace with your success message screen
           ),
         );
       } else {
@@ -283,7 +282,7 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
     } catch (e) {
       // Handle exceptions
       setState(() {
-        errorMessage = 'An error occurred. Please try again.';
+        errorMessage = 'An error occurred. Please try again later.';
       });
     }
   }

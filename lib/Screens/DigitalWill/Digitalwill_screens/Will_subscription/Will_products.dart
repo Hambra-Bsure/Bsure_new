@@ -37,17 +37,6 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
     }
   }
 
-  // void _navigateToPlans(String productLabel) {
-  //   print("Navigating with product label: $productLabel");
-  //   if (productLabel == 'Digital Will') {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => const WillPlansScreen()),
-  //     );
-  //   } else {
-  //     print("No navigation route defined for product label: $productLabel");
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +81,7 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
-                        '${product.description ?? ''}\nLabel: ${product.label ?? ''}\nId: ${product.id ?? ''}',
+                        product.label ?? '',
                         style: const TextStyle(color: Colors.black54),
                       ),
                       trailing: Radio<String>(

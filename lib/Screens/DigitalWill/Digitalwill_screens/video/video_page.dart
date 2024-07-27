@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io' show File;
+import 'package:Bsure_devapp/Screens/DigitalWill/Digitalwill_screens/witness_screens/get_witness_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -180,7 +181,7 @@ class _VideoDisplayScreenState extends State<VideoDisplayScreen> {
 
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const Nomineeforallassets4(),
+            builder: (context) =>  DigitalWillGetWitness(),
           ),
         );
       } else {

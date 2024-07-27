@@ -12,9 +12,13 @@ import 'Will_plans.dart';
 class WillPaymentsScreen extends StatefulWidget {
   final int planId;
   final int finalPrice;
+  final String couponCode;
 
   const WillPaymentsScreen(
-      {required this.planId, Key? key, required this.finalPrice})
+      {required this.planId,
+      Key? key,
+      required this.finalPrice,
+      required this.couponCode})
       : super(key: key);
 
   @override
@@ -33,8 +37,9 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
     String formattedPrice = NumberFormat.currency(locale: 'en_IN', symbol: '₹')
         .format(priceInRupees); // Format price with currency symbol
 
+    print('Coupon code: ${widget.couponCode}');
     print('Formatted Price: $formattedPrice');
-
+    // print("coupon code: ${widget.couponCode}");
     print("subba reddy");
     print('Plan ID: ${widget.planId}');
     print('Price: ${widget.finalPrice}');
@@ -60,7 +65,8 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
         },
         body: jsonEncode({
           'planId': widget.planId,
-          'amount': (widget.finalPrice * 100).toInt(), // Convert price to paise
+          'PlanAmount': (widget.finalPrice * 100).toInt(),
+          'couponCode': widget.couponCode // Convert price to paise
         }),
       );
 
@@ -68,18 +74,10 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
         final orderData = jsonDecode(response.body);
         final orderOptions = orderData['options'];
 
-        final amountInPaise = (widget.finalPrice * 100).toInt();
-        // final amountInRupees = amountInPaise / 100.0; // Convert paise to rupees
-
-        // Format amount with currency symbol
-        // String formattedAmount = NumberFormat.currency(locale: 'en_IN', symbol: '₹')
-        //     .format(amountInRupees);
-        //
-        // print('Formatted Amount: $formattedAmount'); // Print the formatted amount
-
         double priceInRupees = widget.finalPrice / 100.0;
-        String formattedPrice = NumberFormat.currency(locale: 'en_IN', symbol: '₹')
-            .format(priceInRupees);
+        String formattedPrice =
+            NumberFormat.currency(locale: 'en_IN', symbol: '₹')
+                .format(priceInRupees);
 
         print('Formatted Price: $formattedPrice');
 
@@ -117,7 +115,6 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
       });
     }
   }
-
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     print('Payment success: ${response.paymentId}');

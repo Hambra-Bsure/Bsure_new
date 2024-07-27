@@ -93,7 +93,7 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
                     child: ListTile(
                       title: Text(plan.name ?? 'N/A'),
                       subtitle: Text(
-                        '${plan.description ?? ''}\nPrice: ₹${formattedPrice}\nPeriod: ${plan.period ?? ''}',
+                        'Price: ₹$formattedPrice\nPeriod: ${plan.period ?? ''}',
                         style: const TextStyle(height: 1.5),
                       ),
                       trailing: Radio<int>(
