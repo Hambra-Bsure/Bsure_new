@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import for TextInputFormatter
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/AssetModels/NpsRequest.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
@@ -128,6 +129,29 @@ class _NpsAddState extends State<NpsAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
@@ -247,10 +271,26 @@ class _NpsAddState extends State<NpsAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    // Check if token is null or empty
     if (token == null || token.isEmpty) {
-      // Handle the case where token is not available
-      print('Token is not available');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 

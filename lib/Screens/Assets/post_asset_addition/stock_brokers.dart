@@ -10,7 +10,9 @@ import 'package:Bsure_devapp/Screens/Repositary/Retrofit/node_api_client.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart'; // Add this import
+import '../../LoginScreen.dart';
 import '../../Utils/DisplayUtils.dart';
+import '../Static_names_list/StockBrokers.dart';
 
 class StockBrokerAdd extends StatefulWidget {
   final String assetType;
@@ -22,14 +24,18 @@ class StockBrokerAdd extends StatefulWidget {
 }
 
 class _StockBrokerAddState extends State<StockBrokerAdd> {
-  final TextEditingController _brokerNameController = TextEditingController();
-  final TextEditingController _dematAccountNumberController = TextEditingController();
+  //final TextEditingController _brokerNameController = TextEditingController();
+  final TextEditingController _dematAccountNumberController =
+      TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
 
   File? file;
   String? fileName;
   String? downloadUrl;
+
+  String? _selectedStockBroker;
+  List<Broker> _stockbroker = [];
 
   Color color1 = const Color(0xff429bb8);
   String url = "";
@@ -38,11 +44,94 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
   String? assetId;
 
   @override
+  void initState() {
+    super.initState();
+    _fetchStockBrokerNames();
+  }
+
+  Future<void> _fetchStockBrokerNames() async {
+    const url = 'http://43.205.12.154:8080/v2/asset/static/stockBrokers';
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Print the raw response body for debugging
+        print('Response body: ${response.body}');
+
+        // Decode the response
+        final List<dynamic> data = json.decode(response.body);
+
+        // Ensure the data is a list
+        if (data is List) {
+          setState(() {
+            _stockbroker = data.map((item) {
+              if (item is Map<String, dynamic>) {
+                // If it's a map, create a StockBroker instance from JSON
+                return Broker.fromJson(item);
+              } else if (item is String) {
+                // If it's a string, directly use the string as the name
+                return Broker(name: item);
+              } else {
+                throw Exception('Unexpected data type: $item');
+              }
+            }).toList();
+          });
+
+          // Print fetched broker names for debugging
+          print(
+              'Fetched broker names: ${_stockbroker.map((broker) => broker.name).toList()}');
+        } else {
+          print('Unexpected response format: ${response.body}');
+        }
+      } else {
+        print(
+            'Failed to load broker names. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching broker names: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Stock broker', style: TextStyle(color: Colors.white)),
+        title:
+            const Text('Stock broker', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -50,11 +139,7 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildTextField(
-                controller: _brokerNameController,
-                labelText: 'Broker name',
-                mandatory: true,
-              ),
+              buildStockBrokerDropdown(),
               const SizedBox(height: 16),
               buildTextField(
                 controller: _dematAccountNumberController,
@@ -115,13 +200,68 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff429bb8),
                   ),
-                  child: const Text('Submit', style: TextStyle(color: Colors.white)),
+                  child: const Text('Submit',
+                      style: TextStyle(color: Colors.white)),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildStockBrokerDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          children: [
+            Text(
+              'StockBroker name',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _selectedStockBroker ?? '',
+          isExpanded: true,
+          // Set isExpanded to true
+          onChanged: (value) {
+            setState(() {
+              _selectedStockBroker = value;
+            });
+          },
+          items: [
+            const DropdownMenuItem<String>(
+              value: '',
+              child: Text('Select StockBroker Name'),
+            ),
+            ..._stockbroker.map((stockbroker) {
+              return DropdownMenuItem<String>(
+                value: stockbroker.name,
+                child: Text(stockbroker.name),
+              );
+            }).toList(),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
     );
   }
 
@@ -169,11 +309,15 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
         TextFormField(
           controller: controller,
           inputFormatters: isNumeric
-              ? [FilteringTextInputFormatter.digitsOnly, NoLeadingSpaceFormatter()]
+              ? [
+                  FilteringTextInputFormatter.digitsOnly,
+                  NoLeadingSpaceFormatter()
+                ]
               : [NoLeadingSpaceFormatter()],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         ),
@@ -198,6 +342,29 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
   Future<void> submitImage() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     try {
       var uri = Uri.parse(
@@ -224,8 +391,10 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
         DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
-        var fileUrl = jsonResponse['fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
-        var returnedAssetId = jsonResponse['assetId']; // Assuming the server returns the asset ID in 'assetId' key
+        var fileUrl = jsonResponse[
+            'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+        var returnedAssetId = jsonResponse[
+            'assetId']; // Assuming the server returns the asset ID in 'assetId' key
         // Handle the file URL and asset ID
 
         // Navigate to the StockBrokerScreen
@@ -264,9 +433,9 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
   }
 
   void _submitForm() async {
-    if (_brokerNameController.value.text.isEmpty ||
+    if (_selectedStockBroker == null ||
         _dematAccountNumberController.value.text.isEmpty) {
-      if (_brokerNameController.value.text.isEmpty) {
+      if (_selectedStockBroker == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Broker name is required')),
         );
@@ -279,11 +448,29 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token"); // Retrieve token from SharedPreferences
+    var token =
+        prefs.getString("token"); // Retrieve token from SharedPreferences
 
-    // Check if token is null or empty
     if (token == null || token.isEmpty) {
-      // Handle the case where token is not available
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
@@ -292,7 +479,7 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
 
     final request = StockBrokerRequest(
       assetType: widget.assetType,
-      brokerName: _brokerNameController.text,
+      brokerName: _selectedStockBroker ?? '',
       dematAccountNumber: _dematAccountNumberController.text,
       comments: _commentsController.text,
       attachment: _attachmentController.text,
@@ -312,7 +499,8 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => StockBrokerScreen(assetType: widget.assetType),
+            builder: (context) =>
+                StockBrokerScreen(assetType: widget.assetType),
           ),
         );
       }
@@ -324,7 +512,8 @@ class _StockBrokerAddState extends State<StockBrokerAdd> {
 
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.startsWith(' ')) {
       return oldValue;
     }

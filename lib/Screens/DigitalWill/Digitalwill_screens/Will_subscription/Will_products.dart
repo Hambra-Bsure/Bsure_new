@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../LoginScreen.dart';
 import '../../../Repositary/Models/Digital_will/Subscriptions/Will_products.dart';
 import 'Will_plans.dart';
 
@@ -25,6 +27,28 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
   Future<DigitalwillProducts> fetchProducts() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.get("token");
+
+    if (token == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
 
     final response = await http.get(
       Uri.parse('https://dev.bsure.live/v2/subscription/products'),
@@ -75,14 +99,10 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
                     // color: _selectedProductLabel == product.label
                     //     ? Colors.blue.withOpacity(0.1)
                     //     : null,
-                    child: ListTile(
+                    child:ListTile(
                       title: Text(
                         product.name ?? 'N/A',
                         style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        product.label ?? '',
-                        style: const TextStyle(color: Colors.black54),
                       ),
                       trailing: Radio<String>(
                         value: product.label!,
@@ -94,8 +114,10 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
                           print("Radio selected product label: $value");
                         },
                       ),
-                      isThreeLine: true,
+                      // Remove or set isThreeLine to false
+                      isThreeLine: false,
                     ),
+
                   ),
                 );
               },

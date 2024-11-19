@@ -9,6 +9,7 @@ import 'package:universal_platform/universal_platform.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io' if (dart.library.io) 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../../../LoginScreen.dart';
 import '../../../Utils/DisplayUtils.dart';
 import '../Digitalwill_success_message.dart';
 
@@ -143,24 +144,45 @@ class _VideoDisplayScreenState extends State<VideoDisplayScreen> {
 
   Future<void> submitVideoFile(String videoPath) async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token"); // Use getString instead of get
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/will/video');
       var request = http.MultipartRequest('POST', uri);
       request.headers.addAll({
-        'Authorization': token.toString(),
+        'Authorization': token,
         'Content-Type': 'multipart/form-data',
       });
 
       if (kIsWeb) {
-        // For web, use http.MultipartFile.fromBytes
         var fileBytes = await File(videoPath).readAsBytes();
         var file = http.MultipartFile.fromBytes('video', fileBytes,
             filename: 'video.mp4');
         request.files.add(file);
       } else {
-        // For non-web (mobile/desktop), use http.MultipartFile.fromPath
         var file = await http.MultipartFile.fromPath('video', videoPath);
         request.files.add(file);
       }
@@ -168,31 +190,37 @@ class _VideoDisplayScreenState extends State<VideoDisplayScreen> {
       // Send the request
       var response = await request.send();
 
-      // Get the response
-      var responseData = await response.stream.toBytes();
-      var responseString = utf8.decode(responseData);
+      // Check if the response is successful
+      if (response.statusCode == 200) {
+        var responseData = await response.stream.toBytes();
+        var responseString = utf8.decode(responseData);
 
-      // Decode the JSON response
-      var jsonResponse = json.decode(responseString);
+        // Log the raw response for debugging
+        print('Response: $responseString');
 
-      // Check if the video was uploaded successfully
-      if (jsonResponse['isValid'] == true) {
-        DisplayUtils.showToast('Video uploaded successfully');
+        // Decode the JSON response
+        var jsonResponse = json.decode(responseString);
 
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) =>  DigitalWillGetWitness(),
-          ),
-        );
+        // Check if the video was uploaded successfully
+        if (jsonResponse['isValid'] == true) {
+          DisplayUtils.showToast('Video uploaded successfully');
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => DigitalWillGetWitness(),
+            ),
+          );
+        } else {
+          DisplayUtils.showToast(
+              'Failed to upload video: ${jsonResponse['message']}');
+        }
       } else {
-        // Failed to upload video
-
+        // Handle non-200 responses
         DisplayUtils.showToast(
-            'Failed to upload video: ${jsonResponse['message']}');
+            'Failed to upload video: Server returned ${response.statusCode}');
       }
     } catch (e) {
-      // Handle exceptions
-
+      // Log the exception for debugging
+      print('Error uploading video: $e');
       DisplayUtils.showToast('Error uploading video: $e');
     }
   }

@@ -2,8 +2,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 
 class DisplayUtils {
-  static void showToast(String message, {bool isSuccess = false}) {
-    Color backgroundColor = isSuccess ? Colors.blue : Colors.red;
+  static void showToast(String message, {bool isSuccess = true}) {
+    Color backgroundColor = isSuccess ? Color(0xff429bb8) : Colors.red;
 
     Fluttertoast.showToast(
       msg: message,

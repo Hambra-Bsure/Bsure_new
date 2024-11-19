@@ -4,7 +4,10 @@ class UserRequest {
   late String whatsappNumber;
   late int age;
   late String gender;
+  late String fatherName;
+  late String religion;
 
+  String? spouseName;
   String? email;
   String? secondaryNumber;
   String? address;
@@ -17,6 +20,9 @@ class UserRequest {
     required this.age,
     required this.gender,
     required this.whatsappNumber,
+    required this.fatherName,
+    required this.religion,
+    this.spouseName,
     this.email,
     this.secondaryNumber,
     this.address,
@@ -28,9 +34,13 @@ class UserRequest {
     firstName = json['firstName'] ?? ''; // Initialize with empty string if null
     lastName = json['lastName'] ?? ''; // Initialize with empty string if null
     email = json['email'];
-    whatsappNumber = json['whatsappNumber'] ?? ''; // Initialize with empty string if null
+    whatsappNumber =
+        json['whatsappNumber'] ?? ''; // Initialize with empty string if null
     secondaryNumber = json['secondaryNumber'];
     address = json['address'];
+    fatherName = json['fatherName'] ?? '';
+    religion = json['religion'] ?? '';
+    spouseName = json['spouseName'];
     panNumber = json['panNumber'];
     age = json['age'] ?? 0; // Initialize with 0 if null
     gender = json['gender'] ?? ''; // Initialize with empty string if null
@@ -44,14 +54,19 @@ class UserRequest {
       'whatsappNumber': whatsappNumber,
       'age': age,
       'gender': gender,
+      'fatherName': fatherName,
+      'religion': religion,
+      //'spouseName': spouseName ?? '',
     };
 
     if (email != null && email!.isNotEmpty) data['email'] = email;
+     if(spouseName != null && spouseName!.isNotEmpty) data['spouse'] = spouseName;
     if (secondaryNumber != null && secondaryNumber!.isNotEmpty) {
       data['secondaryNumber'] = secondaryNumber;
     }
     if (address != null && address!.isNotEmpty) data['address'] = address;
-    if (panNumber != null && panNumber!.isNotEmpty) data['panNumber'] = panNumber;
+    if (panNumber != null && panNumber!.isNotEmpty)
+      data['panNumber'] = panNumber;
     if (photo != null && photo!.isNotEmpty) data['photo'] = photo;
 
     return data;

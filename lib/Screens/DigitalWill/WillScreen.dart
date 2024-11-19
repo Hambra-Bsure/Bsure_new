@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'Digitalwill_screens/Digitalwillpreview.dart';
+import 'package:http/http.dart' as http;
+import '../LoginScreen.dart';
 import 'Digitalwill_mainscreen.dart';
+import 'Digitalwill_screens/witness_screens/willpdf_download.dart';
 import 'Willbenefits.dart';
 
 class WillScreen extends StatefulWidget {
@@ -14,19 +17,90 @@ class WillScreen extends StatefulWidget {
 class _WillScreenState extends State<WillScreen> {
   bool hasWill = false;
   String errorMessage = '';
+  bool paymentSuccess = false;
+  String willPdfUrl = '';
 
   @override
   void initState() {
     super.initState();
-    _checkWillStatus();
+    checkWillExists();
+    checkPaymentStatus();
   }
 
-  Future<void> _checkWillStatus() async {
+  Future<void> checkPaymentStatus() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token") ?? '';
+
+      if (token.isEmpty) return;
+
+      final url = Uri.parse('https://dev.bsure.live/v2/will/isPaidWillUser');
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': ' $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          paymentSuccess = data['paid'] ?? false;
+          willPdfUrl = data['pdfUrl'] ?? ''; // Store PDF URL if available
+        });
+      } else {
+        throw Exception('Failed to check payment status');
+      }
+    } catch (e) {
       setState(() {
-        hasWill = prefs.getBool('hasWill') ?? false;
+        errorMessage = 'An unexpected error occurred. Please try again later.';
       });
+    }
+  }
+
+  Future<void> checkWillExists() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token") ?? '';
+
+      if (token == null || token.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+
+      final url = Uri.parse('https://dev.bsure.live/v2/will/check-exists');
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': ' $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          hasWill = data['success'] ?? false;
+        });
+      } else {
+        throw Exception('Failed to check will status');
+      }
     } catch (e) {
       setState(() {
         errorMessage = 'An unexpected error occurred. Please try again later.';
@@ -80,7 +154,7 @@ class _WillScreenState extends State<WillScreen> {
                 backgroundColor: const Color(0xFF35Adc2),
               ),
               child: Text(
-                hasWill ? 'Update My Will' : 'Create a New Will/Edit Will',
+                hasWill ? 'Update My Will' : 'Create a Will',
                 style: TextStyle(
                   fontSize: 18 * scaleFactor,
                   color: Colors.white,
@@ -92,20 +166,7 @@ class _WillScreenState extends State<WillScreen> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DigitalWillScreen(),
-                    ),
-                  ).catchError((error) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'An unexpected error occurred. Please try again later.',
-                        ),
-                      ),
-                    );
-                  });
+                  downloadPdf();
                 },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(
@@ -115,47 +176,10 @@ class _WillScreenState extends State<WillScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  backgroundColor: const Color(0xFF38B6ff),
+                  backgroundColor: const Color(0xFF35Adc2),
                 ),
                 child: Text(
-                  'View My Will',
-                  style: TextStyle(
-                    fontSize: 18 * scaleFactor,
-                    color: Colors.white,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AppWidget(),
-                    ),
-                  ).catchError((error) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'An unexpected error occurred. Please try again later.',
-                        ),
-                      ),
-                    );
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 40 * scaleFactor,
-                    vertical: 20 * scaleFactor,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  backgroundColor: const Color(0xFF38B6ff),
-                ),
-                child: Text(
-                  'Edit or Update Will',
+                  'Download Will PDF',
                   style: TextStyle(
                     fontSize: 18 * scaleFactor,
                     color: Colors.white,
@@ -194,7 +218,7 @@ class _WillScreenState extends State<WillScreen> {
                         ),
                       ),
                       TextSpan(
-                        text: "to know the Benefits of Will Sharing",
+                        text: "Benefit of Will Creation",
                         style: TextStyle(
                           fontSize: 16 * scaleFactor,
                           color: Colors.black,
@@ -209,6 +233,20 @@ class _WillScreenState extends State<WillScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> downloadPdf() async {
+    if (!paymentSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please complete the payment to download the PDF.')),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PdfDownloadScreen(pdfUrl: willPdfUrl)),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../LoginScreen.dart';
 import '../Repositary/Retrofit/node_api_client.dart';
 import '../Utils/SharedPrefHelper.dart';
 import '../../main.dart';
@@ -84,10 +85,24 @@ class AccountDeletion extends StatelessWidget {
     var token = prefs.getString("token");
 
 
-    if (token == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('User is not authenticated.'),
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
         ),
       );
       return;

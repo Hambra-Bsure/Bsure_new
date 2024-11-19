@@ -28,7 +28,7 @@ _$WitnessImpl _$$WitnessImplFromJson(Map<String, dynamic> json) =>
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       mobile: json['mobile'] as String,
-      address: json['address'] as String,
+      address: json['address'] as String?,
       verified: json['verified'] as bool,
     );
 

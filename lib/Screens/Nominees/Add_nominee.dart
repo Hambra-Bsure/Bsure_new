@@ -8,6 +8,7 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:file_picker/file_picker.dart';
 
+import '../LoginScreen.dart';
 import 'Get_all_nominees.dart';
 
 enum Relation {
@@ -40,7 +41,7 @@ class _AddNomineeState extends State<AddNominee> {
   TextEditingController ageController = TextEditingController();
   TextEditingController guardianNameController = TextEditingController();
   TextEditingController guardianMobileNumberController =
-  TextEditingController();
+      TextEditingController();
   TextEditingController attachmentController = TextEditingController();
   TextEditingController photoController = TextEditingController();
 
@@ -101,7 +102,7 @@ class _AddNomineeState extends State<AddNominee> {
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
         title:
-        const Text('Create nominee', style: TextStyle(color: Colors.white)),
+            const Text('Create nominee', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -111,19 +112,18 @@ class _AddNomineeState extends State<AddNominee> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildTextField(
-                  firstNameController,
-                  'First name',
-                  mandatory: true,
-                ),
+                _buildTextField(firstNameController, 'First name',
+                    mandatory: true, isNumeric: false
+                    //textCapitalization: TextCapitalization.characters,
+                    ),
+                const SizedBox(height: 10),
+                _buildTextField(lastNameController, 'Last name',
+                    mandatory: true, isNumeric: false),
                 const SizedBox(height: 10),
                 _buildTextField(
-                  lastNameController,
-                  'Last name',
-                  mandatory: true,
+                  emailController,
+                  'Email id',
                 ),
-                const SizedBox(height: 10),
-                _buildTextField(emailController, 'Email id'),
                 const SizedBox(height: 10),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -160,64 +160,81 @@ class _AddNomineeState extends State<AddNominee> {
                 _isLoading
                     ? const CircularProgressIndicator()
                     : ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: _contacts.length,
-                  itemBuilder: (context, index) {
-                    final contact = _contacts[index];
-                    return ListTile(
-                      title: Text(contact.displayName ?? ''),
-                      onTap: () => _selectContact(contact),
-                      trailing: Checkbox(
-                        value: _selectedContacts.contains(contact),
-                        onChanged: (bool? value) {
-                          _selectContact(contact);
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: _contacts.length,
+                        itemBuilder: (context, index) {
+                          final contact = _contacts[index];
+                          return ListTile(
+                            title: Text(contact.displayName ?? ''),
+                            onTap: () => _selectContact(contact),
+                            trailing: Checkbox(
+                              value: _selectedContacts.contains(contact),
+                              onChanged: (bool? value) {
+                                _selectContact(contact);
+                              },
+                            ),
+                          );
                         },
                       ),
-                    );
-                  },
-                ),
                 const SizedBox(height: 10),
-                _buildTextField(addressController, 'Address', mandatory: true),
+                _buildTextField(addressController, 'Address', mandatory: false),
                 const SizedBox(height: 10),
-                DropdownButtonFormField<Relation>(
-                  value: _selectedRelation,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedRelation = value;
-                    });
-                  },
-                  items: _relationDropdownItems,
-                  decoration: InputDecoration(
-                    labelText: 'Relation',
-                    // Updated to indicate mandatory field
-                    labelStyle: const TextStyle(
-                      color: Colors.black, // Set label text color to black
-                    ),
-                    suffixIcon: const Padding(
-                      padding: EdgeInsets.only(top: 15),
-                      child: Text(
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Row(
+                    children: [
+                      Text(
+                        'Account type',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
                         ' *',
-                        style: TextStyle(color: Colors.red, fontSize: 20),
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  DropdownButtonFormField<Relation>(
+                    value: _selectedRelation,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedRelation = value;
+                      });
+                    },
+                    items: _relationDropdownItems,
+                    decoration: InputDecoration(
+                      labelText: 'Relation',
+                      // Updated to indicate mandatory field
+                      labelStyle: const TextStyle(
+                        color: Colors.black, // Set label text color to black
+                      ),
+
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select a relation'; // Validation message if no relation is selected
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Please select a relation'; // Validation message if no relation is selected
-                    }
-                    return null;
-                  },
-                ),
+                ]),
                 const SizedBox(height: 10),
                 _buildTextField(
                   ageController,
                   'Age',
                   mandatory: true,
                   isNumeric: true,
+                  maxLength: 3,
+                  // Restrict the input to a maximum of 3 characters
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
                     setState(() {
@@ -364,65 +381,98 @@ class _AddNomineeState extends State<AddNominee> {
   }
 
   Widget _buildTextField(
-      TextEditingController controller,
-      String labelText, {
-        bool mandatory = false,
-        bool isNumeric = false,
-        TextInputType keyboardType = TextInputType.text,
-        Function()? onTap,
-        Widget? suffixIcon,
-        int? maxLength,
-        void Function(String)? onChanged,
-      }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: isNumeric ? TextInputType.number : keyboardType,
-      onTap: onTap,
-      onChanged: onChanged,
-      maxLength: maxLength,
-      inputFormatters: isNumeric
-          ? <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(10),
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-        NoLeadingSpaceFormatter(),
-      ]
-          : <TextInputFormatter>[
-        NoLeadingSpaceFormatter(),
-      ],
-      decoration: InputDecoration(
-        labelText: labelText,
-        labelStyle: const TextStyle(
-          color: Colors.black, // Set label text color to black
-        ),
-        suffixIcon: mandatory
-            ? suffixIcon ??
-            const Padding(
-              padding: EdgeInsets.only(top: 15),
-              child: Text(
-                ' *',
-                style: TextStyle(color: Colors.red, fontSize: 20),
+    TextEditingController controller,
+    String labelText, {
+    bool mandatory = false,
+    bool isNumeric = false,
+    TextInputType keyboardType = TextInputType.text,
+    Function()? onTap,
+    Widget? suffixIcon,
+    int? maxLength,
+    void Function(String)? onChanged,
+    bool capitalizeFirstLetter = false,
+    TextCapitalization textCapitalization =
+        TextCapitalization.none, // New parameter
+  }) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(
+        children: [
+          Text(
+            labelText,
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          if (mandatory)
+            const Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: 16, // Adjust size for better visibility
               ),
-            )
-            : suffixIcon,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+            ),
+        ],
       ),
-      validator: mandatory
-          ? (value) {
-        if (value == null || value.isEmpty) {
-          return 'This field is required';
-        }
-        return null;
-      }
-          : null,
-    );
+      const SizedBox(height: 8),
+      TextFormField(
+        controller: controller,
+        keyboardType: isNumeric ? TextInputType.number : keyboardType,
+        textCapitalization: textCapitalization,
+        // Apply text capitalization
+        onTap: onTap,
+        onChanged: onChanged,
+        maxLength: maxLength,
+        inputFormatters: isNumeric
+            ? <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(10),
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                NoLeadingSpaceFormatter(),
+              ]
+            : <TextInputFormatter>[
+                NoLeadingSpaceFormatter(),
+              ],
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: const TextStyle(
+            color: Colors.black, // Set label text color to black
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      )
+    ]);
   }
 
   Future<void> _submitForm() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return; // Exit the function if the token is invalid
+    }
 
     // Prepare the request
     final uri = Uri.parse('https://dev.bsure.live/v2/nominee/add');
@@ -432,10 +482,13 @@ class _AddNomineeState extends State<AddNominee> {
     // Add form fields
     request.fields['firstName'] = firstNameController.text;
     request.fields['lastName'] = lastNameController.text;
-    request.fields['address'] = addressController.text;
+    //request.fields['address'] = addressController.text;
     request.fields['relation'] = _selectedRelation?.name.toLowerCase() ?? '';
     request.fields['age'] = age.toString();
 
+    if (addressController.text.isNotEmpty) {
+      request.fields['address'] = addressController.text;
+    }
     if (emailController.text.isNotEmpty) {
       request.fields['email'] = emailController.text;
     }
@@ -486,24 +539,25 @@ class _AddNomineeState extends State<AddNominee> {
         // Handle error case
         final responseJson = json.decode(responseData);
         final errorMessage = responseJson['message'] ?? 'An error occurred';
+        print('Error: $errorMessage'); // Print the error message for debugging
         showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Error'),
-            content: Text(errorMessage),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: const Text('Error'),
+                  content: Text(errorMessage),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ));
       }
     } catch (e) {
       // Handle exception case
+      print('Exception: $e'); // Print the exception for debugging
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -558,17 +612,17 @@ class _AddNomineeState extends State<AddNominee> {
             mainAxisSize: MainAxisSize.min,
             children: _selectedContacts
                 .map((contact) => ListTile(
-              title: Text(contact.displayName ?? ''),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  setState(() {
-                    _selectedContacts.remove(contact);
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-            ))
+                      title: Text(contact.displayName ?? ''),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            _selectedContacts.remove(contact);
+                          });
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ))
                 .toList(),
           ),
           actions: [
@@ -610,6 +664,22 @@ class _AddNomineeState extends State<AddNominee> {
     } else {
       // Handle error when no file is selected.
     }
+  }
+}
+
+class CapitalizeFirstLetterTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isNotEmpty) {
+      String capitalized =
+          newValue.text[0].toUpperCase() + newValue.text.substring(1);
+      return newValue.copyWith(
+        text: capitalized,
+        selection: TextSelection.collapsed(offset: capitalized.length),
+      );
+    }
+    return newValue;
   }
 }
 

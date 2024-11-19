@@ -24,7 +24,7 @@ class _AppWidgetState extends State<AppWidget> {
   @override
   void initState() {
     super.initState();
-    state = getWillAssets();
+    state = getWillAssets(context);
   }
 
   @override
@@ -58,7 +58,7 @@ class _AppWidgetState extends State<AppWidget> {
                     } else {
                       // Check if there are no nominees
                       bool noNominees =
-                      assets.every((asset) => asset.nominees.isEmpty);
+                          assets.every((asset) => asset.nominees.isEmpty);
                       if (noNominees) {
                         // If there are no nominees, show the NoNominee screen
                         return const NoNominee();

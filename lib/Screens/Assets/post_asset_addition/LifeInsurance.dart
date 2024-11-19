@@ -11,7 +11,9 @@ import 'package:Bsure_devapp/Screens/Repositary/Retrofit/node_api_client.dart';
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/life_insurance_screen.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/LifeInsuranceRequest.dart';
 
+import '../../LoginScreen.dart';
 import '../../Utils/DisplayUtils.dart';
+import '../Static_names_list/LifeInsurance.dart';
 
 class LifeInsuranceAdd extends StatefulWidget {
   final String assetType;
@@ -23,8 +25,7 @@ class LifeInsuranceAdd extends StatefulWidget {
 }
 
 class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
-  final TextEditingController _insuranceCompanyNameController =
-  TextEditingController();
+  //final TextEditingController _insuranceCompanyNameController = TextEditingController();
   final TextEditingController _policyNameController = TextEditingController();
   final TextEditingController _policyNumberController = TextEditingController();
   final TextEditingController _coverageAmountController =
@@ -37,6 +38,9 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
   String? fileName;
   String? downloadUrl;
 
+  String? _selectedLifeInsurance;
+  List<Insurance> _lifeInsurance = [];
+
   //ImagePicker imagePicker = ImagePicker();
   Color color1 = const Color(0xff429bb8);
   String url = "";
@@ -45,6 +49,82 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
   String? assetId;
 
   String? maturityDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLifeInsuranceNames();
+  }
+
+  Future<void> _fetchLifeInsuranceNames() async {
+    const url = 'http://43.205.12.154:8080/v2/asset/static/lifeInsuranceCompanies';
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Print the raw response body for debugging
+        print('Response body: ${response.body}'); // For debugging
+
+        // Decode the response body
+        final List<dynamic> data = json.decode(response.body);
+
+        // Ensure the data is a list of maps (or strings, if applicable)
+        if (data is List) {
+          setState(() {
+            _lifeInsurance = data.map((insuranceJson) {
+              if (insuranceJson is Map<String, dynamic>) {
+                return Insurance.fromJson(insuranceJson); // Map to LifeInsurance
+              } else if (insuranceJson is String) {
+                return Insurance(name: insuranceJson); // For cases where it's a plain string
+              } else {
+                throw Exception('Unexpected data type: $insuranceJson');
+              }
+            }).toList();
+          });
+
+          // Print fetched insurance names
+          print('Fetched insurance company names: ${_lifeInsurance.map((insurance) => insurance.name).toList()}');
+        }
+      } else {
+        print('Failed to load insurance names. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching insurance names: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +140,7 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
           child: SingleChildScrollView(
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start, children: [
-              buildTextField(
-                controller: _insuranceCompanyNameController,
-                labelText: 'Insurance company name',
-                mandatory: true,
-              ),
+              buildLifeInsuranceDropdown(),
               buildTextField(
                 controller: _policyNameController,
                 labelText: 'Policy name',
@@ -157,6 +233,61 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
     );
   }
 
+  Widget buildLifeInsuranceDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          children: [
+            Text(
+              'Insurance Company name',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _selectedLifeInsurance ?? '',
+          isExpanded: true,
+          // Set isExpanded to true
+          onChanged: (value) {
+            setState(() {
+              _selectedLifeInsurance = value;
+            });
+          },
+          items: [
+            const DropdownMenuItem<String>(
+              value: '',
+              child: Text('Select Insurance Company Name'),
+            ),
+            ..._lifeInsurance.map((insurance) {
+              return DropdownMenuItem<String>(
+                value: insurance.name,
+                child: Text(insurance.name),
+              );
+            }).toList(),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
+    );
+  }
+
+
   Future<void> uploadFile() async {
     final result = await FilePicker.platform.pickFiles(
         type: FileType.any, allowMultiple: false);
@@ -174,6 +305,29 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
   Future<void> submitImage() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     try {
       var uri = Uri.parse(
@@ -208,7 +362,6 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
         print('File URL: $fileUrl');
         print('Asset ID: $returnedAssetId');
 
-        // Navigate to the BankAccountsScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -221,7 +374,6 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
       } else {
         // Handle error response
         print('Failed to upload file: ${response.statusCode}');
-        // Navigate to the BankAccountsScreen even if upload fails
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -235,7 +387,7 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
     } catch (e) {
       // Handle exception
       print('Error uploading file: $e');
-      // Navigate to the BankAccountsScreen in case of error
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -368,7 +520,7 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
   }
 
   void _submitForm() async {
-    if (_insuranceCompanyNameController.value.text.isEmpty) {
+    if (_selectedLifeInsurance == null ) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Insurance company name is required')),
       );
@@ -378,7 +530,25 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
     var token = prefs.getString("token");
 
     if (token == null || token.isEmpty) {
-      // Handle the case where token is not available
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
@@ -399,7 +569,7 @@ class _LifeInsuranceAddState extends State<LifeInsuranceAdd> {
 
     final request = LifeInsuranceRequest(
       assetType: assetType,
-      insuranceCompanyName: _insuranceCompanyNameController.text,
+      insuranceCompanyName: _selectedLifeInsurance ?? '',
       policyName: _policyNameController.text,
       policyNumber: _policyNumberController.text,
       coverageAmount: coverageAmountValue,

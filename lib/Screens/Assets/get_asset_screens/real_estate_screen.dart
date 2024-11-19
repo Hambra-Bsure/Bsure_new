@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/real_estate.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../Update_asset_screens/RealEstate_Edit.dart';
@@ -37,11 +38,26 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (token == null) {
-      setState(() {
-        isLoading = false;
-      });
-      DisplayUtils.showToast("Token not found. Please login again.");
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
@@ -87,8 +103,26 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      DisplayUtils.showToast("Token not found. Please login again.");
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
@@ -271,7 +305,7 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
-              overflow: TextOverflow.ellipsis,
+             // overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(width: 8.0),
@@ -279,7 +313,7 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
             flex: 7,
             child: Text(
               value ?? '',
-              overflow: TextOverflow.ellipsis,
+            //  overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Colors.black87,
               ),

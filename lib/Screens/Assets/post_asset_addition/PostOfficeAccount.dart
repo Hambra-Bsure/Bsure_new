@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/AssetModels/PostOfficeAccountRequest.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
@@ -256,6 +257,29 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment');
       var request = http.MultipartRequest('POST', uri);
@@ -327,6 +351,25 @@ class _PostOfficeAccountAddState extends State<PostOfficeAccountAdd> {
     var token = prefs.getString("token");
 
     if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 

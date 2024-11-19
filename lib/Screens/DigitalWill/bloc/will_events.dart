@@ -40,6 +40,13 @@ class UndoAllAssetsManualDistribution extends WillEvent {}
 // 8
 class UndoAllAssetsEqualDistribute extends WillEvent {}
 
+// 9
+class UpdateSameDistributionCheckbox extends WillEvent {
+  final bool value;
+
+  UpdateSameDistributionCheckbox(this.value);
+}
+
 /* 
 
 Events {

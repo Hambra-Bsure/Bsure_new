@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/AssetModels/GetCategoryResponse.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 // Import your NodeClient class
@@ -21,6 +22,28 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Future<GetCategoryresponse> fetchCategories() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
 
     try {
       final response = await nodeClient.GetCategoryList(

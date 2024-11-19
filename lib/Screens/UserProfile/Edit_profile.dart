@@ -1,8 +1,10 @@
+import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../LoginScreen.dart';
 import '../Repositary/Models/User_models/Get_user_res.dart';
 import 'Get_profile.dart';
 
@@ -259,8 +261,26 @@ class _EditUserState extends State<EditUser> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    if (token == null) {
-      return;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final Map<String, dynamic> req = {};
@@ -296,12 +316,13 @@ class _EditUserState extends State<EditUser> {
         Uri.parse('https://dev.bsure.live/v2/users/update'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token,
+          "Authorization": token.toString(),
         },
         body: jsonEncode(req), // Encode req to JSON
       );
 
       if (response.statusCode == 200) {
+        DisplayUtils.showToast('Successfully updated nominee details');
         Navigator.pop(context);
         Navigator.pushReplacement(
           context,

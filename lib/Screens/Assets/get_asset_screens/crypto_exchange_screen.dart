@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/crypto_exchange.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../Update_asset_screens/Crypto_Exchnage_Edit.dart';
@@ -37,14 +38,24 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    if (token == null) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Token is missing. Please login again.'),
-          duration: Duration(seconds: 3),
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
         ),
       );
       return;
@@ -75,7 +86,7 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Failed to fetch data'),
+          content: Text('Failed to fetch crypto exchange details'),
           duration: Duration(seconds: 3),
         ),
       );
@@ -91,8 +102,26 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
@@ -293,7 +322,7 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
-              overflow: TextOverflow.ellipsis,
+             // overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(width: 8.0),
@@ -301,7 +330,7 @@ class _CryptoExchangeScreenState extends State<CryptoExchangeScreen> {
             flex: 7,
             child: Text(
               value ?? '',
-              overflow: TextOverflow.ellipsis,
+             // overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Colors.black87,
               ),

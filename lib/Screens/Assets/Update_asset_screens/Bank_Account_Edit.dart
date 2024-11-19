@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/bank_account.dart';
 import '../../Utils/DisplayUtils.dart';
+import '../Static_names_list/Bank.dart';
 import '../get_asset_screens/bank_account_screen.dart';
 
 enum AccountType {
@@ -19,7 +22,8 @@ class BankAccountEdit extends StatefulWidget {
   final BankAccount account;
   final String assetType;
 
-  const BankAccountEdit({Key? key, required this.account, required this.assetType})
+  const BankAccountEdit(
+      {Key? key, required this.account, required this.assetType})
       : super(key: key);
 
   @override
@@ -38,9 +42,14 @@ class _BankAccountEditState extends State<BankAccountEdit> {
   var proof;
   final TextEditingController _attachmentController = TextEditingController();
 
+  String? _selectedBank;
+  List<Bank> _banks = [];
+
   @override
   void initState() {
     super.initState();
+    _fetchBankNames();
+
     bankName = widget.account.bankName;
     accountNumber = widget.account.accountNumber ?? "";
     ifscCode = widget.account.ifscCode ?? "";
@@ -50,12 +59,83 @@ class _BankAccountEditState extends State<BankAccountEdit> {
     attachment = widget.account.attachment ?? "";
   }
 
+  Future<void> _fetchBankNames() async {
+    const url = 'http://43.205.12.154:8080/v2/asset/static/banks';
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+
+        if (data is List) {
+          setState(() {
+            _banks = data.map((bankJson) {
+              if (bankJson is Map<String, dynamic>) {
+                return Bank.fromJson(bankJson);
+              } else if (bankJson is String) {
+                return Bank(name: bankJson); // Adjust based on actual response
+              } else {
+                throw Exception('Unexpected data type: $bankJson');
+              }
+            }).toList();
+
+            // Set the selected bank to the bank of the account being edited
+            _selectedBank = _banks
+                .firstWhere((bank) => bank.name == widget.account.bankName)
+                .name;
+          });
+
+          print(
+              'Fetched bank names: ${_banks.map((bank) => bank.name).toList()}');
+        }
+      } else {
+        print('Failed to load bank names. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching bank names: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit bank account', style: TextStyle(color: Colors.white)),
+        title: const Text('Edit bank account',
+            style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -63,12 +143,7 @@ class _BankAccountEditState extends State<BankAccountEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              buildTextField(
-                labelText: 'Bank name',
-                initialValue: bankName,
-                onChanged: (value) => setState(() => bankName = value),
-                isMandatory: true,
-              ),
+              buildBankDropdown(),
               const SizedBox(height: 12.0),
               buildTextField(
                 labelText: 'Account number',
@@ -105,7 +180,8 @@ class _BankAccountEditState extends State<BankAccountEdit> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
                 ),
-                child: const Text('Update', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Update', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -126,19 +202,19 @@ class _BankAccountEditState extends State<BankAccountEdit> {
       decoration: InputDecoration(
         label: isMandatory
             ? RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: labelText,
-                style: const TextStyle(color: Colors.black),
-              ),
-              const TextSpan(
-                text: ' *',
-                style: TextStyle(color: Colors.red),
-              ),
-            ],
-          ),
-        )
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: labelText,
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    const TextSpan(
+                      text: ' *',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              )
             : Text(labelText, style: const TextStyle(color: Colors.black)),
         border: const OutlineInputBorder(),
       ),
@@ -148,10 +224,66 @@ class _BankAccountEditState extends State<BankAccountEdit> {
       },
       inputFormatters: isNumeric
           ? <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(10),
-      ]
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(10),
+            ]
           : <TextInputFormatter>[],
+    );
+  }
+
+  Widget buildBankDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          children: [
+            Text(
+              'Bank name',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _selectedBank ?? (_banks.isNotEmpty ? _banks.first.name : ''),
+          // Check if _banks is not empty
+          isExpanded: true,
+          onChanged: (value) {
+            setState(() {
+              _selectedBank = value;
+            });
+          },
+          items: [
+            const DropdownMenuItem<String>(
+              value: '',
+              child: Text('Select Bank Name'),
+            ),
+            ..._banks.map((bank) {
+              return DropdownMenuItem<String>(
+                value: bank.name,
+                child: Text(bank.name),
+              );
+            }).toList(),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
     );
   }
 
@@ -203,7 +335,8 @@ class _BankAccountEditState extends State<BankAccountEdit> {
   }
 
   Future<void> _uploadFile() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.any, allowMultiple: false);
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
 
     if (result != null) {
       setState(() {
@@ -271,7 +404,7 @@ class _BankAccountEditState extends State<BankAccountEdit> {
     }
 
     final updatedAccount = BankAccount(
-      bankName: bankName,
+      bankName: _selectedBank ?? '',
       accountNumber: accountNumber,
       ifscCode: ifscCode,
       branchName: branchName,
@@ -285,7 +418,7 @@ class _BankAccountEditState extends State<BankAccountEdit> {
     final response = await _performUpdate(updatedAccount);
 
     if (response != null) {
-      DisplayUtils.showToast('Bank account details Updated Successfully');
+      DisplayUtils.showToast('Bank account asset  details Updated Successfully');
     } else {
       DisplayUtils.showToast('Failed to update Bank account');
     }
@@ -305,8 +438,26 @@ class _BankAccountEditState extends State<BankAccountEdit> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      return null;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final dio = Dio();

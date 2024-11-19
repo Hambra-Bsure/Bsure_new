@@ -1,7 +1,9 @@
 import 'package:Bsure_devapp/Screens/DigitalWill/Digitalwill_screens/witness_screens/Executor/AddExecutor.dart';
+import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../LoginScreen.dart';
 import '../../../../Repositary/Models/Digital_will/Subscriptions/GetExecutorResponse.dart';
 import 'EditExecutor.dart';
 
@@ -26,18 +28,33 @@ class _GetExecutorState extends State<GetExecutor> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-    if (token.isEmpty) {
-      setState(() {
-        _loading = false;
-        _message = 'Token not found';
-      });
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
     try {
       final dio = Dio();
       final response = await dio.get(
-        'http://43.205.12.154:8080/v2/will/executor',
+        'https://dev.bsure.live/v2/will/executor',
         options: Options(
           headers: {
             'Authorization': token,
@@ -46,6 +63,7 @@ class _GetExecutorState extends State<GetExecutor> {
       );
 
       if (response.statusCode == 200) {
+        DisplayUtils.showToast('Successfully fetch executor details');
         final executorResponse = ExecutorResponse.fromJson(response.data);
         setState(() {
           _loading = false;
@@ -171,7 +189,7 @@ class _GetExecutorState extends State<GetExecutor> {
     try {
       final dio = Dio();
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/will/executor',
+        'https://dev.bsure.live/v2/will/executor',
         options: Options(
           headers: {
             'Authorization': token,

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'share_asset_withme_res.freezed.dart';
 part 'share_asset_withme_res.g.dart';
 
@@ -6,7 +7,7 @@ part 'share_asset_withme_res.g.dart';
 class ShareAssetswithmeResponse with _$ShareAssetswithmeResponse {
   factory ShareAssetswithmeResponse({
     required bool success,
-    required String? message, // Make message nullable
+    String? message, // Make message nullable
     required List<UserData> data,
   }) = _ShareAssetswithmeResponse;
 
@@ -17,10 +18,10 @@ class ShareAssetswithmeResponse with _$ShareAssetswithmeResponse {
 @freezed
 class UserData with _$UserData {
   factory UserData({
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String mobileNumber,
+    String? firstName, // Make firstName nullable
+    String? lastName,  // Make lastName nullable
+    String? email,     // Make email nullable
+    String? mobileNumber, // Make mobileNumber nullable
     required List<Asset> assets,
   }) = _UserData;
 
@@ -44,7 +45,7 @@ class Asset with _$Asset {
 class Detail with _$Detail {
   factory Detail({
     required String fieldName,
-    required String? fieldValue,
+    String? fieldValue, // Make fieldValue nullable
   }) = _Detail;
 
   factory Detail.fromJson(Map<String, dynamic> json) => _$DetailFromJson(json);

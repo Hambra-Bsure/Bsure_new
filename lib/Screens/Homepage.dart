@@ -123,11 +123,9 @@ class _HomepageState extends State<Homepage> {
     return Card(
       color: Colors.white,
       margin: const EdgeInsets.all(10.0),
-      // Slightly larger margin for better spacing
       elevation: 4.0,
-      // Slightly lower elevation for a smoother look
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0), // More rounded corners
+        borderRadius: BorderRadius.circular(15.0),
       ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -136,69 +134,44 @@ class _HomepageState extends State<Homepage> {
           children: [
             const SizedBox(height: 10.0),
             SizedBox(
-              height: 100.0, // Increased height for better spacing
-              child: Stack(
+              height: 300.0, // Adjusted height to fit multiple rows
+              child: GridView.count(
+                crossAxisCount: 3, // 3 items per row
+                childAspectRatio: 1.0, // Aspect ratio for square-like items
+                crossAxisSpacing: 10.0, // Spacing between items horizontally
+                mainAxisSpacing: 10.0, // Spacing between items vertically
                 children: [
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        buildGridItem(
-                          context,
-                          'Assets',
-                          'assets/images/img_2.png',
-                          const CategoriesScreen(),
-                        ),
-                        buildGridItem(
-                          context,
-                          'Nominee',
-                          'assets/images/img_7.png',
-                          const GetNomineeScreen(),
-                        ),
-                        buildGridItem(
-                          context,
-                          'Nudge',
-                          'assets/images/img_1.png',
-                          const NudgeScreen(),
-                        ),
-                        buildGridItem(
-                          context,
-                          'ShareAssets',
-                          Icons.share,
-                          const AssetScreen(),
-                        ),
-                        buildGridItem(
-                          context,
-                          'Digitalwill',
-                          Icons.design_services,
-                          const WillScreen(),
-                        ),
-                      ],
-                    ),
+                  buildGridItem(
+                    context,
+                    'Assets',
+                    'assets/images/img_2.png',
+                    const CategoriesScreen(),
                   ),
-                  // Adding an indicator to show there are more items
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: Container(
-                      width: 30.0,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.centerRight,
-                          end: Alignment.centerLeft,
-                          colors: [
-                            Colors.white,
-                            Colors.white.withOpacity(0.0),
-                          ],
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey,
-                      ),
-                    ),
+                  buildGridItem(
+                    context,
+                    'Nominee',
+                    'assets/images/img_7.png',
+                    const GetNomineeScreen(),
                   ),
+                  buildGridItem(
+                    context,
+                    'Nudge',
+                    'assets/images/img_1.png',
+                    const NudgeScreen(),
+                  ),
+                  buildGridItem(
+                    context,
+                    'ShareAssets',
+                    Icons.share,
+                    const AssetScreen(),
+                  ),
+                  buildGridItem(
+                    context,
+                    'Digitalwill',
+                    Icons.design_services,
+                    const WillScreen(),
+                  ),
+                  // Add more items here if needed
                 ],
               ),
             ),
@@ -209,51 +182,46 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget buildGridItem(
-    BuildContext context,
-    String title,
-    dynamic icon,
-    Widget route,
-  ) {
-    return Container(
-      width: MediaQuery.of(context).size.width / 3 - 20,
-      // Adjust width to fit 3 items
-      margin: const EdgeInsets.symmetric(horizontal: 10.0),
-      // Adjusted for better spacing
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => route),
-          );
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            icon is String
-                ? Image.asset(
-                    icon,
-                    width: 60.0, // Slightly larger icon size
-                    height: 60.0,
-                  )
-                : Icon(
-                    icon,
-                    size: 60.0, // Slightly larger icon size
-                    color: const Color(0xff429bb8),
-                  ),
-            const SizedBox(height: 10.0),
-            Text(
-              title,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center, // Centered text
-              style: TextStyle(
-                fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
-                fontWeight: FontWeight.bold,
-              ),
+      BuildContext context,
+      String title,
+      dynamic icon,
+      Widget route,
+      ) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => route),
+        );
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          icon is String
+              ? Image.asset(
+            icon,
+            width: 60.0,
+            height: 60.0,
+          )
+              : Icon(
+            icon,
+            size: 60.0,
+            color: const Color(0xff429bb8),
+          ),
+          const SizedBox(height: 10.0),
+          Text(
+            title,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
+              fontWeight: FontWeight.bold,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+
 
   Widget _buildStepper() {
     return Card(

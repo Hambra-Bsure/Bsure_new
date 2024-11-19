@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/AssetModels/RealEstateRequest.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
@@ -14,7 +15,7 @@ import 'package:flutter/services.dart';
 
 // Import other necessary packages and files
 
-enum PropertyType { Residential, Commercial }
+enum PropertyType { Residential, Commercial, Plot, Agricultureland, Others }
 
 class RealEstateAdd extends StatefulWidget {
   final String assetType;
@@ -29,13 +30,13 @@ class _RealEstateAddState extends State<RealEstateAdd> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _khataNumberController = TextEditingController();
   final TextEditingController _northOfPropertyController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _southOfPropertyController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _eastOfPropertyController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _westOfPropertyController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _imageController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
@@ -65,7 +66,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               buildTextField(
                 controller: _addressController,
                 labelText: 'Address',
@@ -112,7 +113,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding:
-                  EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                      EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                 ),
               ),
               const SizedBox(height: 10),
@@ -120,8 +121,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                   controller: _khataNumberController,
                   labelText: 'Khata number',
                   mandatory: false,
-                  isNumeric: true
-              ),
+                  isNumeric: true),
               buildTextField(
                 controller: _northOfPropertyController,
                 labelText: 'North of property ',
@@ -182,7 +182,7 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                           padding: EdgeInsets.symmetric(
                             vertical: MediaQuery.of(context).size.width * 0.01,
                             horizontal:
-                            MediaQuery.of(context).size.width * 0.03,
+                                MediaQuery.of(context).size.width * 0.03,
                           ),
                         ),
                         child: const Text(
@@ -204,8 +204,8 @@ class _RealEstateAddState extends State<RealEstateAdd> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff429bb8),
                     ),
-                    child:
-                    const Text('Submit', style: TextStyle(color: Colors.white)),
+                    child: const Text('Submit',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
@@ -234,6 +234,28 @@ class _RealEstateAddState extends State<RealEstateAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     try {
       var uri = Uri.parse(
@@ -261,9 +283,9 @@ class _RealEstateAddState extends State<RealEstateAdd> {
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         var fileUrl = jsonResponse[
-        'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+            'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
         var returnedAssetId = jsonResponse[
-        'assetId']; // Assuming the server returns the asset ID in 'assetId' key
+            'assetId']; // Assuming the server returns the asset ID in 'assetId' key
         // Handle the file URL and asset ID
 
         // Navigate to the NpsScreen
@@ -348,17 +370,17 @@ class _RealEstateAddState extends State<RealEstateAdd> {
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
           inputFormatters: isNumeric
               ? <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10), // Limiting to 10 digits
-            NoLeadingSpaceFormatter(),
-          ]
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10), // Limiting to 10 digits
+                  NoLeadingSpaceFormatter(),
+                ]
               : <TextInputFormatter>[
-            NoLeadingSpaceFormatter(),
-          ],
+                  NoLeadingSpaceFormatter(),
+                ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             contentPadding:
-            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
         const SizedBox(height: 16),
@@ -379,12 +401,28 @@ class _RealEstateAddState extends State<RealEstateAdd> {
 
     final prefs = await SharedPreferences.getInstance();
     var token =
-    prefs.getString("token"); // Retrieve token from SharedPreferences
+        prefs.getString("token"); // Retrieve token from SharedPreferences
 
-    // Check if token is null or empty
     if (token == null || token.isEmpty) {
-      // Handle the case where token is not available
-
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 

@@ -1,7 +1,9 @@
+import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../LoginScreen.dart';
 import '../../../Repositary/Models/Digital_will/witness_get_res.dart';
 
 class WitnessEditScreen extends StatefulWidget {
@@ -23,7 +25,8 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
   @override
   void initState() {
     super.initState();
-    _firstNameController = TextEditingController(text: widget.witness.firstName);
+    _firstNameController =
+        TextEditingController(text: widget.witness.firstName);
     _lastNameController = TextEditingController(text: widget.witness.lastName);
     _mobileController = TextEditingController(text: widget.witness.mobile);
     _addressController = TextEditingController(text: widget.witness.address);
@@ -39,8 +42,9 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
   }
 
   void _updateWitnessDetails() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
+    if (_mobileController.text.isEmpty) {
+      DisplayUtils.showToast('Mobile number is required');
+      return; // Exit the method if the mobile number is empty
     }
 
     Map<String, dynamic> updateData = {
@@ -48,7 +52,7 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
       'firstName': _firstNameController.text.trim(),
       'lastName': _lastNameController.text.trim(),
       'mobile': _mobileController.text.trim(),
-      'address': _addressController.text.trim(),
+      'address': _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : null,
     };
 
     try {
@@ -56,9 +60,25 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
       final token = prefs.getString("token");
 
       if (token == null || token.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Token is not available.'),
-        ));
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
         return;
       }
 
@@ -93,7 +113,8 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit witness', style: TextStyle(color: Colors.white)),
+        title: const Text(
+            'Edit witness', style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -105,7 +126,7 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
               buildTextField(
                 controller: _firstNameController,
                 labelText: 'First name',
-                mandatory: true,
+                mandatory: false,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter first name';
@@ -116,7 +137,7 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
               buildTextField(
                 controller: _lastNameController,
                 labelText: 'Last name',
-                mandatory: true,
+                mandatory: false,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter last name';
@@ -142,7 +163,7 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
               buildTextField(
                 controller: _addressController,
                 labelText: 'Address',
-                mandatory: true,
+                mandatory: false,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter address';
@@ -156,7 +177,8 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
                 ),
-                child: const Text('Update', style: TextStyle(color: Colors.white)),
+                child: const Text(
+                    'Update', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -201,12 +223,14 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
           inputFormatters: isNumeric
               ? [
             FilteringTextInputFormatter.digitsOnly,
-            NoLeadingSpaceFormatter(),
+            NoLeadingSpaceFormatter(), // Formatter applied here
           ]
               : [NoLeadingSpaceFormatter()],
+          // Formatter applied here
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding: EdgeInsets.symmetric(
+                vertical: 12.0, horizontal: 16.0),
           ),
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         ),
@@ -218,7 +242,8 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    if (newValue.text.startsWith(' ')) {
+    // Prevent leading spaces but allow spaces after the first character
+    if (newValue.text.startsWith(' ') && newValue.text.trim().isEmpty) {
       return oldValue;
     }
     return newValue;

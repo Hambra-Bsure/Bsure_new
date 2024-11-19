@@ -126,9 +126,7 @@ class __$$ShareAssetswithmeResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ShareAssetswithmeResponseImpl implements _ShareAssetswithmeResponse {
   _$ShareAssetswithmeResponseImpl(
-      {required this.success,
-      required this.message,
-      required final List<UserData> data})
+      {required this.success, this.message, required final List<UserData> data})
       : _data = data;
 
   factory _$ShareAssetswithmeResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -186,7 +184,7 @@ class _$ShareAssetswithmeResponseImpl implements _ShareAssetswithmeResponse {
 abstract class _ShareAssetswithmeResponse implements ShareAssetswithmeResponse {
   factory _ShareAssetswithmeResponse(
       {required final bool success,
-      required final String? message,
+      final String? message,
       required final List<UserData> data}) = _$ShareAssetswithmeResponseImpl;
 
   factory _ShareAssetswithmeResponse.fromJson(Map<String, dynamic> json) =
@@ -210,10 +208,14 @@ UserData _$UserDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserData {
-  String get firstName => throw _privateConstructorUsedError;
-  String get lastName => throw _privateConstructorUsedError;
-  String get email => throw _privateConstructorUsedError;
-  String get mobileNumber => throw _privateConstructorUsedError;
+  String? get firstName =>
+      throw _privateConstructorUsedError; // Make firstName nullable
+  String? get lastName =>
+      throw _privateConstructorUsedError; // Make lastName nullable
+  String? get email =>
+      throw _privateConstructorUsedError; // Make email nullable
+  String? get mobileNumber =>
+      throw _privateConstructorUsedError; // Make mobileNumber nullable
   List<Asset> get assets => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -228,10 +230,10 @@ abstract class $UserDataCopyWith<$Res> {
       _$UserDataCopyWithImpl<$Res, UserData>;
   @useResult
   $Res call(
-      {String firstName,
-      String lastName,
-      String email,
-      String mobileNumber,
+      {String? firstName,
+      String? lastName,
+      String? email,
+      String? mobileNumber,
       List<Asset> assets});
 }
 
@@ -248,29 +250,29 @@ class _$UserDataCopyWithImpl<$Res, $Val extends UserData>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? firstName = null,
-    Object? lastName = null,
-    Object? email = null,
-    Object? mobileNumber = null,
+    Object? firstName = freezed,
+    Object? lastName = freezed,
+    Object? email = freezed,
+    Object? mobileNumber = freezed,
     Object? assets = null,
   }) {
     return _then(_value.copyWith(
-      firstName: null == firstName
+      firstName: freezed == firstName
           ? _value.firstName
           : firstName // ignore: cast_nullable_to_non_nullable
-              as String,
-      lastName: null == lastName
+              as String?,
+      lastName: freezed == lastName
           ? _value.lastName
           : lastName // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
+              as String?,
+      email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      mobileNumber: null == mobileNumber
+              as String?,
+      mobileNumber: freezed == mobileNumber
           ? _value.mobileNumber
           : mobileNumber // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assets: null == assets
           ? _value.assets
           : assets // ignore: cast_nullable_to_non_nullable
@@ -288,10 +290,10 @@ abstract class _$$UserDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String firstName,
-      String lastName,
-      String email,
-      String mobileNumber,
+      {String? firstName,
+      String? lastName,
+      String? email,
+      String? mobileNumber,
       List<Asset> assets});
 }
 
@@ -306,29 +308,29 @@ class __$$UserDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? firstName = null,
-    Object? lastName = null,
-    Object? email = null,
-    Object? mobileNumber = null,
+    Object? firstName = freezed,
+    Object? lastName = freezed,
+    Object? email = freezed,
+    Object? mobileNumber = freezed,
     Object? assets = null,
   }) {
     return _then(_$UserDataImpl(
-      firstName: null == firstName
+      firstName: freezed == firstName
           ? _value.firstName
           : firstName // ignore: cast_nullable_to_non_nullable
-              as String,
-      lastName: null == lastName
+              as String?,
+      lastName: freezed == lastName
           ? _value.lastName
           : lastName // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
+              as String?,
+      email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      mobileNumber: null == mobileNumber
+              as String?,
+      mobileNumber: freezed == mobileNumber
           ? _value.mobileNumber
           : mobileNumber // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       assets: null == assets
           ? _value._assets
           : assets // ignore: cast_nullable_to_non_nullable
@@ -341,10 +343,10 @@ class __$$UserDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserDataImpl implements _UserData {
   _$UserDataImpl(
-      {required this.firstName,
-      required this.lastName,
-      required this.email,
-      required this.mobileNumber,
+      {this.firstName,
+      this.lastName,
+      this.email,
+      this.mobileNumber,
       required final List<Asset> assets})
       : _assets = assets;
 
@@ -352,14 +354,19 @@ class _$UserDataImpl implements _UserData {
       _$$UserDataImplFromJson(json);
 
   @override
-  final String firstName;
+  final String? firstName;
+// Make firstName nullable
   @override
-  final String lastName;
+  final String? lastName;
+// Make lastName nullable
   @override
-  final String email;
+  final String? email;
+// Make email nullable
   @override
-  final String mobileNumber;
+  final String? mobileNumber;
+// Make mobileNumber nullable
   final List<Asset> _assets;
+// Make mobileNumber nullable
   @override
   List<Asset> get assets {
     if (_assets is EqualUnmodifiableListView) return _assets;
@@ -408,24 +415,24 @@ class _$UserDataImpl implements _UserData {
 
 abstract class _UserData implements UserData {
   factory _UserData(
-      {required final String firstName,
-      required final String lastName,
-      required final String email,
-      required final String mobileNumber,
+      {final String? firstName,
+      final String? lastName,
+      final String? email,
+      final String? mobileNumber,
       required final List<Asset> assets}) = _$UserDataImpl;
 
   factory _UserData.fromJson(Map<String, dynamic> json) =
       _$UserDataImpl.fromJson;
 
   @override
-  String get firstName;
-  @override
-  String get lastName;
-  @override
-  String get email;
-  @override
-  String get mobileNumber;
-  @override
+  String? get firstName;
+  @override // Make firstName nullable
+  String? get lastName;
+  @override // Make lastName nullable
+  String? get email;
+  @override // Make email nullable
+  String? get mobileNumber;
+  @override // Make mobileNumber nullable
   List<Asset> get assets;
   @override
   @JsonKey(ignore: true)
@@ -720,7 +727,7 @@ class __$$DetailImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$DetailImpl implements _Detail {
-  _$DetailImpl({required this.fieldName, required this.fieldValue});
+  _$DetailImpl({required this.fieldName, this.fieldValue});
 
   factory _$DetailImpl.fromJson(Map<String, dynamic> json) =>
       _$$DetailImplFromJson(json);
@@ -765,9 +772,8 @@ class _$DetailImpl implements _Detail {
 }
 
 abstract class _Detail implements Detail {
-  factory _Detail(
-      {required final String fieldName,
-      required final String? fieldValue}) = _$DetailImpl;
+  factory _Detail({required final String fieldName, final String? fieldValue}) =
+      _$DetailImpl;
 
   factory _Detail.fromJson(Map<String, dynamic> json) = _$DetailImpl.fromJson;
 

@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/post_office_account.dart';
 import '../../Utils/DisplayUtils.dart';
 
@@ -105,7 +106,7 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
                   final response =
                       await updatePostOfficeAccount(updatedPostOfficeAccount);
 
-                  DisplayUtils.showToast('Asset updated successfully');
+                  DisplayUtils.showToast('PostOfficeAccount Asset details updated successfully');
 
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
@@ -300,9 +301,26 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    if (token == null) {
-      // Handle token absence or expiration here
-      return null;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final dio = Dio();
@@ -332,7 +350,26 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (proof == null || token == null) {
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 

@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/post_office_account.dart';
 import '../../Utils/DisplayUtils.dart';
 
@@ -37,6 +38,29 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
 
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.get("token");
+
+    if (token == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     const category = 'PostOfficeAccount'; // Add this line
     // Print category for debugging
@@ -266,7 +290,7 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
-              overflow: TextOverflow.ellipsis,
+            //  overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(width: 8.0),
@@ -274,7 +298,7 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
             flex: 7,
             child: Text(
               value ?? '',
-              overflow: TextOverflow.ellipsis,
+             // overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Colors.black87,
               ),
@@ -290,8 +314,26 @@ class _PostofficeAccountScreenState extends State<PostofficeAccountScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 

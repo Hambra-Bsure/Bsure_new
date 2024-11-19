@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: "none"
 
-version: 2.1.0+33
+version: 2.1.0+34
 
 environment:
   sdk: ">=3.2.3 <3.4.0"
@@ -55,6 +55,7 @@ dependencies:
   contacts_service: ^0.6.3
   permission_handler: ^10.3.0
   page_indicator: ^0.4.1
+  pdfx: ^2.6.0
 
 
 dev_dependencies:

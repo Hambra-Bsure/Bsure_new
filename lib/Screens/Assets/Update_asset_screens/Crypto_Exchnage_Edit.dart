@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/crypto_exchange.dart';
 import '../../Utils/DisplayUtils.dart';
+import '../Static_names_list/Crypto_Exchange.dart';
 import '../get_asset_screens/crypto_exchange_screen.dart';
 
 class CryptoExchangeEdit extends StatefulWidget {
@@ -26,18 +29,98 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
   late String comments;
   late String attachment;
 
+  String? _selectedCryptoExchange;
+  List<Exchange> _cryptoExchange = [];
+
   var proof;
   final TextEditingController _attachmentController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+
+    _fetchCryptoExchangeNames();
     // Initialize the local variables with the current values
     exchangeName = widget.cryptoexchange.exchangeName;
     accountNumber = widget.cryptoexchange.accountNumber;
     walletAddress = widget.cryptoexchange.walletAddress ?? "";
     comments = widget.cryptoexchange.comments ?? "";
     attachment = widget.cryptoexchange.attachment ?? "";
+  }
+
+  Future<void> _fetchCryptoExchangeNames() async {
+    const url = 'http://43.205.12.154:8080/v2/asset/static/cryptoExchanges';
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Print the raw response body for debugging
+        print('Response body: ${response.body}'); // Debugging purposes
+
+        // Decode the response body
+        final List<dynamic> data = json.decode(response.body);
+
+        // Ensure the data is a list of strings or maps
+        setState(() {
+          _cryptoExchange = data.map((exchangeJson) {
+            if (exchangeJson is Map<String, dynamic>) {
+              return Exchange.fromJson(exchangeJson); // Map to Exchange
+            } else if (exchangeJson is String) {
+              return Exchange(name: exchangeJson); // Handle plain strings
+            } else {
+              throw Exception('Unexpected data type: $exchangeJson');
+            }
+          }).toList();
+
+          _selectedCryptoExchange = _cryptoExchange
+              .firstWhere(
+                  (bank) => bank.name == widget.cryptoexchange.exchangeName)
+              .name;
+        });
+
+        // Print fetched exchange names for debugging
+        print(
+            'Fetched exchange names: ${_cryptoExchange.map((exchange) => exchange.name).toList()}');
+      } else {
+        print(
+            'Failed to load exchange names. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching exchange names: $e');
+    }
   }
 
   @override
@@ -54,20 +137,14 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              buildTextField(
-                labelText: 'Exchange name',
-                initialValue: exchangeName,
-                onChanged: (value) => setState(() => exchangeName = value),
-                isMandatory: true,
-              ),
+              buildExchangeNameDropdown(),
               const SizedBox(height: 10),
               buildTextField(
-                labelText: 'Account number',
-                initialValue: accountNumber,
-                onChanged: (value) => setState(() => accountNumber = value),
-                isMandatory: true,
-                isNumeric: true
-              ),
+                  labelText: 'Account number',
+                  initialValue: accountNumber,
+                  onChanged: (value) => setState(() => accountNumber = value),
+                  isMandatory: true,
+                  isNumeric: true),
               const SizedBox(height: 10),
               buildTextField(
                 labelText: 'Wallet address',
@@ -87,7 +164,6 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
-
                   if (exchangeName.isEmpty) {
                     DisplayUtils.showToast('Please enter Exchange name');
                     return;
@@ -98,7 +174,7 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
                   }
 
                   final updatedcryptoexchange = CryptoExchange(
-                    exchangeName: exchangeName,
+                    exchangeName: _selectedCryptoExchange ?? '',
                     accountNumber: accountNumber,
                     walletAddress: walletAddress,
                     comments: comments,
@@ -110,7 +186,7 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
                   // Call API to update bank account details
                   final response =
                       await updatecryptoexchange(updatedcryptoexchange);
-                  DisplayUtils.showToast('Asset updated successfully');
+                  DisplayUtils.showToast('Crypto exchange asset details updated successfully');
 
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
@@ -125,14 +201,70 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
                   } else {}
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor : const Color(0xff429bb8), // Set background color here
+                  backgroundColor:
+                      const Color(0xff429bb8), // Set background color here
                 ),
-                child: const Text('Update',style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Update', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildExchangeNameDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          children: [
+            Text(
+              'Exchange name',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _selectedCryptoExchange ?? '',
+          isExpanded: true,
+          // Set isExpanded to true
+          onChanged: (value) {
+            setState(() {
+              _selectedCryptoExchange = value;
+            });
+          },
+          items: [
+            const DropdownMenuItem<String>(
+              value: '',
+              child: Text('Select Exchange Name'),
+            ),
+            ..._cryptoExchange.map((cryptoExchange) {
+              return DropdownMenuItem<String>(
+                value: cryptoExchange.name,
+                child: Text(cryptoExchange.name),
+              );
+            }).toList(),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
     );
   }
 
@@ -148,19 +280,19 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
       decoration: InputDecoration(
         label: isMandatory
             ? RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: labelText,
-                style: const TextStyle(color: Colors.black),
-              ),
-              const TextSpan(
-                text: ' *',
-                style: TextStyle(color: Colors.red),
-              ),
-            ],
-          ),
-        )
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: labelText,
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    const TextSpan(
+                      text: ' *',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              )
             : Text(labelText, style: const TextStyle(color: Colors.black)),
         border: const OutlineInputBorder(),
       ),
@@ -177,14 +309,14 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
       },
       inputFormatters: isNumeric
           ? <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(10),
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-        NoLeadingSpaceFormatter(),
-      ]
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(10),
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+              NoLeadingSpaceFormatter(),
+            ]
           : <TextInputFormatter>[
-        NoLeadingSpaceFormatter(),
-      ],
+              NoLeadingSpaceFormatter(),
+            ],
     );
   }
 
@@ -249,15 +381,31 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
     }
   }
 
-
   Future<CryptoExchange?> updatecryptoexchange(
       CryptoExchange cryptoExchange) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
-      return null;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final dio = Dio();
@@ -287,8 +435,27 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
     final token = prefs.getString("token");
 
     if (proof == null || token == null) {
-      return;
-    }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
 
     final formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(proof.path),
@@ -310,7 +477,8 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
 
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.startsWith(' ')) {
       return oldValue;
     }

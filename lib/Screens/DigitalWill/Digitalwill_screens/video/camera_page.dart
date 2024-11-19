@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../LoginScreen.dart';
 import '../../../Repositary/Models/User_models/Get_user_res.dart';
 import '../../../Utils/DisplayUtils.dart';
 import '../../../Utils/SharedPrefHelper.dart'; // Import the http package
@@ -49,7 +50,26 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
       final sharedPreferences = await SharedPreferences.getInstance();
       final token = sharedPreferences.getString("token");
 
-      if (token == null) {
+      if (token == null || token.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
         return;
       }
 

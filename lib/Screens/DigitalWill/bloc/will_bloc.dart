@@ -13,6 +13,7 @@ class WillBloc extends Bloc<WillEvent, WillState> {
     on<ManualDistributionAllAssets>(_onManualDistributionAllAssets);
     on<EqualDistributeAllAssets>(_onEqualDistributeAllAssets);
     on<UndoEqualDistributeAllAssets>(_onUndoEqualDistributeAllAssets);
+    on<UpdateSameDistributionCheckbox>(_onUpdateSameDistributionCheckbox); // Add this line
   }
 
   @override
@@ -88,6 +89,15 @@ class WillBloc extends Bloc<WillEvent, WillState> {
           )
         ],
       ),
+    );
+  }
+
+  void _onUpdateSameDistributionCheckbox(
+      UpdateSameDistributionCheckbox event,
+      Emitter<WillState> emit,
+      ) {
+    emit(
+      state.copyWith(sameDistributionCheckbox: event.value),
     );
   }
 

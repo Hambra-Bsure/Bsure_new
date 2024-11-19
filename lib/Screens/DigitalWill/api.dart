@@ -1,12 +1,36 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../LoginScreen.dart';
 import 'bloc/will_state.dart';
 
-Future<List<Asset>> getWillAssets() async {
+Future<List<Asset>> getWillAssets(context) async {
   try {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token") ?? "";
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
 
     var url = "https://dev.bsure.live/v2/will/assets";
     final response = await http.get(

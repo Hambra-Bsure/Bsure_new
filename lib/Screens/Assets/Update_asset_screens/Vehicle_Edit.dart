@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/Vehicle.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/vehicle_screen.dart';
@@ -104,13 +105,12 @@ class _VehicleEditState extends State<VehicleEdit> {
               ),
               const SizedBox(height: 16.0),
               buildTextField(
-                labelText: 'Registration number',
-                initialValue: registrationNumber,
-                onChanged: (value) =>
-                    setState(() => registrationNumber = value),
-                isMandatory: true,
-                isNumeric: true
-              ),
+                  labelText: 'Registration number',
+                  initialValue: registrationNumber,
+                  onChanged: (value) =>
+                      setState(() => registrationNumber = value),
+                  isMandatory: true,
+                  isNumeric: true),
               const SizedBox(height: 16.0),
               buildTextField(
                 labelText: 'Chassis number',
@@ -160,7 +160,8 @@ class _VehicleEditState extends State<VehicleEdit> {
                   // Call API to update vehicle details
                   final response = await updateVehicle(updatedVehicle);
 
-                  DisplayUtils.showToast('Asset updated successfully');
+                  DisplayUtils.showToast(
+                      'Vehicle Asset  details updated successfully');
 
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
@@ -242,19 +243,19 @@ class _VehicleEditState extends State<VehicleEdit> {
       decoration: InputDecoration(
         label: isMandatory
             ? RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: labelText,
-                style: const TextStyle(color: Colors.black),
-              ),
-              const TextSpan(
-                text: ' *',
-                style: TextStyle(color: Colors.red),
-              ),
-            ],
-          ),
-        )
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: labelText,
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    const TextSpan(
+                      text: ' *',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              )
             : Text(labelText, style: const TextStyle(color: Colors.black)),
         border: const OutlineInputBorder(),
       ),
@@ -271,14 +272,14 @@ class _VehicleEditState extends State<VehicleEdit> {
       },
       inputFormatters: isNumeric
           ? <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(10),
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-        NoLeadingSpaceFormatter(),
-      ]
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(10),
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+              NoLeadingSpaceFormatter(),
+            ]
           : <TextInputFormatter>[
-        NoLeadingSpaceFormatter(),
-      ],
+              NoLeadingSpaceFormatter(),
+            ],
     );
   }
 
@@ -347,9 +348,26 @@ class _VehicleEditState extends State<VehicleEdit> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
-      return null;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final dio = Dio();
@@ -379,8 +397,27 @@ class _VehicleEditState extends State<VehicleEdit> {
     final token = prefs.getString("token");
 
     if (proof == null || token == null) {
-      return;
-    }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
 
     final formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(proof.path),
@@ -400,11 +437,10 @@ class _VehicleEditState extends State<VehicleEdit> {
   }
 }
 
-
-
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.startsWith(' ')) {
       return oldValue;
     }

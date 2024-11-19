@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/will_bloc.dart';
@@ -18,6 +19,7 @@ class NomineeController {
 class AssetItem extends StatefulWidget {
   final Asset asset;
   final int pageNumber;
+  final bool isEditable;
 
   // final void Function(List<Asset> newAssets) updateWill;
 
@@ -25,6 +27,7 @@ class AssetItem extends StatefulWidget {
     super.key,
     required this.asset,
     required this.pageNumber,
+    required this.isEditable,
   });
 
   @override
@@ -36,6 +39,7 @@ class AssetItemState extends State<AssetItem> {
   final _formKey = GlobalKey<FormState>();
   late final List<NomineeController> nomineeControllers;
   bool equalShareCheckBox = false;
+  bool isEditing = false;
 
   void printState() {
     for (var controller in nomineeControllers) {
@@ -77,7 +81,8 @@ class AssetItemState extends State<AssetItem> {
     nomineeControllers = [];
     for (var nominee in asset.nominees) {
       var controller = TextEditingController(
-          text: nominee.share.toStringAsFixed(2)); // Initialize share value
+          text: nominee.share.toStringAsFixed(
+              2)); // Initialize share value to two decimal places
       nomineeControllers.add(NomineeController(
         nomineeId: nominee.id,
         controller: controller,
@@ -293,17 +298,21 @@ class AssetItemState extends State<AssetItem> {
           child: CustomScrollView(
             slivers: [
               SliverAppBar(
-                title: Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        formatDetails(asset),
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 18),
-                        // Ensure text color is set to white for better visibility
-                        textAlign: TextAlign.left, // Align text to the left
-                      ),
-                    ],
+                backgroundColor: Colors.white,
+                title: Container(
+                  color: const Color(0xff429bb8),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          formatDetails(asset),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 18),
+                          // Ensure text color is set to white for better visibility
+                          //textAlign: TextAlign.left, // Align text to the left
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 // floating: true,
@@ -311,59 +320,104 @@ class AssetItemState extends State<AssetItem> {
                 stretch: true,
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(80),
-                  child: Container(
-                    height: 80,
-                    color: const Color(0xFF00436A),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: FloatingActionButton.extended(
-                        heroTag: 'checkbox1',
-                        onPressed: () {},
-                        label: Row(
-                          children: [
-                            Checkbox(
-                              value: asset.equalDistributionCheckbox,
-                              onChanged: (value) {
-                                if (value == true) {
-                                  if (context
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: FloatingActionButton.extended(
+                      heroTag: 'checkbox1',
+                      onPressed: () {
+                        double totalShares =
+                            100.0; // Assuming total shares to distribute is 100
+                        double equalShare = totalShares / asset.nominees.length;
+
+                        for (var controller in nomineeControllers) {
+                          double roundedShare =
+                              double.parse(equalShare.toStringAsFixed(2));
+                          controller.controller.text =
+                              roundedShare.toStringAsFixed(2);
+
+                          // Update the underlying asset data
+                          asset = asset.copyWith(
+                            nominees: asset.nominees.map((nominee) {
+                              if (nominee.id == controller.nomineeId) {
+                                return nominee.copyWith(share: roundedShare);
+                              }
+                              return nominee;
+                            }).toList(),
+                          );
+                        }
+                      },
+                      label: Row(
+                        children: [
+                          Checkbox(
+                            value: asset.equalDistributionCheckbox,
+                            onChanged: (value) {
+                              setState(() {
+                                asset = asset.copyWith(
+                                    equalDistributionCheckbox: value ??
+                                        false); // Default to false if null
+                              });
+                              if (value == true) {
+                                double totalShares =
+                                    100.0; // Assuming total shares to distribute is 100
+                                double equalShare =
+                                    totalShares / asset.nominees.length;
+
+                                for (var controller in nomineeControllers) {
+                                  double roundedShare = double.parse(
+                                      equalShare.toStringAsFixed(2));
+                                  controller.controller.text =
+                                      roundedShare.toStringAsFixed(2);
+
+                                  // Update the underlying asset data
+                                  asset = asset.copyWith(
+                                    nominees: asset.nominees.map((nominee) {
+                                      if (nominee.id == controller.nomineeId) {
+                                        return nominee.copyWith(
+                                            share: roundedShare);
+                                      }
+                                      return nominee;
+                                    }).toList(),
+                                  );
+                                }
+                                if (context
+                                    .read<WillBloc>()
+                                    .state
+                                    .sameDistributionCheckbox) {
+                                  context
                                       .read<WillBloc>()
-                                      .state
-                                      .sameDistributionCheckbox) {
-                                    context
-                                        .read<WillBloc>()
-                                        .add(EqualDistributeAllAssets());
-                                  }
+                                      .add(EqualDistributeAllAssets());
+                                }
+                                context.read<WillBloc>().add(
+                                      EqualDistribute(
+                                        assetId: asset.assetId,
+                                      ),
+                                    );
+                              } else if (value == false) {
+                                //
+                                if (context
+                                    .read<WillBloc>()
+                                    .state
+                                    .sameDistributionCheckbox) {
+                                  context
+                                      .read<WillBloc>()
+                                      .add(UndoEqualDistributeAllAssets());
+                                } else {
                                   context.read<WillBloc>().add(
-                                        EqualDistribute(
+                                        UndoEqualDistribute(
                                           assetId: asset.assetId,
                                         ),
                                       );
-                                } else if (value == false) {
-                                  //
-                                  if (context
-                                      .read<WillBloc>()
-                                      .state
-                                      .sameDistributionCheckbox) {
-                                    context
-                                        .read<WillBloc>()
-                                        .add(UndoEqualDistributeAllAssets());
-                                  } else {
-                                    context.read<WillBloc>().add(
-                                          UndoEqualDistribute(
-                                            assetId: asset.assetId,
-                                          ),
-                                        );
-                                  }
                                 }
-                              },
-                            ),
-                            const Text(
-                              'Distribute Equally',
-                            ),
-                          ],
-                        ),
-                        backgroundColor: const Color(0xff429bb8),
+                              }
+                            },
+                          ),
+                          const Text(
+                            'Distribute Equally',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
                       ),
+                      backgroundColor: const Color(0xff429bb8),
                     ),
                   ),
                 ),
@@ -376,55 +430,52 @@ class AssetItemState extends State<AssetItem> {
                         .firstWhere(
                             (element) => element.nomineeId == nominee.id)
                         .controller;
-                    cb(controller, nominee.share.toString());
+                    cb(controller, nominee.share.toStringAsFixed(2));
 
                     return Column(
                       children: [
                         ListTile(
                           leading: Text('${index + 1}',
-                              style: const TextStyle(color: Colors.white)),
+                              style: const TextStyle(color: Colors.black)),
                           title: Text(nominee.name,
-                              style: const TextStyle(color: Colors.white)),
+                              style: const TextStyle(color: Colors.black)),
                           subtitle: Row(
                             children: [
                               Expanded(
                                   child: Text(nominee.relation,
                                       style: const TextStyle(
-                                          color: Colors.white))),
+                                          color: Colors.black))),
                               Expanded(
                                 child: TextFormField(
+                                  enabled: widget.isEditable && !isEditing,
                                   controller: controller,
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
                                           decimal: true),
+                                  inputFormatters: [
+                                    DecimalTextInputFormatter(decimalRange: 2),
+                                    // Use the formatter
+                                  ],
                                   decoration: const InputDecoration(
                                     hintText: "Nominee Share",
                                     suffixText: '%',
-                                    hintStyle: TextStyle(color: Colors.white),
-                                    // Color of the hint text
+                                    hintStyle: TextStyle(color: Colors.black),
                                     enabledBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors
-                                              .white), // Color of the border when not focused
+                                      borderSide:
+                                          BorderSide(color: Colors.black),
                                     ),
                                     focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors
-                                              .white), // Color of the border when focused
+                                      borderSide:
+                                          BorderSide(color: Colors.black),
                                     ),
                                     errorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors
-                                              .red), // Color of the border when there's an error
+                                      borderSide: BorderSide(color: Colors.red),
                                     ),
                                     focusedErrorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors
-                                              .red), // Color of the border when focused and there's an error
+                                      borderSide: BorderSide(color: Colors.red),
                                     ),
                                   ),
-                                  style: const TextStyle(color: Colors.white),
-                                  // Color of the entered text
+                                  style: const TextStyle(color: Colors.black),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Enter a value';
@@ -433,6 +484,18 @@ class AssetItemState extends State<AssetItem> {
                                       return 'Enter a number';
                                     }
                                     return null;
+                                  },
+                                  onChanged: (value) {
+                                    if (value.isNotEmpty) {
+                                      setState(() {
+                                        isEditing = true; // Mark as editing
+                                      });
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('You have edited this. This will disable the "Distribute Equally" checkbox.'),
+                                        ),
+                                      );
+                                    }
                                   },
                                   onSaved: (value) {
                                     // Parse the value as a double
@@ -443,20 +506,23 @@ class AssetItemState extends State<AssetItem> {
                                     double roundedValue = double.parse(
                                         parsedValue.toStringAsFixed(2));
 
+                                    // Update the asset nominees with the rounded value
                                     asset = asset.copyWith(
                                       nominees: [
-                                        ...asset.nominees.map(
-                                          (e) {
-                                            if (e.id != nominee.id) {
-                                              return e;
-                                            }
-                                            return nominee.copyWith(
-                                              share: roundedValue,
-                                            );
-                                          },
-                                        )
+                                        ...asset.nominees.map((e) {
+                                          if (e.id != nominee.id) {
+                                            return e;
+                                          }
+                                          return nominee.copyWith(
+                                            share: roundedValue,
+                                          );
+                                        }),
                                       ],
                                     );
+
+                                    // Update the controller text to reflect the rounded value
+                                    controller.text =
+                                        roundedValue.toStringAsFixed(2);
                                   },
                                 ),
                               ),
@@ -549,5 +615,27 @@ class _NomineeItemState extends State<NomineeItem> {
         const Divider()
       ],
     );
+  }
+}
+
+class DecimalTextInputFormatter extends TextInputFormatter {
+  final int decimalRange;
+
+  DecimalTextInputFormatter({this.decimalRange = 2});
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.isEmpty) {
+      return newValue;
+    }
+
+    final RegExp regex = RegExp(r'^\d+\.?\d{0,$decimalRange}');
+    if (regex.hasMatch(newValue.text)) {
+      return newValue;
+    }
+    return oldValue;
   }
 }

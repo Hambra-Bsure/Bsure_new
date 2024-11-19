@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/bond.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/bond_screen.dart';
@@ -148,7 +149,7 @@ class _BondEditState extends State<BondEdit> {
                   // Call API to update bond details
                   final response = await updateBond(updatedbond);
 
-                  DisplayUtils.showToast('Asset updated successfully');
+                  DisplayUtils.showToast('Bond  asset details updated successfully');
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
                     context,
@@ -356,9 +357,26 @@ class _BondEditState extends State<BondEdit> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
-      return null;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final dio = Dio();

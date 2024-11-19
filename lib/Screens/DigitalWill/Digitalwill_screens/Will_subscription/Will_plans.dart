@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../LoginScreen.dart';
 import '../../../Repositary/Models/Digital_will/Subscriptions/Will_plans.dart';
 import 'Will_billing_screen.dart';
 import 'package:http/http.dart' as http;
@@ -27,6 +29,28 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+
     final response = await http.get(
       Uri.parse(
           'https://dev.bsure.live/v2/subscription/products/digitalWill/plans'),
@@ -45,8 +69,7 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              WillBillingScreen(planId: planId, price: price),
+          builder: (context) => WillBillingScreen(planId: planId, price: price),
         ),
       );
     }
@@ -78,7 +101,8 @@ class _WillPlansScreenState extends State<WillPlansScreen> {
               itemCount: snapshot.data!.product!.plans!.length,
               itemBuilder: (context, index) {
                 final plan = snapshot.data!.product!.plans![index];
-                final formattedPrice = (plan.priceInPaisa! / 100).toStringAsFixed(2);
+                final formattedPrice =
+                    (plan.priceInPaisa! / 100).toStringAsFixed(2);
 
                 return GestureDetector(
                   onTap: () {

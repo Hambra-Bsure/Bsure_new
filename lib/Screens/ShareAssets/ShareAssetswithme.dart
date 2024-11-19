@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../LoginScreen.dart';
 import '../Repositary/Models/Share_assets/share_asset_withme_res.dart';
 import '../Repositary/Retrofit/node_api_client.dart';
 
@@ -34,6 +35,28 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString("token");
+
+      if (token == null || token.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
 
       if (token != null) {
         final dio = Dio();
@@ -69,6 +92,15 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
     }
   }
 
+  String capitalize(String text) {
+    // Capitalizes each word in the text
+    return text.splitMapJoin(
+      RegExp(r'(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'),
+      onMatch: (_) => ' ',
+      onNonMatch: (word) => word[0].toUpperCase() + word.substring(1),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
@@ -83,7 +115,6 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
         ),
       ),
       backgroundColor: Colors.grey[200],
-      // Background color for the whole screen
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -113,12 +144,10 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
                                 ),
                                 subtitle: Center(
                                   child: Text(
-                                    userData.mobileNumber,
+                                    userData.mobileNumber ?? '',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      // FontWeight.bold for bold text
-                                      fontSize:
-                                          16, // Example font size, adjust as needed
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ),
@@ -141,58 +170,51 @@ class _ShareassetwithmeState extends State<Shareassetwithme> {
                                               horizontal: 16.0, vertical: 8.0),
                                           child: Center(
                                             child: Text(
-                                              asset.category,
+                                              capitalize(asset.category),
                                               style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 18),
                                             ),
                                           ),
                                         ),
-                                        ...asset.details
-                                            .map(
-                                              (detail) => Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0, bottom: 8.0),
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      // Wrap the Row widget with Expanded
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Expanded(
-                                                            // Wrap the Text widget with Expanded
-                                                            child: Text(
-                                                              '${detail.fieldName.replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'), (match) => ' ${match.group(0)!}').trim()}:',
-                                                              // Convert camelCase to words
-                                                              style: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                              overflow: TextOverflow
-                                                                  .ellipsis, // Add this line to handle overflow
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            // Wrap the Text widget with Expanded
-                                                            child: Text(
-                                                              detail.fieldValue ??
-                                                                  '',
-                                                              // Use an empty string as the default value if detail.fieldValue is null
-                                                              overflow: TextOverflow
-                                                                  .ellipsis, // Add this line to handle overflow
-                                                            ),
-                                                          ),
-                                                        ],
+                                        ...asset.details.map((detail) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0, bottom: 8.0),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          '${capitalize(detail.fieldName)}:',
+                                                          style: const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                      Expanded(
+                                                        child: Text(
+                                                          detail.fieldValue ??
+                                                              '',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            )
-                                            .toList(),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList(),
                                       ],
                                     ),
                                   ),

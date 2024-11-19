@@ -1,10 +1,10 @@
-class MutualFund {
+class Fund {
   final String name;
 
-  MutualFund({required this.name});
+  Fund({required this.name});
 
-  factory MutualFund.fromJson(Map<String, dynamic> json) {
-    return MutualFund(
+  factory Fund.fromJson(Map<String, dynamic> json) {
+    return Fund(
       name: json['AMC Name'] as String, // Adjust this based on your actual JSON field
     );
   }

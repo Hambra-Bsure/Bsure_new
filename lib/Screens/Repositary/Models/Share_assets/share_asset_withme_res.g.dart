@@ -26,10 +26,10 @@ Map<String, dynamic> _$$ShareAssetswithmeResponseImplToJson(
 
 _$UserDataImpl _$$UserDataImplFromJson(Map<String, dynamic> json) =>
     _$UserDataImpl(
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      email: json['email'] as String,
-      mobileNumber: json['mobileNumber'] as String,
+      firstName: json['firstName'] as String?,
+      lastName: json['lastName'] as String?,
+      email: json['email'] as String?,
+      mobileNumber: json['mobileNumber'] as String?,
       assets: (json['assets'] as List<dynamic>)
           .map((e) => Asset.fromJson(e as Map<String, dynamic>))
           .toList(),

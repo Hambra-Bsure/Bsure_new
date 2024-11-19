@@ -47,7 +47,7 @@ import '../Models/Share_assets/Share_asset_res.dart';
 import '../Models/User_models/Account_delete_res.dart';
 part 'node_api_client.g.dart';
 
-//@RestApi(baseUrl: 'https://api.bsure.live')
+//@RestApi(baseUrl: 'http://13.234.213.250:8080')
 //@RestApi(baseUrl: 'https://wgflssl8-8080.inc1.devtunnels.ms')
 //http://43.205.12.154:8080
 @RestApi(baseUrl: 'https://dev.bsure.live')

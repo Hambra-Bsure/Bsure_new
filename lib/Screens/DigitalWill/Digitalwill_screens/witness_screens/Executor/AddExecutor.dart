@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../LoginScreen.dart';
 import '../../../../Repositary/Models/Digital_will/Subscriptions/Will_ececutor_res.dart';
 import '../../../../Repositary/Models/Digital_will/Subscriptions/Will_executor_req.dart';
 import 'GetExecutor.dart';
@@ -23,6 +24,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
   final TextEditingController _fatherNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _religionController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   String? _errorMessage;
 
   @override
@@ -30,10 +32,32 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
     super.initState();
   }
 
-
   Future<void> _saveData() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     const url = 'https://dev.bsure.live/v2/will/executor';
 
@@ -44,7 +68,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
       fatherName: _fatherNameController.text,
       age: int.tryParse(_ageController.text),
       religion: _religionController.text,
-      // address: _addressController.text,
+      address: _addressController.text,
     );
 
     try {
@@ -53,7 +77,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
         body: jsonEncode(willExecutor.toJson()),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': token.toString(),
+          'Authorization': token,
         },
       );
 
@@ -194,8 +218,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
             contentPadding:
             EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
-          keyboardType:
-          isNumeric ? TextInputType.number : TextInputType.text,
+          keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         ),
       ],
     );
@@ -206,7 +229,10 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Will Executor', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Will Executor',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -225,57 +251,87 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
               _buildTextField(
                 controller: _firstNameController,
                 labelText: 'First name',
-                validator: _validateFirstName,
                 mandatory: true,
+                validator: _validateFirstName,
               ),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: _lastNameController,
                 labelText: 'Last name',
-                validator: _validateLastName,
                 mandatory: true,
+                validator: _validateLastName,
               ),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: _ageController,
                 labelText: 'Age',
-                validator: _validateAge,
                 isNumeric: true,
                 mandatory: true,
+                validator: _validateAge,
               ),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: _mobileController,
                 labelText: 'Mobile no',
-                validator: _validateMobileNumber,
-                mandatory: true,
                 isNumeric: true,
+                mandatory: true,
+                validator: _validateMobileNumber,
               ),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: _religionController,
                 labelText: 'Religion',
-                validator: _validateReligion,
                 mandatory: true,
+                validator: _validateReligion,
               ),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: _fatherNameController,
                 labelText: 'Father name',
-                validator: _validateFatherName,
                 mandatory: true,
+                validator: _validateFatherName,
+              ),
+              const SizedBox(height: 15),
+              _buildTextField(
+                controller: _addressController,
+                labelText: 'Address',
+                mandatory: true,
+                validator: _validateAddress,
               ),
               const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _saveData();
+                  if (_firstNameController.text.isEmpty) {
+                    DisplayUtils.showToast('firstname  is required');
+                    return; // Exit the method if the mobile number is empty
+                  } else if (_lastNameController.text.isEmpty) {
+                    DisplayUtils.showToast('lastname  is required');
+                    return; // Exit the method if the mobile number is empty
+                  } else  if (_mobileController.text.isEmpty) {
+                    DisplayUtils.showToast('Mobilenumber is required');
+                    return; // Exit the method if the mobile number is empty
+                  } else if (_fatherNameController.text.isEmpty) {
+                    DisplayUtils.showToast('fathername  is required');
+                    return; // Exit the method if the mobile number is empty
+                  } else if (_ageController.text.isEmpty) {
+                    DisplayUtils.showToast('age  is required');
+                    return; // Exit the method if the mobile number is empty
+                  } else  if (_religionController.text.isEmpty) {
+                    DisplayUtils.showToast('Religion  is required');
+                    return; // Exit the method if the mobile number is empty
+                  } else if (_addressController.text.isEmpty) {
+                    DisplayUtils.showToast('address is required');
+                    return; // Exit the method if the mobile number is empty
                   }
+                  _saveData();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
                 ),
-                child: const Text('Submit', style: TextStyle(color: Colors.white)),
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -297,5 +353,3 @@ class NoLeadingSpaceFormatter extends TextInputFormatter {
     return newValue;
   }
 }
-
-

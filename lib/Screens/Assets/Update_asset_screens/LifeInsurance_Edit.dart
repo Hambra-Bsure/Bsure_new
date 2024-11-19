@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/life_Insurance.dart';
 import '../../Utils/DisplayUtils.dart';
+import '../Static_names_list/LifeInsurance.dart';
 import '../get_asset_screens/life_insurance_screen.dart';
 
 class LifeInsuranceEdit extends StatefulWidget {
@@ -35,9 +38,14 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
   final TextEditingController _attachmentController = TextEditingController();
   final TextEditingController _maturityDateController = TextEditingController();
 
+  String? _selectedLifeInsurance;
+  List<Insurance> _lifeInsurance = [];
+
   @override
   void initState() {
     super.initState();
+
+    _fetchLifeInsuranceNames();
     // Initialize the local variables with the current values
     insuranceCompanyName = widget.insurance.insuranceCompanyName;
     policyName = widget.insurance.policyName ?? "";
@@ -48,9 +56,89 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
     maturityDate = widget.insurance.maturityDate != null
         ? DateTime.parse(widget.insurance.maturityDate!)
         : null; // Use null as default value
-    _maturityDateController.text = maturityDate != null ? formatDate(maturityDate!) : ''; // Format DateTime to string
+    _maturityDateController.text = maturityDate != null
+        ? formatDate(maturityDate!)
+        : ''; // Format DateTime to string
     comments = widget.insurance.comments ?? "";
     attachment = widget.insurance.attachment ?? "";
+  }
+
+  Future<void> _fetchLifeInsuranceNames() async {
+    const url =
+        'http://43.205.12.154:8080/v2/asset/static/lifeInsuranceCompanies';
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Print the raw response body for debugging
+        print('Response body: ${response.body}'); // For debugging
+
+        // Decode the response body
+        final List<dynamic> data = json.decode(response.body);
+
+        // Ensure the data is a list of maps (or strings, if applicable)
+        if (data is List) {
+          setState(() {
+            _lifeInsurance = data.map((insuranceJson) {
+              if (insuranceJson is Map<String, dynamic>) {
+                return Insurance.fromJson(insuranceJson); // Map to Insurance
+              } else if (insuranceJson is String) {
+                return Insurance(
+                    name: insuranceJson); // For cases where it's a plain string
+              } else {
+                throw Exception('Unexpected data type: $insuranceJson');
+              }
+            }).toList();
+
+            _selectedLifeInsurance = _lifeInsurance
+                .firstWhere((bank) =>
+                    bank.name == widget.insurance.insuranceCompanyName)
+                .name;
+          });
+
+          // Print fetched insurance names
+          print(
+              'Fetched insurance company names: ${_lifeInsurance.map((insurance) => insurance.name).toList()}');
+        }
+      } else {
+        print(
+            'Failed to load insurance names. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching insurance names: $e');
+    }
   }
 
   @override
@@ -67,13 +155,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              buildTextField(
-                labelText: 'Insurance company name',
-                initialValue: insuranceCompanyName,
-                onChanged: (value) =>
-                    setState(() => insuranceCompanyName = value),
-                isMandatory: true,
-              ),
+              buildLifeInsuranceDropdown(),
               const SizedBox(height: 16.0),
               buildTextField(
                 labelText: 'Policy name',
@@ -83,20 +165,18 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
               ),
               const SizedBox(height: 16.0),
               buildTextField(
-                labelText: 'Policy number',
-                initialValue: policyNumber,
-                onChanged: (value) => setState(() => policyNumber = value),
-                isMandatory: false,
-                isNumeric: true
-              ),
+                  labelText: 'Policy number',
+                  initialValue: policyNumber,
+                  onChanged: (value) => setState(() => policyNumber = value),
+                  isMandatory: false,
+                  isNumeric: true),
               const SizedBox(height: 16.0),
               buildTextField(
-                labelText: 'Coverage amount',
-                initialValue: coverageAmount,
-                onChanged: (value) => setState(() => coverageAmount = value),
-                isMandatory: false,
-                isNumeric: true
-              ),
+                  labelText: 'Coverage amount',
+                  initialValue: coverageAmount,
+                  onChanged: (value) => setState(() => coverageAmount = value),
+                  isMandatory: false,
+                  isNumeric: true),
               const SizedBox(height: 16.0),
               buildDateField(
                 controller: _maturityDateController,
@@ -117,7 +197,8 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
                 onPressed: () async {
                   // Validate fields
                   if (insuranceCompanyName.isEmpty) {
-                    DisplayUtils.showToast('Please enter Insurance company name.');
+                    DisplayUtils.showToast(
+                        'Please enter Insurance company name.');
                     return;
                   }
 
@@ -138,11 +219,12 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
                   }
 
                   final updatedInsurance = LifeInsurance(
-                    insuranceCompanyName: insuranceCompanyName,
+                    insuranceCompanyName: _selectedLifeInsurance ?? '',
                     policyName: policyName,
                     policyNumber: policyNumber,
                     coverageAmount: parsedCoverageAmount,
-                    maturityDate: maturityDateText, // Use nullable string
+                    maturityDate: maturityDateText,
+                    // Use nullable string
                     comments: comments,
                     attachment: attachment,
                     assetId: widget.insurance.assetId,
@@ -152,7 +234,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
                   // Call API to update insurance details
                   final response = await updateInsurance(updatedInsurance);
 
-                  DisplayUtils.showToast('Asset updated successfully');
+                  DisplayUtils.showToast('Life insurance asset details updated successfully');
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
                     context,
@@ -163,14 +245,70 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff429bb8), // Set background color here
+                  backgroundColor:
+                      const Color(0xff429bb8), // Set background color here
                 ),
-                child: const Text('Update', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Update', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildLifeInsuranceDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          children: [
+            Text(
+              'Insurance Company name',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _selectedLifeInsurance ?? '',
+          isExpanded: true,
+          // Set isExpanded to true
+          onChanged: (value) {
+            setState(() {
+              _selectedLifeInsurance = value;
+            });
+          },
+          items: [
+            const DropdownMenuItem<String>(
+              value: '',
+              child: Text('Select Insurance Company Name'),
+            ),
+            ..._lifeInsurance.map((insurance) {
+              return DropdownMenuItem<String>(
+                value: insurance.name,
+                child: Text(insurance.name),
+              );
+            }).toList(),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
     );
   }
 
@@ -212,7 +350,7 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                    EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
               ),
             ),
           ),
@@ -253,19 +391,19 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
       decoration: InputDecoration(
         label: isMandatory
             ? RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: labelText,
-                style: const TextStyle(color: Colors.black),
-              ),
-              const TextSpan(
-                text: ' *',
-                style: TextStyle(color: Colors.red),
-              ),
-            ],
-          ),
-        )
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: labelText,
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    const TextSpan(
+                      text: ' *',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              )
             : Text(labelText, style: const TextStyle(color: Colors.black)),
         border: const OutlineInputBorder(),
       ),
@@ -282,14 +420,14 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
       },
       inputFormatters: isNumeric
           ? <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(10),
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-        NoLeadingSpaceFormatter(),
-      ]
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(10),
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+              NoLeadingSpaceFormatter(),
+            ]
           : <TextInputFormatter>[
-        NoLeadingSpaceFormatter(),
-      ],
+              NoLeadingSpaceFormatter(),
+            ],
     );
   }
 
@@ -358,9 +496,26 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
-      return null;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final dio = Dio();
@@ -398,7 +553,26 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
     final token = prefs.getString("token");
 
     if (proof == null || token == null) {
-      return;
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
     }
 
     final formData = FormData.fromMap({
@@ -421,7 +595,8 @@ class _LifeInsuranceEditState extends State<LifeInsuranceEdit> {
 
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.startsWith(' ')) {
       return oldValue;
     }

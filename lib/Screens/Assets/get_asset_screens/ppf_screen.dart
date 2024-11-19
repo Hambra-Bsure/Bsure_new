@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/Ppf.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../Update_asset_screens/PPF_Edit.dart';
@@ -36,6 +37,29 @@ class _PPfScreenState extends State<PPfScreen> {
 
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     final url = Uri.parse('https://dev.bsure.live/v2/asset/category/Ppf');
     final response = await http.get(url, headers: {
@@ -248,7 +272,7 @@ class _PPfScreenState extends State<PPfScreen> {
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
-              overflow: TextOverflow.ellipsis,
+             // overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(width: 8.0),
@@ -256,7 +280,7 @@ class _PPfScreenState extends State<PPfScreen> {
             flex: 7,
             child: Text(
               value ?? '',
-              overflow: TextOverflow.ellipsis,
+              //overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Colors.black87,
               ),
@@ -272,8 +296,26 @@ class _PPfScreenState extends State<PPfScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 

@@ -188,7 +188,7 @@ mixin _$Witness {
   String get firstName => throw _privateConstructorUsedError;
   String get lastName => throw _privateConstructorUsedError;
   String get mobile => throw _privateConstructorUsedError;
-  String get address => throw _privateConstructorUsedError;
+  String? get address => throw _privateConstructorUsedError;
   bool get verified => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -206,7 +206,7 @@ abstract class $WitnessCopyWith<$Res> {
       String firstName,
       String lastName,
       String mobile,
-      String address,
+      String? address,
       bool verified});
 }
 
@@ -227,7 +227,7 @@ class _$WitnessCopyWithImpl<$Res, $Val extends Witness>
     Object? firstName = null,
     Object? lastName = null,
     Object? mobile = null,
-    Object? address = null,
+    Object? address = freezed,
     Object? verified = null,
   }) {
     return _then(_value.copyWith(
@@ -247,10 +247,10 @@ class _$WitnessCopyWithImpl<$Res, $Val extends Witness>
           ? _value.mobile
           : mobile // ignore: cast_nullable_to_non_nullable
               as String,
-      address: null == address
+      address: freezed == address
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       verified: null == verified
           ? _value.verified
           : verified // ignore: cast_nullable_to_non_nullable
@@ -271,7 +271,7 @@ abstract class _$$WitnessImplCopyWith<$Res> implements $WitnessCopyWith<$Res> {
       String firstName,
       String lastName,
       String mobile,
-      String address,
+      String? address,
       bool verified});
 }
 
@@ -290,7 +290,7 @@ class __$$WitnessImplCopyWithImpl<$Res>
     Object? firstName = null,
     Object? lastName = null,
     Object? mobile = null,
-    Object? address = null,
+    Object? address = freezed,
     Object? verified = null,
   }) {
     return _then(_$WitnessImpl(
@@ -310,10 +310,10 @@ class __$$WitnessImplCopyWithImpl<$Res>
           ? _value.mobile
           : mobile // ignore: cast_nullable_to_non_nullable
               as String,
-      address: null == address
+      address: freezed == address
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       verified: null == verified
           ? _value.verified
           : verified // ignore: cast_nullable_to_non_nullable
@@ -345,7 +345,7 @@ class _$WitnessImpl implements _Witness {
   @override
   final String mobile;
   @override
-  final String address;
+  final String? address;
   @override
   final bool verified;
 
@@ -395,7 +395,7 @@ abstract class _Witness implements Witness {
       required final String firstName,
       required final String lastName,
       required final String mobile,
-      required final String address,
+      required final String? address,
       required final bool verified}) = _$WitnessImpl;
 
   factory _Witness.fromJson(Map<String, dynamic> json) = _$WitnessImpl.fromJson;
@@ -409,7 +409,7 @@ abstract class _Witness implements Witness {
   @override
   String get mobile;
   @override
-  String get address;
+  String? get address;
   @override
   bool get verified;
   @override

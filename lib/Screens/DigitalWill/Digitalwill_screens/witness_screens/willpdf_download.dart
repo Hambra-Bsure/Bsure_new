@@ -5,10 +5,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import '../../../LoginScreen.dart';
 import '../Will_subscription/Will_products.dart';
 
 class PdfDownloadScreen extends StatefulWidget {
+  final String pdfUrl;
+
+  const PdfDownloadScreen({super.key, required this.pdfUrl});
   @override
   _PdfDownloadScreenState createState() => _PdfDownloadScreenState();
 }
@@ -26,6 +29,29 @@ class _PdfDownloadScreenState extends State<PdfDownloadScreen> {
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.get("token");
+
+    if (token == null ) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     try {
       final response = await http.get(

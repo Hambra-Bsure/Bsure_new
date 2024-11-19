@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:Bsure_devapp/Screens/Assets/Static_names_list/Mutualfund.dart';
 import 'package:http/http.dart' as http;
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/mutual_fund_screen.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/AssetModels/MutualFundRequest.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
 
@@ -23,7 +25,8 @@ class MutualFundAdd extends StatefulWidget {
 
 class _MutualFundAddState extends State<MutualFundAdd> {
   final TextEditingController _assetTypeController = TextEditingController();
-  final TextEditingController _amcNameController = TextEditingController();
+
+  // final TextEditingController _amcNameController = TextEditingController();
   final TextEditingController _schemeNameController = TextEditingController();
   final TextEditingController _folioNumberController = TextEditingController();
   final TextEditingController _fundTypeController = TextEditingController();
@@ -33,22 +36,99 @@ class _MutualFundAddState extends State<MutualFundAdd> {
   FilePickerResult? proof;
   String? assetId;
 
+  String? _selectedmutulFund;
+  List<Fund> _mutualFunds = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMutualFunds();
+  }
+
+  Future<void> _fetchMutualFunds() async {
+    const url = 'http://43.205.12.154:8080/v2/asset/static/mutualFunds';
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Print the raw response body for debugging
+        print('Response body: ${response.body}'); // For debugging purposes
+
+        // Decode the response body
+        final List<dynamic> data = json.decode(response.body);
+
+        // Ensure the data is a list of maps (or strings, if applicable)
+        if (data is List) {
+          setState(() {
+            _mutualFunds = data.map((fundJson) {
+              if (fundJson is Map<String, dynamic>) {
+                return Fund.fromJson(fundJson); // Map to MutualFund
+              } else if (fundJson is String) {
+                return Fund(name: fundJson); // Handle plain string response
+              } else {
+                throw Exception('Unexpected data type: $fundJson');
+              }
+            }).toList();
+          });
+
+          // Print fetched mutual fund names
+          print('Fetched mutual fund names: ${_mutualFunds.map((fund) => fund.name).toList()}');
+        }
+      } else {
+        print('Failed to load mutual fund names. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching mutual fund names: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xff429bb8),
-          title: const Text('Mutual fund', style: TextStyle(color: Colors.white)),
+          title:
+              const Text('Mutual fund', style: TextStyle(color: Colors.white)),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const SizedBox(height: 16),
-            buildTextField(
-              controller: _amcNameController,
-              labelText: 'Amc name',
-              mandatory: true,
-            ),
+            buildMutualFundDropdown(),
             const SizedBox(height: 16),
             buildTextField(
               controller: _schemeNameController,
@@ -115,20 +195,76 @@ class _MutualFundAddState extends State<MutualFundAdd> {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                   _submitForm();
+                  _submitForm();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
                 ),
-                child: const Text('Submit', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Submit', style: TextStyle(color: Colors.white)),
               ),
             ),
           ]),
         ));
   }
 
+  Widget buildMutualFundDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          children: [
+            Text(
+              'AMC Name',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _selectedmutulFund ?? '',
+          isExpanded: true,
+          // Set isExpanded to true
+          onChanged: (value) {
+            setState(() {
+              _selectedmutulFund = value;
+            });
+          },
+          items: [
+            const DropdownMenuItem<String>(
+              value: '',
+              child: Text('Select AMC Name'),
+            ),
+            ..._mutualFunds.map((mutualfund) {
+              return DropdownMenuItem<String>(
+                value: mutualfund.name,
+                child: Text(mutualfund.name),
+              );
+            }).toList(),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> uploadFile() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.any, allowMultiple: false);
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
 
     if (result != null) {
       setState(() {
@@ -147,8 +283,32 @@ class _MutualFundAddState extends State<MutualFundAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     try {
-      var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
+      var uri = Uri.parse(
+          'https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
@@ -171,8 +331,10 @@ class _MutualFundAddState extends State<MutualFundAdd> {
         DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
-        var fileUrl = jsonResponse['fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
-        var returnedAssetId = jsonResponse['assetId']; // Assuming the server returns the asset ID in 'assetId' key
+        var fileUrl = jsonResponse[
+            'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+        var returnedAssetId = jsonResponse[
+            'assetId']; // Assuming the server returns the asset ID in 'assetId' key
         // Handle the file URL and asset ID
 
         // Navigate to the MutualFundScreen
@@ -250,11 +412,15 @@ class _MutualFundAddState extends State<MutualFundAdd> {
         TextFormField(
           controller: controller,
           inputFormatters: isNumeric
-              ? [FilteringTextInputFormatter.digitsOnly, NoLeadingSpaceFormatter()]
+              ? [
+                  FilteringTextInputFormatter.digitsOnly,
+                  NoLeadingSpaceFormatter()
+                ]
               : [NoLeadingSpaceFormatter()],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         ),
@@ -263,9 +429,9 @@ class _MutualFundAddState extends State<MutualFundAdd> {
   }
 
   void _submitForm() async {
-    if (_amcNameController.value.text.isEmpty) {
+    if (_selectedmutulFund == null || _selectedmutulFund!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Amc name is required')),
+        const SnackBar(content: Text('AMC name is required')),
       );
       return;
     }
@@ -274,9 +440,24 @@ class _MutualFundAddState extends State<MutualFundAdd> {
     var token = prefs.getString("token");
 
     if (token == null || token.isEmpty) {
-      // Handle the case where token is not available
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Token is required')),
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
       );
       return;
     }
@@ -286,7 +467,7 @@ class _MutualFundAddState extends State<MutualFundAdd> {
 
     final request = MutualFundRequest(
       assetType: widget.assetType,
-      amcName: _amcNameController.text,
+      amcName: _selectedmutulFund ?? '',
       schemeName: _schemeNameController.text,
       folioNumber: _folioNumberController.text,
       fundType: _fundTypeController.text,
@@ -319,7 +500,8 @@ class _MutualFundAddState extends State<MutualFundAdd> {
 
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.startsWith(' ')) {
       return oldValue;
     }

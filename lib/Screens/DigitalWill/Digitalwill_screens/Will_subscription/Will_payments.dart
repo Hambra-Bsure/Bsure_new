@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:Bsure_devapp/Screens/Utils/DisplayUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -7,7 +8,9 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show File, Platform;
+import '../../../LoginScreen.dart';
 import 'Will_plans.dart';
+import 'package:pdfx/pdfx.dart';
 
 class WillPaymentsScreen extends StatefulWidget {
   final int planId;
@@ -39,7 +42,6 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
 
     print('Coupon code: ${widget.couponCode}');
     print('Formatted Price: $formattedPrice');
-    // print("coupon code: ${widget.couponCode}");
     print("subba reddy");
     print('Plan ID: ${widget.planId}');
     print('Price: ${widget.finalPrice}');
@@ -174,22 +176,48 @@ class PaymentSuccessScreen extends StatelessWidget {
   final String transactionId;
   final double amount;
 
-  const PaymentSuccessScreen(
-      {required this.transactionId, required this.amount});
+  const PaymentSuccessScreen({
+    required this.transactionId,
+    required this.amount,
+  });
 
   Future<void> _downloadPdf(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.get("token");
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     try {
       final response = await http.get(
         Uri.parse('https://dev.bsure.live/v2/will/pdf'),
         headers: {
-          'Authorization': token.toString(),
+          'Authorization': token ?? '',
         },
       );
 
       if (response.statusCode == 200) {
+        DisplayUtils.showToast('Successfully downloaded pdf');
         final directory = await getApplicationDocumentsDirectory();
         final filePath = '${directory.path}/downloaded_pdf.pdf';
         final file = File(filePath);
@@ -200,6 +228,14 @@ class PaymentSuccessScreen extends StatelessWidget {
         );
 
         Share.shareFiles([filePath], text: 'Check out this PDF!');
+
+        // Open PDF preview after download
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfPreviewScreen(filePath: filePath),
+          ),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -221,6 +257,12 @@ class PaymentSuccessScreen extends StatelessWidget {
         title: const Text('Payment Success',
             style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xff429bb8),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+            onPressed: () => _downloadPdf(context),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -239,12 +281,53 @@ class PaymentSuccessScreen extends StatelessWidget {
               onPressed: () => _downloadPdf(context),
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8)),
-              child: const Text('Download PDF'),
+              child: const Text('Download PDF',
+                  style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+class PdfPreviewScreen extends StatefulWidget {
+  final String filePath;
+
+  const PdfPreviewScreen({required this.filePath});
+
+  @override
+  _PdfPreviewScreenState createState() => _PdfPreviewScreenState();
+}
+
+class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
+  late PdfController _pdfController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pdfController = PdfController(
+      document: PdfDocument.openFile(widget.filePath),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PDF Preview', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xff429bb8),
+      ),
+      body: PdfView(
+        controller: _pdfController,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pdfController.dispose();
+    super.dispose();
   }
 }
 

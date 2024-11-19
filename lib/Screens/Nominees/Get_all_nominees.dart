@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../LoginScreen.dart';
 import '../Utils/DisplayUtils.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/Nominee_models/Get_Nominee_response.dart';
 import 'package:Bsure_devapp/Screens/Nominees/Add_nominee.dart';
@@ -32,6 +33,29 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
 
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.get("token");
+
+    if (token == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     final url = Uri.parse('https://dev.bsure.live/v2/nominee/all');
     final response = await http.get(url, headers: {
@@ -64,7 +88,8 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Nominee details', style: TextStyle(color: Colors.white)),
+        title: const Text('Nominee details',
+            style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -117,12 +142,10 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                             if (showGuardianInfo) ...[
                               Text(
                                 'Guardian name: ${nominee.guardianName}',
-                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 10),
                               Text(
                                 'Guardian mobile no: ${nominee.guardianMobileNumber}',
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                             const SizedBox(height: 8.0),
@@ -166,6 +189,9 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                                             onPressed: () async {
                                               Navigator.of(context).pop();
                                               deleteNominee(index);
+                                              setState(() {
+                                                nominees.removeAt(index);
+                                              });
                                             },
                                           ),
                                         ],
@@ -230,8 +256,26 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
@@ -240,14 +284,11 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
 
     try {
       final response = await dio.delete(
-        'http://43.205.12.154:8080/v2/nominee/${nominee.id}',
+        'https://dev.bsure.live/v2/nominee/${nominee.id}',
       );
 
       if (response.statusCode == 200) {
         DisplayUtils.showToast("Nominee deleted successfully");
-        setState(() {
-          nominees.removeAt(index);
-        });
       }
     } catch (e) {
       DisplayUtils.showToast("Failed to delete nominee. Please try again.");

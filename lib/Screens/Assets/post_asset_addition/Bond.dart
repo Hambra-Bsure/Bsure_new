@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/AssetModels/BondRequest.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
@@ -132,7 +133,8 @@ class _BondAddState extends State<BondAdd> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff429bb8),
                   ),
-                  child: const Text('Submit', style: TextStyle(color: Colors.white)),
+                  child: const Text('Submit',
+                      style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -160,9 +162,32 @@ class _BondAddState extends State<BondAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     try {
-      var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
+      var uri = Uri.parse(
+          'https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
@@ -186,8 +211,10 @@ class _BondAddState extends State<BondAdd> {
         DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
-        var fileUrl = jsonResponse['fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
-        var returnedAssetId = jsonResponse['assetId']; // Assuming the server returns the asset ID in 'assetId' key
+        var fileUrl = jsonResponse[
+            'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+        var returnedAssetId = jsonResponse[
+            'assetId']; // Assuming the server returns the asset ID in 'assetId' key
         // Handle the file URL and asset ID
         print('File URL: $fileUrl');
         print('Asset ID: $returnedAssetId');
@@ -258,18 +285,18 @@ class _BondAddState extends State<BondAdd> {
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
           inputFormatters: isNumeric
               ? <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10),
-            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-            NoLeadingSpaceFormatter(),
-          ]
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10),
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  NoLeadingSpaceFormatter(),
+                ]
               : <TextInputFormatter>[
-            NoLeadingSpaceFormatter(),
-          ],
+                  NoLeadingSpaceFormatter(),
+                ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             contentPadding:
-            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
         const SizedBox(height: 16),
@@ -315,7 +342,7 @@ class _BondAddState extends State<BondAdd> {
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                    EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
               ),
             ),
           ),
@@ -371,12 +398,29 @@ class _BondAddState extends State<BondAdd> {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token"); // Retrieve token from SharedPreferences
+    var token =
+        prefs.getString("token"); // Retrieve token from SharedPreferences
 
-    // Check if token is null or empty
     if (token == null || token.isEmpty) {
-      // Handle the case where token is not available
-
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 

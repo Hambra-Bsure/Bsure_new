@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
+import '../../../LoginScreen.dart';
 import '../../../Repositary/Models/Digital_will/witness_get_res.dart';
 import '../../../Repositary/Retrofit/node_api_client.dart';
-import '../Will_subscription/Will_products.dart';
 import 'DigitalWitness1.dart';
 import 'Edit_witness.dart';
-import 'Executor/GetExecutor.dart';
-import 'willpdf_download.dart';
 
 class DigitalWillGetWitness extends StatefulWidget {
   @override
@@ -28,7 +26,25 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     final token = prefs.getString("token");
 
     if (token == null || token.isEmpty) {
-      throw Exception('Token is not available.');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     Dio dio = Dio();
@@ -37,7 +53,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     NodeClient nodeClient = NodeClient(dio);
 
     try {
-      var response = await nodeClient.getWitnessData(token);
+      var response = await nodeClient.getWitnessData(token.toString());
       return response;
     } catch (e) {
       if (e is DioError) {
@@ -82,73 +98,6 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
       print('Error checking executor data: $e');
       return false;
     }
-  }
-
-  Future<void> _checkAndNavigate() async {
-    try {
-      final data = await fetchData();
-      final executorExists = await _checkExecutorExists();
-        _showOptionsDialog(data.witnesses.length, executorExists);
-    } catch (e) {
-      print('Error in navigation check: $e');
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Error in navigation check. Please try again.'),
-      ));
-    }
-  }
-
-  void _showOptionsDialog(int witnessCount, bool executorExists) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Choose an option'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              if (witnessCount < 2)
-                ListTile(
-                  leading: const Icon(Icons.person_add),
-                  title: const Text('Add witness'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const DigitalWitnessScreen()),
-                    );
-                  },
-                ),
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: const Text('Add executor'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => GetExecutor()),
-                  );
-                },
-              ),
-              if (witnessCount >= 2)
-                ListTile(
-                  leading: const Icon(Icons.download),
-                  title: const Text('Will pdf download'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => WillProductsScreen()),
-                    );
-                  },
-                ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   void _editWitness(Witness witness) async {
@@ -218,6 +167,10 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
     }
   }
 
+  bool isAddNewButtonEnabled(List<Witness> witnesses) {
+    return witnesses.length < 2;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -241,11 +194,30 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _checkAndNavigate,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('Add New', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xff429bb8),
+      floatingActionButton: FutureBuilder<WitnessgetResponse>(
+        future: _futureData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              !snapshot.hasData || snapshot.hasError) {
+            return Container(); // Show nothing while loading
+          } else if (snapshot.data!.witnesses.length >= 2) {
+            return Container(); // Hide the button if there are 2 or more witnesses
+          } else {
+            return FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DigitalWitnessScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text('Add New', style: TextStyle(color: Colors.white)),
+              backgroundColor: const Color(0xff429bb8),
+            );
+          }
+        },
       ),
     );
   }
@@ -264,7 +236,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Mobile: ${witness.mobile}'),
-                Text('Address: ${witness.address}'),
+                Text('Address: ${witness.address?.isNotEmpty == true ? witness.address! : "N/A"}'),
               ],
             ),
             trailing: Row(

@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/Nps.dart';
 import '../../Utils/DisplayUtils.dart';
 
@@ -83,7 +84,7 @@ class _NPSEditState extends State<NpsEdit> {
         
                   // Call API to update bank account details
                   final response = await updateNps(updatednps);
-                  DisplayUtils.showToast('Asset updated successfully');
+                  DisplayUtils.showToast(' NPS Asset details updated successfully');
         
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
@@ -226,9 +227,26 @@ class _NPSEditState extends State<NpsEdit> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
-      return null;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final dio = Dio();
@@ -259,8 +277,27 @@ class _NPSEditState extends State<NpsEdit> {
     final token = prefs.getString("token");
 
     if (proof == null || token == null) {
-      return;
-    }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
 
     final formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(proof.path),

@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart'; // Add this for TextInputFormatter
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/AssetModels/VehicleRequest.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
@@ -86,7 +87,7 @@ class _VehicleAddState extends State<VehicleAdd> {
               controller: _registrationNumberController,
               labelText: 'Registration number',
               mandatory: true,
-              isNumeric: true,
+             // isNumeric: true,
             ),
             buildTextField(
               controller: _chassisNumberController,
@@ -175,6 +176,29 @@ class _VehicleAddState extends State<VehicleAdd> {
   Future<void> submitImage() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     try {
       var uri = Uri.parse(
@@ -364,9 +388,26 @@ class _VehicleAddState extends State<VehicleAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
-    // Check if token is null or empty
     if (token == null || token.isEmpty) {
-      // Handle the case where token is not available
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 

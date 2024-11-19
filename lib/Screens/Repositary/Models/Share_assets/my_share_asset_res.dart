@@ -1,35 +1,35 @@
-class MyShareAssetsResponsee {
+class MyShareAssetsResponse {
   bool? success;
-  List<Asset>? assets;
+  List<MyAsset>? assets;
 
-  MyShareAssetsResponsee({this.success, this.assets});
+  MyShareAssetsResponse({this.success, this.assets});
 
-  factory MyShareAssetsResponsee.fromJson(Map<String, dynamic> json) {
-    return MyShareAssetsResponsee(
+  factory MyShareAssetsResponse.fromJson(Map<String, dynamic> json) {
+    return MyShareAssetsResponse(
       success: json['success'] as bool?,
       assets: (json['assets'] as List<dynamic>?)
-          ?.map((item) => Asset.fromJson(item as Map<String, dynamic>))
+          ?.map((item) => MyAsset.fromJson(item as Map<String, dynamic>))
           .toList() ??
           [], // default to an empty list if null
     );
   }
 }
 
-class Asset {
+class MyAsset {
   int id;
   String category;
   List<Detail>? details;
   List<Nominee>? nominees;
 
-  Asset({
+  MyAsset({
     required this.id,
     required this.category,
     this.details,
     this.nominees,
   });
 
-  factory Asset.fromJson(Map<String, dynamic> json) {
-    return Asset(
+  factory MyAsset.fromJson(Map<String, dynamic> json) {
+    return MyAsset(
       id: json['id'] as int,
       category: json['category'] as String,
       details: (json['details'] as List<dynamic>?)

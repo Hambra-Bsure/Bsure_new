@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 part 'response.freezed.dart';
 part 'response.g.dart';
 
@@ -9,7 +8,7 @@ class GetAssetsResponse with _$GetAssetsResponse {
     required List<Asset> assets,
     required bool success,
     required String message,
-  }) = _GetAssetsResponse
+  }) = _GetAssetsResponse;
 
   factory GetAssetsResponse.fromJson(Map<String, dynamic> json) =>
       _$GetAssetsResponseFromJson(json);

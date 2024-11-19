@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/pf.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/Pf_screen.dart';
@@ -82,7 +83,7 @@ class _NPSEditState extends State<PfEdit> {
 
                   // Call API to update bank account details
                   final response = await updatePf(updatedpf);
-                  DisplayUtils.showToast('Asset updated successfully');
+                  DisplayUtils.showToast(' PF Asset details updated successfully');
 
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
@@ -229,9 +230,26 @@ class _NPSEditState extends State<PfEdit> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
-      return null;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final dio = Dio();
@@ -262,8 +280,27 @@ class _NPSEditState extends State<PfEdit> {
     final token = prefs.getString("token");
 
     if (proof == null || token == null) {
-      return;
-    }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
 
     final formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(proof.path),

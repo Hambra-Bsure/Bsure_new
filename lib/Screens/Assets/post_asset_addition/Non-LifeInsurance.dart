@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/AssetModels/NonLifeInsuranceRequest.dart';
 import '../../Utils/DisplayUtils.dart';
+import '../Static_names_list/Non_lifeInsurance.dart';
 import '../get_asset_screens/non_life_insurance_screen.dart';
 
 class NonLifeInsuranceAdd extends StatefulWidget {
@@ -21,8 +23,7 @@ class NonLifeInsuranceAdd extends StatefulWidget {
 }
 
 class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
-  final TextEditingController _insuranceCompanyNameController =
-      TextEditingController();
+  // final TextEditingController _insuranceCompanyNameController = TextEditingController();
   final TextEditingController _policyNameController = TextEditingController();
   final TextEditingController _policyNumberController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
@@ -35,6 +36,9 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
     'Other'
   ];
 
+  String? _selectedNonLifeInsurance;
+  List<Nonlifeinsurance> _nonlifeInsurance = [];
+
   String? _selectedDropdownValue;
   File? file;
   String? fileName;
@@ -43,6 +47,83 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
 
   var proof;
   var name;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNonLifeInsuranceNames();
+  }
+
+  Future<void> _fetchNonLifeInsuranceNames() async {
+    const url = 'http://43.205.12.154:8080/v2/asset/static/nonLifeInsuranceCompanies';
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Print the raw response body for debugging
+        print('Response body: ${response.body}'); // For debugging
+
+        // Decode the response body
+        final List<dynamic> data = json.decode(response.body);
+
+        // Ensure the data is a list of maps (or strings, if applicable)
+        if (data is List) {
+          setState(() {
+            _nonlifeInsurance = data.map((insuranceJson) {
+              if (insuranceJson is Map<String, dynamic>) {
+                return Nonlifeinsurance.fromJson(insuranceJson); // Map to NonLifeInsurance
+              } else if (insuranceJson is String) {
+                return Nonlifeinsurance(name: insuranceJson); // Handle as plain string
+              } else {
+                throw Exception('Unexpected data type: $insuranceJson');
+              }
+            }).toList();
+          });
+
+          // Print fetched insurance names
+          print('Fetched insurance company names: ${_nonlifeInsurance.map((insurance) => insurance.name).toList()}');
+        }
+      } else {
+        print('Failed to load insurance names. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching insurance names: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,11 +138,7 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
           padding: const EdgeInsets.all(16.0),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            buildTextField(
-              controller: _insuranceCompanyNameController,
-              labelText: 'Insurance company name',
-              mandatory: true,
-            ),
+            buildNonLifeInsuranceDropdown(),
             const SizedBox(height: 16),
             buildDropdownField(),
             const SizedBox(height: 16),
@@ -140,6 +217,59 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
       ),
     );
   }
+
+  Widget buildNonLifeInsuranceDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          children: [
+            Text(
+              'Insurance Company name',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _selectedNonLifeInsurance ?? '',
+          isExpanded: true, // Set isExpanded to true
+          onChanged: (value) {
+            setState(() {
+              _selectedNonLifeInsurance = value;
+            });
+          },
+          items: [
+            const DropdownMenuItem<String>(
+              value: '',
+              child: Text('Select Insurance Company Name'),
+            ),
+            ..._nonlifeInsurance.map((insurance) {
+              return DropdownMenuItem<String>(
+                value: insurance.name,
+                child: Text(insurance.name),
+              );
+            }).toList(),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
+    );
+  }
+
 
   Widget buildTextField({
     required TextEditingController controller,
@@ -265,6 +395,29 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     try {
       var uri = Uri.parse('https://dev.bsure.live/v2/asset/attachment');
       var request = http.MultipartRequest('POST', uri);
@@ -320,9 +473,8 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
   }
 
   void _submitForm() async {
-    if (_insuranceCompanyNameController.text.isEmpty ||
-        _selectedDropdownValue == null) {
-      if (_insuranceCompanyNameController.text.isEmpty) {
+    if (_selectedNonLifeInsurance == null || _selectedDropdownValue == null) {
+      if (_selectedNonLifeInsurance == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Insurance company name is required')),
         );
@@ -338,6 +490,25 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
     var token = prefs.getString("token");
 
     if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
@@ -349,7 +520,7 @@ class _NonLifeInsuranceAddState extends State<NonLifeInsuranceAdd> {
         token,
         NonLifeInsuranceRequest(
           assetType: widget.assetType,
-          insuranceCompanyName: _insuranceCompanyNameController.text,
+          insuranceCompanyName: _selectedNonLifeInsurance ?? '',
           typeOfInsurance: _selectedDropdownValue,
           policyName: _policyNameController.text,
           policyNumber: _policyNumberController.text,

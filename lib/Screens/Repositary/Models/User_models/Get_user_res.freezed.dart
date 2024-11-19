@@ -206,6 +206,9 @@ mixin _$User {
   int? get id => throw _privateConstructorUsedError;
   String? get firstName => throw _privateConstructorUsedError;
   String? get lastName => throw _privateConstructorUsedError;
+  String? get fatherName => throw _privateConstructorUsedError;
+  String? get religion => throw _privateConstructorUsedError;
+  String? get spouseName => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get mobileNumber => throw _privateConstructorUsedError;
   String? get whatsappNumber => throw _privateConstructorUsedError;
@@ -230,6 +233,9 @@ abstract class $UserCopyWith<$Res> {
       {int? id,
       String? firstName,
       String? lastName,
+      String? fatherName,
+      String? religion,
+      String? spouseName,
       String? email,
       String? mobileNumber,
       String? whatsappNumber,
@@ -257,6 +263,9 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? id = freezed,
     Object? firstName = freezed,
     Object? lastName = freezed,
+    Object? fatherName = freezed,
+    Object? religion = freezed,
+    Object? spouseName = freezed,
     Object? email = freezed,
     Object? mobileNumber = freezed,
     Object? whatsappNumber = freezed,
@@ -279,6 +288,18 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
       lastName: freezed == lastName
           ? _value.lastName
           : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fatherName: freezed == fatherName
+          ? _value.fatherName
+          : fatherName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      religion: freezed == religion
+          ? _value.religion
+          : religion // ignore: cast_nullable_to_non_nullable
+              as String?,
+      spouseName: freezed == spouseName
+          ? _value.spouseName
+          : spouseName // ignore: cast_nullable_to_non_nullable
               as String?,
       email: freezed == email
           ? _value.email
@@ -331,6 +352,9 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       {int? id,
       String? firstName,
       String? lastName,
+      String? fatherName,
+      String? religion,
+      String? spouseName,
       String? email,
       String? mobileNumber,
       String? whatsappNumber,
@@ -355,6 +379,9 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? firstName = freezed,
     Object? lastName = freezed,
+    Object? fatherName = freezed,
+    Object? religion = freezed,
+    Object? spouseName = freezed,
     Object? email = freezed,
     Object? mobileNumber = freezed,
     Object? whatsappNumber = freezed,
@@ -377,6 +404,18 @@ class __$$UserImplCopyWithImpl<$Res>
       lastName: freezed == lastName
           ? _value.lastName
           : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fatherName: freezed == fatherName
+          ? _value.fatherName
+          : fatherName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      religion: freezed == religion
+          ? _value.religion
+          : religion // ignore: cast_nullable_to_non_nullable
+              as String?,
+      spouseName: freezed == spouseName
+          ? _value.spouseName
+          : spouseName // ignore: cast_nullable_to_non_nullable
               as String?,
       email: freezed == email
           ? _value.email
@@ -425,6 +464,9 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       {this.id,
       this.firstName,
       this.lastName,
+      this.fatherName,
+      this.religion,
+      this.spouseName,
       this.email,
       this.mobileNumber,
       this.whatsappNumber,
@@ -444,6 +486,12 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   final String? firstName;
   @override
   final String? lastName;
+  @override
+  final String? fatherName;
+  @override
+  final String? religion;
+  @override
+  final String? spouseName;
   @override
   final String? email;
   @override
@@ -465,7 +513,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'User(id: $id, firstName: $firstName, lastName: $lastName, email: $email, mobileNumber: $mobileNumber, whatsappNumber: $whatsappNumber, secondaryNumber: $secondaryNumber, address: $address, panNumber: $panNumber, age: $age, gender: $gender, photo: $photo)';
+    return 'User(id: $id, firstName: $firstName, lastName: $lastName, fatherName: $fatherName, religion: $religion, spouseName: $spouseName, email: $email, mobileNumber: $mobileNumber, whatsappNumber: $whatsappNumber, secondaryNumber: $secondaryNumber, address: $address, panNumber: $panNumber, age: $age, gender: $gender, photo: $photo)';
   }
 
   @override
@@ -476,6 +524,9 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('firstName', firstName))
       ..add(DiagnosticsProperty('lastName', lastName))
+      ..add(DiagnosticsProperty('fatherName', fatherName))
+      ..add(DiagnosticsProperty('religion', religion))
+      ..add(DiagnosticsProperty('spouseName', spouseName))
       ..add(DiagnosticsProperty('email', email))
       ..add(DiagnosticsProperty('mobileNumber', mobileNumber))
       ..add(DiagnosticsProperty('whatsappNumber', whatsappNumber))
@@ -497,6 +548,12 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
                 other.firstName == firstName) &&
             (identical(other.lastName, lastName) ||
                 other.lastName == lastName) &&
+            (identical(other.fatherName, fatherName) ||
+                other.fatherName == fatherName) &&
+            (identical(other.religion, religion) ||
+                other.religion == religion) &&
+            (identical(other.spouseName, spouseName) ||
+                other.spouseName == spouseName) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.mobileNumber, mobileNumber) ||
                 other.mobileNumber == mobileNumber) &&
@@ -519,6 +576,9 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       id,
       firstName,
       lastName,
+      fatherName,
+      religion,
+      spouseName,
       email,
       mobileNumber,
       whatsappNumber,
@@ -548,6 +608,9 @@ abstract class _User implements User {
       {final int? id,
       final String? firstName,
       final String? lastName,
+      final String? fatherName,
+      final String? religion,
+      final String? spouseName,
       final String? email,
       final String? mobileNumber,
       final String? whatsappNumber,
@@ -566,6 +629,12 @@ abstract class _User implements User {
   String? get firstName;
   @override
   String? get lastName;
+  @override
+  String? get fatherName;
+  @override
+  String? get religion;
+  @override
+  String? get spouseName;
   @override
   String? get email;
   @override

@@ -1,10 +1,10 @@
-class LifeInsurance {
+class Insurance {
   final String name;
 
-  LifeInsurance({required this.name});
+  Insurance({required this.name});
 
-  factory LifeInsurance.fromJson(Map<String, dynamic> json) {
-    return LifeInsurance(
+  factory Insurance.fromJson(Map<String, dynamic> json) {
+    return Insurance(
       name: json['Insurance company name'] as String, // Adjust this based on your actual JSON field
     );
   }

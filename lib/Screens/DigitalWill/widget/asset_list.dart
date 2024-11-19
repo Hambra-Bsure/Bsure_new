@@ -51,7 +51,7 @@ class _AssetListState extends State<AssetList>
           debugShowCheckedModeBanner: false,
           // Set to false to remove the debug banner
           home: Scaffold(
-            backgroundColor: const Color(0xFF00436A),
+            backgroundColor: Colors.white,
             appBar: AppBar(
               //debugShowCheckedModeBanner: false,
               backgroundColor: const Color(0xff429bb8),
@@ -67,18 +67,18 @@ class _AssetListState extends State<AssetList>
                 },
               ),
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  const Text("Nominee for all your assets",
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          overflow: TextOverflow.ellipsis)),
-                  const SizedBox(height: 5),
-                  Expanded(
+            body: Column(
+              children: [
+                const Text("Nominee for all your assets",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        overflow: TextOverflow.ellipsis)),
+                const SizedBox(height: 5),
+                Expanded(
+                  child: Container(
+                    color: Colors.white,
                     child: PageView.builder(
                       controller: pageController,
                       itemCount: assets.length,
@@ -89,114 +89,22 @@ class _AssetListState extends State<AssetList>
                         });
                       },
                       itemBuilder: (context, index) {
-                        return AssetItem(
-                          key: childKeys[index],
-                          asset: assets[index],
-                          pageNumber: index,
+                        return Container(
+                          color: Colors.white,
+                          // padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: AssetItem(
+                            key: childKeys[index],
+                            asset: assets[index],
+                            pageNumber: index,
+                            isEditable: !sameDistributionCheckbox,
+                          ),
                         );
                       },
                     ),
                   ),
-                  const SizedBox(height: 50),
-                ],
-              ),
-            ),
-            bottomNavigationBar: BottomAppBar(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: currentPage == 0
-                        ? null
-                        : () {
-                            pageController.previousPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_forward),
-                    onPressed: () {
-                      final bool equalDistributionCheckbox = context
-                          .read<WillBloc>()
-                          .state
-                          .assets[currentPage]
-                          .equalDistributionCheckbox;
-
-                      final sameDistributionCheckbox = context
-                          .read<WillBloc>()
-                          .state
-                          .sameDistributionCheckbox;
-
-                      if (childKeys[currentPage].currentState!.validateForm()) {
-                        if (equalDistributionCheckbox) {
-                          if (currentPage == assets.length - 1) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider(
-                                  create: (context) =>
-                                      WillBloc(WillState(assets: assets)),
-                                  child: const PreviewScreen(),
-                                ),
-                              ),
-                            );
-                            return;
-                          } else {
-                            pageController.nextPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut);
-                          }
-                        } else {
-                          final childState = childKeys[currentPage]
-                              .currentState!
-                              .getAssetState();
-
-                          if (sameDistributionCheckbox) {
-                            context.read<WillBloc>().add(
-                                  ManualDistributionAllAssets(
-                                    manualState: childState,
-                                  ),
-                                );
-                          } else {
-                            context
-                                .read<WillBloc>()
-                                .add(ManualDistribution(asset: childState));
-                          }
-                          if (currentPage == assets.length - 1) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider(
-                                  create: (context) =>
-                                      WillBloc(WillState(assets: assets)),
-                                  child: const PreviewScreen(),
-                                ),
-                              ),
-                            );
-                            return;
-                          } else {
-                            pageController.nextPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut);
-                          }
-                        }
-                      } else {
-                        const snackbar = SnackBar(
-                          backgroundColor: Colors.red,
-                          content:
-                              Text("Total of nominees share should be 100"),
-                          duration: Duration(seconds: 3),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                      }
-                      return;
-                    },
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 50),
+              ],
             ),
             floatingActionButton: FloatingActionButton.extended(
               heroTag: 'checkbox2',
@@ -242,11 +150,142 @@ class _AssetListState extends State<AssetList>
                       }
                     },
                   ),
-                  const Text('Use same distribution for all assets '),
+                  const Text('Use same distribution for all assets',
+                      style: TextStyle(color: Colors.white)),
                 ],
               ),
               // icon: Icon(Icons.add),
               backgroundColor: const Color(0xff429bb8),
+            ),
+            bottomNavigationBar: BottomAppBar(
+              color: Colors.white,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Click here to previous asset',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back),
+                            onPressed: currentPage == 0
+                                ? null
+                                : () {
+                                    pageController.previousPage(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  },
+                          ),
+                        ],
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Click here to next asset',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.arrow_forward),
+                            onPressed: () {
+                              final bool equalDistributionCheckbox = context
+                                  .read<WillBloc>()
+                                  .state
+                                  .assets[currentPage]
+                                  .equalDistributionCheckbox;
+
+                              final sameDistributionCheckbox = context
+                                  .read<WillBloc>()
+                                  .state
+                                  .sameDistributionCheckbox;
+
+                              if (childKeys[currentPage]
+                                  .currentState!
+                                  .validateForm()) {
+                                if (equalDistributionCheckbox) {
+                                  if (currentPage == assets.length - 1) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => BlocProvider(
+                                          create: (context) => WillBloc(
+                                              WillState(assets: assets)),
+                                          child: PreviewScreen(),
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  } else {
+                                    pageController.nextPage(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  }
+                                } else {
+                                  final childState = childKeys[currentPage]
+                                      .currentState!
+                                      .getAssetState();
+
+                                  if (sameDistributionCheckbox) {
+                                    context.read<WillBloc>().add(
+                                          ManualDistributionAllAssets(
+                                            manualState: childState,
+                                          ),
+                                        );
+                                  } else {
+                                    context.read<WillBloc>().add(
+                                          ManualDistribution(asset: childState),
+                                        );
+                                  }
+                                  if (currentPage == assets.length - 1) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => BlocProvider(
+                                          create: (context) => WillBloc(
+                                              WillState(assets: assets)),
+                                          child: PreviewScreen(),
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  } else {
+                                    pageController.nextPage(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  }
+                                }
+                              } else {
+                                const snackbar = SnackBar(
+                                  backgroundColor: Colors.red,
+                                  content: Text(
+                                      "Total of nominees' share should be 100"),
+                                  duration: Duration(seconds: 3),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackbar);
+                              }
+                              return;
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         );

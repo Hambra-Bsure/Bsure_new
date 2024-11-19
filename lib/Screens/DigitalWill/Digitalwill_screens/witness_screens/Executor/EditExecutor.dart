@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart'; // Import this for TextInputFormatter
+import '../../../../LoginScreen.dart';
 import '../../../../Repositary/Models/Digital_will/Subscriptions/GetExecutorResponse.dart';
+import '../../../../Utils/DisplayUtils.dart';
 
 class EditExecutor extends StatefulWidget {
   final Executor executor;
@@ -34,15 +37,48 @@ class _EditExecutorState extends State<EditExecutor> {
   }
 
   Future<void> _updateExecutor() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (_firstNameController.text.isEmpty) {
+      DisplayUtils.showToast('firstname  is required');
+      return; // Exit the method if the mobile number is empty
+    } else if (_lastNameController.text.isEmpty) {
+      DisplayUtils.showToast('lastname  is required');
+      return; // Exit the method if the mobile number is empty
+    } else  if (_mobileController.text.isEmpty) {
+      DisplayUtils.showToast('Mobilenumber is required');
+      return; // Exit the method if the mobile number is empty
+    } else if (_fatherNameController.text.isEmpty) {
+      DisplayUtils.showToast('fathername  is required');
+      return; // Exit the method if the mobile number is empty
+    } else if (_ageController.text.isEmpty) {
+      DisplayUtils.showToast('age  is required');
+      return; // Exit the method if the mobile number is empty
+    } else  if (_religionController.text.isEmpty) {
+      DisplayUtils.showToast('Religion  is required');
+      return; // Exit the method if the mobile number is empty
+    }
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-
-    if (token.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Token not found')),
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
       );
       return;
     }
@@ -54,7 +90,7 @@ class _EditExecutorState extends State<EditExecutor> {
     try {
       final dio = Dio();
       final response = await dio.put(
-        'http://43.205.12.154:8080/v2/will/executor',
+        'https://dev.bsure.live/v2/will/executor',
         data: {
           "id": widget.executor.id,
           'firstName': _firstNameController.text,
@@ -72,6 +108,9 @@ class _EditExecutorState extends State<EditExecutor> {
       );
 
       if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Executor updated successfully')),
+        );
         Navigator.of(context).pop(true); // Indicate success
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -107,9 +146,10 @@ class _EditExecutorState extends State<EditExecutor> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
+              buildTextFormField(
                 controller: _firstNameController,
-                decoration: InputDecoration(labelText: 'First Name'),
+                labelText: 'First Name',
+                mandatory: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter first name';
@@ -117,9 +157,10 @@ class _EditExecutorState extends State<EditExecutor> {
                   return null;
                 },
               ),
-              TextFormField(
+              buildTextFormField(
                 controller: _lastNameController,
-                decoration: InputDecoration(labelText: 'Last Name'),
+                labelText: 'Last Name',
+                mandatory: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter last name';
@@ -127,9 +168,10 @@ class _EditExecutorState extends State<EditExecutor> {
                   return null;
                 },
               ),
-              TextFormField(
+              buildTextFormField(
                 controller: _fatherNameController,
-                decoration: InputDecoration(labelText: 'Father Name'),
+                labelText: 'Father Name',
+                mandatory: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter father name';
@@ -137,10 +179,11 @@ class _EditExecutorState extends State<EditExecutor> {
                   return null;
                 },
               ),
-              TextFormField(
+              buildTextFormField(
                 controller: _mobileController,
-                decoration: InputDecoration(labelText: 'Mobile'),
-                keyboardType: TextInputType.phone,
+                labelText: 'Mobile',
+                isNumeric: true,
+                mandatory: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter mobile number';
@@ -148,10 +191,11 @@ class _EditExecutorState extends State<EditExecutor> {
                   return null;
                 },
               ),
-              TextFormField(
+              buildTextFormField(
                 controller: _ageController,
-                decoration: InputDecoration(labelText: 'Age'),
-                keyboardType: TextInputType.number,
+                labelText: 'Age',
+                isNumeric: true,
+                mandatory: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter age';
@@ -159,9 +203,10 @@ class _EditExecutorState extends State<EditExecutor> {
                   return null;
                 },
               ),
-              TextFormField(
+              buildTextFormField(
                 controller: _religionController,
-                decoration: InputDecoration(labelText: 'Religion'),
+                labelText: 'Religion',
+                mandatory: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter religion';
@@ -175,12 +220,73 @@ class _EditExecutorState extends State<EditExecutor> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
                 ),
-                child: const Text('Update'),
+                child: const Text('Update', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget buildTextFormField({
+    required TextEditingController controller,
+    required String labelText,
+    bool mandatory = false,
+    bool isNumeric = false,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              labelText,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (mandatory)
+              const Text(
+                ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          validator: validator,
+          inputFormatters: isNumeric
+              ? [
+            FilteringTextInputFormatter.digitsOnly,
+            NoLeadingSpaceFormatter(), // Formatter applied here
+          ]
+              : [NoLeadingSpaceFormatter()],
+          // Formatter applied here
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(
+                vertical: 12.0, horizontal: 16.0),
+          ),
+          keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+        ),
+      ],
+    );
+  }
+}
+
+class NoLeadingSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

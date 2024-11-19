@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:Bsure_devapp/Screens/Homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../LoginScreen.dart';
 import '../Repositary/Models/User_models/Get_user_res.dart';
 import '../Repositary/Models/User_models/User_request.dart';
 import '../Utils/DisplayUtils.dart';
@@ -23,6 +25,9 @@ class EditProfileState extends State<EditProfile> {
 
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController fatherNameController = TextEditingController();
+  final TextEditingController religionController = TextEditingController();
+  final TextEditingController spouseNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController whatsappController = TextEditingController();
   final TextEditingController secondaryController = TextEditingController();
@@ -40,6 +45,9 @@ class EditProfileState extends State<EditProfile> {
       final user = widget.userProfile!.user!;
       firstNameController.text = user.firstName ?? '';
       lastNameController.text = user.lastName ?? '';
+      fatherNameController.text = user.fatherName ?? '';
+      religionController.text = user.religion ?? '';
+      spouseNameController.text = user.spouseName ?? '';
       emailController.text = user.email ?? '';
       whatsappController.text = user.whatsappNumber ?? '';
       secondaryController.text = user.secondaryNumber ?? '';
@@ -58,20 +66,6 @@ class EditProfileState extends State<EditProfile> {
   }
 
   @override
-  void dispose() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    emailController.dispose();
-    whatsappController.dispose();
-    secondaryController.dispose();
-    addressController.dispose();
-    panNumberController.dispose();
-    ageController.dispose();
-    photoController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
@@ -80,7 +74,12 @@ class EditProfileState extends State<EditProfile> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Homepage(),
+            ),
+          ),
         ),
         backgroundColor: const Color(0xff429bb8),
         title: const Text(
@@ -114,6 +113,10 @@ class EditProfileState extends State<EditProfile> {
               const SizedBox(height: 10),
               _buildLastNameField(),
               const SizedBox(height: 10),
+              _buildFatherNameField(),
+              const SizedBox(height: 10),
+              _buildSpouseNameField(),
+              const SizedBox(height: 10),
               _buildEmailField(),
               const SizedBox(height: 10),
               _buildAgeField(),
@@ -125,6 +128,8 @@ class EditProfileState extends State<EditProfile> {
               _buildSecondaryNoField(),
               const SizedBox(height: 10),
               _buildAddressField(),
+              const SizedBox(height: 10),
+              _buildreligionField(),
               const SizedBox(height: 10),
               _buildPanNumberField(),
               const SizedBox(height: 50),
@@ -164,6 +169,13 @@ class EditProfileState extends State<EditProfile> {
     );
   }
 
+  Widget _buildSpouseNameField() {
+    return _buildTextField(
+      controller: spouseNameController,
+      labelText: 'Spouse name',
+    );
+  }
+
   Widget _buildFirstNameField() {
     return _buildTextField(
       controller: firstNameController,
@@ -172,10 +184,26 @@ class EditProfileState extends State<EditProfile> {
     );
   }
 
+  Widget _buildreligionField() {
+    return _buildTextField(
+      controller: religionController,
+      labelText: 'religion name',
+      isMandatory: true,
+    );
+  }
+
   Widget _buildLastNameField() {
     return _buildTextField(
       controller: lastNameController,
       labelText: 'Last name',
+      isMandatory: true,
+    );
+  }
+
+  Widget _buildFatherNameField() {
+    return _buildTextField(
+      controller: fatherNameController,
+      labelText: 'Father name',
       isMandatory: true,
     );
   }
@@ -273,13 +301,34 @@ class EditProfileState extends State<EditProfile> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    if (token == null) {
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
     final req = UserRequest(
       firstName: firstNameController.text,
       lastName: lastNameController.text,
+      fatherName: fatherNameController.text,
+      religion: religionController.text,
       email: emailController.text.isEmpty ? null : emailController.text,
       whatsappNumber: whatsappController.text,
       secondaryNumber:
@@ -290,14 +339,18 @@ class EditProfileState extends State<EditProfile> {
       age: int.tryParse(ageController.text) ?? 0,
       gender: gender!,
       photo: photoController.text.isEmpty ? null : photoController.text,
+      spouseName: spouseNameController.text.isEmpty ? null : spouseNameController.text,
     );
+
+    print("user");
+    print(req.toJson());
 
     try {
       final response = await http.post(
         Uri.parse('https://dev.bsure.live/v2/users'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token,
+          "Authorization": token.toString(),
         },
         body: jsonEncode(req.toJson()),
       );
@@ -333,7 +386,9 @@ class EditProfileState extends State<EditProfile> {
     if (firstNameController.text.isEmpty ||
         lastNameController.text.isEmpty ||
         whatsappController.text.isEmpty ||
+        fatherNameController.text.isEmpty ||
         ageController.text.isEmpty ||
+        religionController.text.isEmpty ||
         gender == null) {
       if (firstNameController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -347,6 +402,22 @@ class EditProfileState extends State<EditProfile> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Last name is required.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      if (fatherNameController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Father name is required.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      if (religionController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('religion name is required.'),
             backgroundColor: Colors.red,
           ),
         );

@@ -2,6 +2,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/Digital_will/digitalwill_get_res.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../Digitalwill_mainscreen.dart';
@@ -29,7 +30,25 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
     var token = prefs.getString("token");
 
     if (token == null || token.isEmpty) {
-      throw Exception('Token is not available.');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     Dio dio = Dio();
@@ -38,7 +57,7 @@ class _DigitalWillScreenState extends State<DigitalWillScreen> {
     NodeClient nodeClient = NodeClient(dio);
 
     try {
-      var response = await nodeClient.digitalWillGetData(token);
+      var response = await nodeClient.digitalWillGetData(token.toString());
 
       print("Response received:");
       print(response);

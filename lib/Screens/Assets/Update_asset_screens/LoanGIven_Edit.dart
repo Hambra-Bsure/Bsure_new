@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/loan_given_screen.dart';
 
@@ -127,7 +128,7 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
                   // Call API to update loan details
                   final response = await updateLoan(updatedLoan);
 
-                  DisplayUtils.showToast('Asset updated successfully');
+                  DisplayUtils.showToast('Loan given Asset details updated successfully');
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
                     context,
@@ -336,9 +337,26 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
-      return null;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final dio = Dio();
@@ -369,7 +387,26 @@ class _LoanGivenEditState extends State<LoanGivenEdit> {
     final token = prefs.getString("token");
 
     if (proof == null || token == null) {
-      return;
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
     }
 
     final formData = FormData.fromMap({

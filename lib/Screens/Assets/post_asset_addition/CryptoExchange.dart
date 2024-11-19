@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:Bsure_devapp/Screens/Assets/Static_names_list/Crypto_Exchange.dart';
 import 'package:http/http.dart' as http;
 import 'package:Bsure_devapp/Screens/Assets/get_asset_screens/crypto_exchange_screen.dart';
 import 'package:dio/dio.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import this for TextInputFormatter
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/AssetModels/CryptoExchangeRequest.dart';
 import '../../Repositary/Retrofit/node_api_client.dart';
 import '../../Utils/DisplayUtils.dart';
@@ -22,9 +24,11 @@ class CryptoExchangeAdd extends StatefulWidget {
 }
 
 class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
-  final TextEditingController _exchangeNameController = TextEditingController();
-  final TextEditingController _accountNumberController = TextEditingController();
-  final TextEditingController _walletAddressController = TextEditingController();
+  // final TextEditingController _exchangeNameController = TextEditingController();
+  final TextEditingController _accountNumberController =
+      TextEditingController();
+  final TextEditingController _walletAddressController =
+      TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
 
@@ -32,11 +36,88 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
   String? fileName;
   String? downloadUrl;
 
+  String? _selectedCryptoExchange;
+  List<Exchange> _cryptoExchange = [];
+
   Color color1 = const Color(0xff429bb8);
   String url = "";
   var name;
   var proof;
   String? assetId;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCryptoExchangeNames();
+  }
+
+  Future<void> _fetchCryptoExchangeNames() async {
+    const url = 'http://43.205.12.154:8080/v2/asset/static/cryptoExchanges';
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Print the raw response body for debugging
+        print('Response body: ${response.body}'); // Debugging purposes
+
+        // Decode the response body
+        final List<dynamic> data = json.decode(response.body);
+
+        // Ensure the data is a list of strings or maps
+        setState(() {
+          _cryptoExchange = data.map((exchangeJson) {
+            if (exchangeJson is Map<String, dynamic>) {
+              return Exchange.fromJson(exchangeJson); // Map to CryptoExchange
+            } else if (exchangeJson is String) {
+              return Exchange(name: exchangeJson); // Handle plain strings
+            } else {
+              throw Exception('Unexpected data type: $exchangeJson');
+            }
+          }).toList();
+        });
+
+        // Print fetched exchange names for debugging
+        print('Fetched exchange names: ${_cryptoExchange.map((exchange) => exchange.name).toList()}');
+      } else {
+        print('Failed to load exchange names. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching exchange names: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +130,7 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          buildTextField(
-            controller: _exchangeNameController,
-            labelText: 'Exchange name',
-            mandatory: true,
-          ),
+          buildExchangeNameDropdown(),
           buildTextField(
             controller: _accountNumberController,
             labelText: 'Account number',
@@ -122,7 +199,8 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
                 ),
-                child: const Text('Submit', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Submit', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -131,8 +209,63 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
     );
   }
 
+  Widget buildExchangeNameDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          children: [
+            Text(
+              'Exchange name',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _selectedCryptoExchange ?? '',
+          isExpanded: true,
+          // Set isExpanded to true
+          onChanged: (value) {
+            setState(() {
+              _selectedCryptoExchange = value;
+            });
+          },
+          items: [
+            const DropdownMenuItem<String>(
+              value: '',
+              child: Text('Select Exchange Name'),
+            ),
+            ..._cryptoExchange.map((cryptoExchange) {
+              return DropdownMenuItem<String>(
+                value: cryptoExchange.name,
+                child: Text(cryptoExchange.name),
+              );
+            }).toList(),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> uploadFile() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.any, allowMultiple: false);
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
 
     if (result != null) {
       setState(() {
@@ -148,6 +281,28 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
 
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     try {
       var uri = Uri.parse(
@@ -178,13 +333,14 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
         DisplayUtils.showToast("Attachment uploaded successfully");
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
-        var fileUrl = jsonResponse['fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
-        var returnedAssetId = jsonResponse['assetId']; // Assuming the server returns the asset ID in 'assetId' key
+        var fileUrl = jsonResponse[
+            'fileUrl']; // Assuming the server returns the file URL in 'fileUrl' key
+        var returnedAssetId = jsonResponse[
+            'assetId']; // Assuming the server returns the asset ID in 'assetId' key
         // Handle the file URL and asset ID
         print('File URL: $fileUrl');
         print('Asset ID: $returnedAssetId');
 
-        // Navigate to the BankAccountsScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -196,7 +352,6 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
       } else {
         // Handle error response
         print('Failed to upload file: ${response.statusCode}');
-        // Navigate to the BankAccountsScreen even if upload fails
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -209,7 +364,6 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
     } catch (e) {
       // Handle exception
       print('Error uploading file: $e');
-      // Navigate to the BankAccountsScreen in case of error
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -267,16 +421,17 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
           inputFormatters: isNumeric
               ? [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10), // Limiting to 10 digits
-            NoLeadingSpaceFormatter(),
-          ]
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10), // Limiting to 10 digits
+                  NoLeadingSpaceFormatter(),
+                ]
               : [
-            NoLeadingSpaceFormatter(),
-          ],
+                  NoLeadingSpaceFormatter(),
+                ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
         const SizedBox(height: 16),
@@ -285,8 +440,9 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
   }
 
   void _submitForm() async {
-    if (_exchangeNameController.text.isEmpty || _accountNumberController.text.isEmpty) {
-      if (_exchangeNameController.text.isEmpty) {
+    if (_selectedCryptoExchange == null ||
+        _accountNumberController.text.isEmpty) {
+      if (_selectedCryptoExchange == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Exchange name is required')),
         );
@@ -299,12 +455,29 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token"); // Retrieve token from SharedPreferences
+    var token =
+        prefs.getString("token"); // Retrieve token from SharedPreferences
 
-    // Check if token is null or empty
     if (token == null || token.isEmpty) {
-      // Handle the case where token is not available
-
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
@@ -313,7 +486,7 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
 
     final request = CryptoExchangeRequest(
       assetType: widget.assetType,
-      exchangeName: _exchangeNameController.text,
+      exchangeName: _selectedCryptoExchange ?? '',
       accountNumber: _accountNumberController.text,
       walletAddress: _walletAddressController.text,
       comments: _commentsController.text,
@@ -334,7 +507,8 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => CryptoExchangeScreen(assetType: widget.assetType),
+            builder: (context) =>
+                CryptoExchangeScreen(assetType: widget.assetType),
           ),
         );
       }
@@ -344,7 +518,8 @@ class _CryptoExchangeAddState extends State<CryptoExchangeAdd> {
 
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.startsWith(' ')) {
       return oldValue;
     }

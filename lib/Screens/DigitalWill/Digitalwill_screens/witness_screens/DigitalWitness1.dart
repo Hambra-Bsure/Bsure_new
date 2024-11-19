@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../Assets/Update_asset_screens/Bank_Account_Edit.dart';
+import '../../../LoginScreen.dart';
 import '../../../Repositary/Models/Digital_will/Witness1Res.dart';
 import '../../../Repositary/Models/Digital_will/witness1_req.dart';
-import 'get_witness_list.dart';
+import 'Witness_verifyotp.dart';
 
 class DigitalWitnessScreen extends StatefulWidget {
   const DigitalWitnessScreen({Key? key}) : super(key: key);
@@ -18,34 +18,15 @@ class DigitalWitnessScreen extends StatefulWidget {
 
 class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _controller1 = TextEditingController();
-  final TextEditingController _controller2 = TextEditingController();
-  final TextEditingController _controller3 = TextEditingController();
-  final TextEditingController _controller4 = TextEditingController();
-  final TextEditingController _controller5 = TextEditingController();
-  final TextEditingController _controller6 = TextEditingController();
-  final TextEditingController _otpController = TextEditingController();
+  final TextEditingController _controller1 = TextEditingController(); // First Name
+  final TextEditingController _controller2 = TextEditingController(); // Last Name
+  final TextEditingController _controller3 = TextEditingController(); // Age
+  final TextEditingController _controller4 = TextEditingController(); // Mobile Number
+  final TextEditingController _controller5 = TextEditingController(); // Email (optional)
+  final TextEditingController _controller6 = TextEditingController(); // Address (optional)
+  final TextEditingController _controller7 = TextEditingController(); // Father Name
 
-  bool _isOtpFieldVisible = false;
   String? _witnessId;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSavedData();
-  }
-
-  void _loadSavedData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _controller1.text = prefs.getString('firstName') ?? '';
-      _controller2.text = prefs.getString('lastName') ?? '';
-      _controller3.text = prefs.getString('age') ?? '';
-      _controller4.text = prefs.getString('mobile') ?? '';
-      _controller5.text = prefs.getString('email') ?? '';
-      _controller6.text = prefs.getString('address') ?? '';
-    });
-  }
 
   void _saveDataLocally() async {
     final prefs = await SharedPreferences.getInstance();
@@ -55,67 +36,126 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     await prefs.setString('mobile', _controller4.text);
     await prefs.setString('email', _controller5.text);
     await prefs.setString('address', _controller6.text);
+    await prefs.setString('fatherName', _controller7.text);
   }
 
   Future<void> _submit() async {
-    if (_formKey.currentState!.validate()) {
-      _saveDataLocally();
+    if (_controller1.text.isEmpty) {
+      _showSnackbar('First name is required');
+      return;
+    } else if (_controller2.text.isEmpty) {
+      _showSnackbar('Last name is required');
+      return;
+    } else if (_controller3.text.isEmpty) {
+      _showSnackbar('age  is required');
+      return;
+    } else if (_controller4.text.isEmpty) {
+      _showSnackbar('Mobile number is required');
+      return;
+    } else if (_controller7.text.isEmpty) {
+      _showSnackbar('Father name is required');
+      return;
+    }
 
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString("token");
+    _saveDataLocally();
 
-      String firstName = _controller1.text;
-      String lastName = _controller2.text;
-      String age = _controller3.text;
-      String mobileNumber = _controller4.text;
-      String email = _controller5.text;
-      String address = _controller6.text;
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
 
-      Witness1Req witness1Req = Witness1Req(
-        firstName: firstName,
-        lastName: lastName,
-        mobile: mobileNumber,
-        age: int.tryParse(age),
-        emailId: email,
-        address: address,
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    Witness1Req witness1Req = Witness1Req(
+      firstName: _controller1.text,
+      lastName: _controller2.text,
+      mobile: _controller4.text,
+      age: int.tryParse(_controller3.text),
+      emailId: _controller5.text.isNotEmpty ? _controller5.text : null, // Only set if not empty
+      address: _controller6.text.isNotEmpty ? _controller6.text : null, // Only set if not empty
+      fatherName: _controller7.text,
+    );
+
+
+    Map<String, dynamic> body = witness1Req.toJson();
+
+    Uri apiUrl = Uri.parse('https://dev.bsure.live/v2/will/witness');
+
+    try {
+      final response = await http.post(
+        apiUrl,
+        body: jsonEncode(body),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': token,
+        },
       );
 
-      Map<String, dynamic> body = witness1Req.toJson();
-
-      Uri apiUrl = Uri.parse('https://dev.bsure.live/v2/will/witness');
-
-      try {
-        final response = await http.post(
-          apiUrl,
-          body: jsonEncode(body),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': token!,
-          },
-        );
-
-        if (response.statusCode == 201) {
-          Witness1Res witness1Res = Witness1Res.fromJson(jsonDecode(response.body));
-          if (witness1Res.witness != null && witness1Res.witness!.isNotEmpty) {
-            setState(() {
-              _witnessId = witness1Res.witness!.first.id.toString();
-            });
-            await _sendOtp(_witnessId!);
-          } else {
-            _showSnackbar('Witness data is empty or null');
-          }
+      if (response.statusCode == 201) {
+        Witness1Res witness1Res =
+        Witness1Res.fromJson(jsonDecode(response.body));
+        if (witness1Res.witness != null && witness1Res.witness!.isNotEmpty) {
+          setState(() {
+            _witnessId = witness1Res.witness!.first.id.toString();
+          });
+          await _sendOtp(_witnessId!);
         } else {
-          _showSnackbar('Failed to submit witness data');
+          _showSnackbar('Witness data is empty or null');
         }
-      } catch (e) {
-        _showSnackbar('Error submitting witness data: $e');
+      } else {
+        _showSnackbar('Failed to submit witness data');
       }
+    } catch (e) {
+      _showSnackbar('Error submitting witness data: $e');
     }
   }
 
   Future<void> _sendOtp(String witnessId) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      print(token);
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     try {
       final response = await Dio().post(
@@ -127,10 +167,13 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
       );
 
       if (response.statusCode == 200) {
-        setState(() {
-          _isOtpFieldVisible = true;
-        });
-        _showSnackbar('OTP sent successfully');
+        _showSnackbar('Successfully sent otp');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VerifyOtpScreen(witnessId: witnessId),
+          ),
+        );
       } else {
         _showSnackbar('Failed to send OTP');
       }
@@ -139,104 +182,10 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     }
   }
 
-  void _verifyOtp() async {
-    String otp = _otpController.text.trim();
-    if (otp.length == 5) {
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        final token = prefs.getString("token");
-
-        final dio = Dio();
-        dio.options.headers["Authorization"] = token;
-
-        final int? witnessId = int.tryParse(_witnessId!);
-        final int? otpValue = int.tryParse(otp);
-
-        if (witnessId == null || otpValue == null) {
-          throw Exception("Invalid witnessId or OTP");
-        }
-
-        final response = await dio.post(
-          "https://dev.bsure.live/v2/will/witness/verify",
-          data: {"witnessId": witnessId, "otp": otpValue},
-        );
-
-        if (response.statusCode == 200) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DigitalWillGetWitness(),
-            ),
-          );
-          _showSnackbar("OTP verified successfully");
-        } else {
-          _showSnackbar("Failed to verify OTP: ${response.data}");
-        }
-      } catch (e) {
-        _showSnackbar("Exception occurred: $e");
-      }
-    } else {
-      _showSnackbar('Please enter a valid OTP.');
-    }
-  }
-
   void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
-  }
-
-  String? _validateFirstName(String? value) {
-    if (value!.isEmpty) {
-      return 'Please enter first name';
-    }
-    return null;
-  }
-
-  String? _validateLastName(String? value) {
-    if (value!.isEmpty) {
-      return 'Please enter last name';
-    }
-    return null;
-  }
-
-  String? _validateAge(String? value) {
-    if (value!.isEmpty) {
-      return 'Age cannot be empty';
-    }
-    int age = int.tryParse(value) ?? 0;
-    if (age < 21) {
-      return 'Age should be at least 21 years';
-    }
-    return null;
-  }
-
-  String? _validateEmail(String? value) {
-    if (value!.isEmpty) {
-      return 'Email cannot be empty';
-    }
-    final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegExp.hasMatch(value)) {
-      return 'Please enter a valid email address';
-    }
-    return null;
-  }
-
-  String? _validateMobileNumber(String? value) {
-    if (value!.isEmpty) {
-      return 'Please enter mobile number';
-    }
-    if (value.length != 10) {
-      return 'Mobile number should be 10 digits';
-    }
-    return null;
-  }
-
-  String? _validateAddress(String? value) {
-    if (value!.isEmpty) {
-      return 'Please enter address';
-    }
-    return null;
   }
 
   @override
@@ -259,61 +208,59 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
                 _buildTextField(
                   controller: _controller1,
                   labelText: 'First Name',
-                  validator: _validateFirstName,
+                  mandatory: true,
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller2,
                   labelText: 'Last Name',
-                  validator: _validateLastName,
+                  mandatory: true,
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller3,
                   labelText: 'Age',
-                  validator: _validateAge,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  mandatory: true,
+                  isNumeric: true,
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller4,
                   labelText: 'Mobile Number',
-                  validator: _validateMobileNumber,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  mandatory: true,
+                  isNumeric: true,
+                ),
+                const SizedBox(height: 20),
+                _buildTextField(
+                  controller: _controller7,
+                  labelText: 'Father Name',
+                  mandatory: true,
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller5,
                   labelText: 'Email Address',
-                  validator: _validateEmail,
+                  mandatory: false,
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller6,
                   labelText: 'Address',
-                  validator: _validateAddress,
+                  mandatory: false,
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _submit,
-                  child: const Text("Submit"),
-                ),
-                const SizedBox(height: 20),
-                if (_isOtpFieldVisible)
-                  Column(
-                    children: [
-                      _buildTextField(
-                        controller: _otpController,
-                        labelText: 'Enter OTP',
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: _verifyOtp,
-                        child: const Text("Verify OTP"),
-                      ),
-                    ],
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff429bb8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    elevation: 0,
                   ),
+                  child: const Text("Submit",
+                      style: TextStyle(color: Colors.white)),
+                ),
               ],
             ),
           ),
@@ -322,23 +269,47 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     );
   }
 
-  TextFormField _buildTextField({
+  Widget _buildTextField({
     required TextEditingController controller,
     required String labelText,
-    String? Function(String?)? validator,
-    List<TextInputFormatter>? inputFormatters,
+    bool mandatory = false,
+    bool isNumeric = false,
   }) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: labelText,
-        labelStyle: const TextStyle(
-          color: Colors.black,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              labelText,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (mandatory)
+              const Text(
+                ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
         ),
-        border: const OutlineInputBorder(),
-      ),
-      validator: validator,
-      inputFormatters: inputFormatters,
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          inputFormatters:
+          isNumeric ? [FilteringTextInputFormatter.digitsOnly] : [],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+          keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+        ),
+      ],
     );
   }
 }

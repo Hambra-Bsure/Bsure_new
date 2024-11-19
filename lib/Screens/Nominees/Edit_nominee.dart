@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../LoginScreen.dart';
 import '../Repositary/Models/Nominee_models/Edit_nominee_res.dart';
 import '../Repositary/Models/Nominee_models/Get_Nominee_response.dart';
 import '../Utils/DisplayUtils.dart';
@@ -157,7 +158,8 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Edit nominee', style: TextStyle(color: Colors.white)),
+        title:
+            const Text('Edit nominee', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -167,11 +169,15 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildTextFormField(_firstNameController, 'First name', false, true),
+                buildTextFormField(
+                    _firstNameController, 'First name', false, true),
                 const SizedBox(height: 16.0),
-                buildTextFormField(_lastNameController, 'Last name', false, true),
+                buildTextFormField(
+                    _lastNameController, 'Last name', false, true),
                 const SizedBox(height: 16.0),
-                buildTextFormField(_mobileNumberController, 'Mobile number', false, false, keyboardType: TextInputType.phone),
+                buildTextFormField(
+                    _mobileNumberController, 'Mobile number', false, false,
+                    keyboardType: TextInputType.phone),
                 const SizedBox(height: 16.0),
                 DropdownButtonFormField<Relation>(
                   value: _selectedRelation,
@@ -206,7 +212,8 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
                   },
                 ),
                 const SizedBox(height: 16.0),
-                buildTextFormField(_emailController, 'Email id', false, false, keyboardType: TextInputType.emailAddress),
+                buildTextFormField(_emailController, 'Email id', false, false,
+                    keyboardType: TextInputType.emailAddress),
                 const SizedBox(height: 16.0),
                 buildTextFormField(
                   _ageController,
@@ -225,7 +232,8 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
                 if (isGuardianVisible)
                   Column(
                     children: [
-                      buildTextFormField(_guardianNameController, 'Enter Guardian Name', false, true),
+                      buildTextFormField(_guardianNameController,
+                          'Enter Guardian Name', false, true),
                       const SizedBox(height: 10),
                       buildTextFormField(
                         _guardianMobileNumberController,
@@ -237,7 +245,7 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
                     ],
                   ),
                 const SizedBox(height: 16.0),
-                buildTextFormField(_addressController, 'Address', false, true),
+                buildTextFormField(_addressController, 'Address', false, false),
                 const SizedBox(height: 16.0),
                 Center(
                   child: ElevatedButton(
@@ -257,12 +265,15 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
                           guardianMobileNumber: isGuardianVisible
                               ? _guardianMobileNumberController.text
                               : null,
-                          address: _addressController.text,
+                          address: _addressController.text.isNotEmpty
+                              ? _addressController.text
+                              : "",
                         );
 
                         final response = await updateNominee(updatedNomineeReq);
                         if (response != null) {
-                          DisplayUtils.showToast('Nominee Updated Successfully');
+                          DisplayUtils.showToast(
+                              'Nominee Updated Successfully');
                           Navigator.pop(context);
                           Navigator.pushReplacement(
                             context,
@@ -278,7 +289,8 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff429bb8),
                     ),
-                    child: const Text('Update', style: TextStyle(color: Colors.white)),
+                    child: const Text('Update',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ],
@@ -290,14 +302,14 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
   }
 
   Widget buildTextFormField(
-      TextEditingController controller,
-      String label,
-      bool isNumeric,
-      bool isRequired, {
-        TextInputType keyboardType = TextInputType.text,
-        List<TextInputFormatter>? inputFormatters,
-        ValueChanged<String>? onChanged,
-      }) {
+    TextEditingController controller,
+    String label,
+    bool isNumeric,
+    bool isRequired, {
+    TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
+    ValueChanged<String>? onChanged,
+  }) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -327,17 +339,17 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
           borderSide: const BorderSide(color: Color(0xff429bb8)),
         ),
         contentPadding:
-        const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+            const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
       ),
       keyboardType: keyboardType,
       inputFormatters: isNumeric
           ? <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(10),
-      ]
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(10),
+            ]
           : <TextInputFormatter>[
-        NoLeadingSpaceFormatter(),
-      ],
+              NoLeadingSpaceFormatter(),
+            ],
       onChanged: onChanged,
       validator: (value) {
         if (isRequired && (value == null || value.isEmpty)) {
@@ -357,6 +369,28 @@ class _NomineeEditScreenState extends State<NomineeEditScreen> {
   Future<EditNomineeRes?> updateNominee(EditNomineeReq nominee) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
 
     final dio = Dio();
     dio.options.headers["Authorization"] = token; // Add "Bearer" to the token

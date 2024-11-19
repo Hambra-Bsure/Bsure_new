@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../LoginScreen.dart';
 import '../Repositary/Models/User_models/Get_user_res.dart';
 import '../Utils/DisplayUtils.dart';
 import '../homepage.dart';
@@ -31,8 +32,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final sharedPreferences = await SharedPreferences.getInstance();
       final token = sharedPreferences.getString("token");
 
-      if (token == null) {
-        return;
+      if (token == null || token.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
       }
 
       final dio = Dio();
@@ -41,6 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final response = await dio.get('https://dev.bsure.live/v2/users');
 
       if (response.statusCode == 200) {
+        DisplayUtils.showToast('Successfully fetch profile details');
         final getUserResponse = GetUserResponse.fromJson(response.data);
         setState(() {
           userProfile = getUserResponse;
@@ -151,6 +171,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             _buildText('First Name:', user.firstName ?? ''),
             _buildText('Last Name:', user.lastName ?? ''),
+            _buildText('Father Name:', user.fatherName ?? ''),
+            _buildText('Religion Name:', user.religion ?? ''),
             _buildText('Gender:', user.gender ?? ''),
             _buildText('Whatsapp no:', user.whatsappNumber ?? ''),
             if (user.secondaryNumber != null &&
@@ -159,6 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildText('Secondary no:', user.secondaryNumber!),
             if (user.age != null) _buildText('Age:', user.age.toString()),
             if (user.email != null) _buildText('Email id:', user.email!),
+            if (user.spouseName != null) _buildText('Spouse Name:', user.spouseName!),
             if (user.address != null) _buildText('Address:', user.address!),
             if (user.panNumber != null && user.panNumber!.isNotEmpty)
               _buildText('PanNumber:', user.panNumber!),

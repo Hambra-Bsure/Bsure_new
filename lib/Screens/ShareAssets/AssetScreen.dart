@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'MyShareAsssets.dart';
 import 'SelectedAssetsScreen.dart';
 import 'ShareAssetswithme.dart';
 import 'ShareassetBenefits.dart';
@@ -34,7 +35,7 @@ class AssetScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const SelectedAssetsScreen(),
+                      builder: (context) => const MyAssetsScreen(),
                     ),
                   );
                 },
@@ -106,7 +107,7 @@ class AssetScreen extends StatelessWidget {
                   backgroundColor: const Color(0xFF38B6ff),
                 ),
                 child: Text(
-                  'Share assets with Me',
+                  'Assets shared with me',
                   style: TextStyle(
                     fontSize: 18 * scaleFactor,
                     color: Colors.white,

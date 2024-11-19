@@ -3,15 +3,18 @@ class Witness1Req {
   late String firstName;
   late String lastName;
   late String mobile;
-  late String address;
+  late String? address;
+  late String fatherName;
   int? age;
   String? emailId;
+
 
   Witness1Req({
     required this.firstName,
     required this.lastName,
     required this.mobile,
     required this.address,
+    required this.fatherName,
     this.age,
     this.emailId,
   });
@@ -21,6 +24,7 @@ class Witness1Req {
     lastName = json['lastName'];
     mobile = json['mobile'];
     address = json['address'];
+    fatherName = json['fatherName'];
     age = json['age'];
     emailId = json['emailId'];
   }
@@ -31,6 +35,7 @@ class Witness1Req {
     data['lastName'] = lastName;
     data['mobile'] = mobile;
     data['address'] = address;
+    data['fatherName'] = fatherName;
     data['age'] = age;
     data['emailId'] = emailId;
     return data;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/esop.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../get_asset_screens/esop_screen.dart';
@@ -150,7 +151,7 @@ class _EsopEditState extends State<EsopEdit> {
                   // Call API to update Esop details
                   final response = await updateEsop(updatedEsop);
 
-                  DisplayUtils.showToast('Asset updated successfully');
+                  DisplayUtils.showToast('Esop asset details updated successfully');
                   Navigator.pop(context);
                   Navigator.pushReplacement<void, void>(
                     context,
@@ -361,9 +362,26 @@ class _EsopEditState extends State<EsopEdit> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
-      // Handle token absence or expiration here
-      return null;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     final dio = Dio();
@@ -393,8 +411,27 @@ class _EsopEditState extends State<EsopEdit> {
     final token = prefs.getString("token");
 
     if (proof == null || token == null) {
-      return;
-    }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
 
     final formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(proof.path),

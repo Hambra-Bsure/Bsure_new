@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/esop.dart';
 import '../../Utils/DisplayUtils.dart';
 import '../Update_asset_screens/Esop_Edit.dart';
@@ -37,6 +38,29 @@ class _EsopScreenState extends State<EsopScreen> {
 
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     final url = Uri.parse('https://dev.bsure.live/v2/asset/category/Esop');
     final response = await http.get(url, headers: {
@@ -245,7 +269,7 @@ class _EsopScreenState extends State<EsopScreen> {
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
-              overflow: TextOverflow.ellipsis,
+              //overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(width: 8.0),
@@ -253,7 +277,7 @@ class _EsopScreenState extends State<EsopScreen> {
             flex: 7,
             child: Text(
               value ?? '',
-              overflow: TextOverflow.ellipsis,
+              //overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Colors.black87,
               ),
@@ -269,7 +293,26 @@ class _EsopScreenState extends State<EsopScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) {
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Invalid Token'),
+          content: const Text('Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
