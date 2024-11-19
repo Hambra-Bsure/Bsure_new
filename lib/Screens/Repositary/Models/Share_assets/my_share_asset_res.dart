@@ -1,19 +1,19 @@
-class MyShareAssetsResponse {
+class MyShareAssetsResponsee {
   bool? success;
   List<Asset>? assets;
 
-  MyShareAssetsResponse({this.success, this.assets});
+  MyShareAssetsResponsee({this.success, this.assets});
 
-  factory MyShareAssetsResponse.fromJson(Map<String, dynamic> json) {
-    return MyShareAssetsResponse(
+  factory MyShareAssetsResponsee.fromJson(Map<String, dynamic> json) {
+    return MyShareAssetsResponsee(
       success: json['success'] as bool?,
       assets: (json['assets'] as List<dynamic>?)
           ?.map((item) => Asset.fromJson(item as Map<String, dynamic>))
-          .toList() ?? [], // default to an empty list if null
+          .toList() ??
+          [], // default to an empty list if null
     );
   }
 }
-
 
 class Asset {
   int id;
@@ -34,10 +34,12 @@ class Asset {
       category: json['category'] as String,
       details: (json['details'] as List<dynamic>?)
           ?.map((item) => Detail.fromJson(item as Map<String, dynamic>))
-          .toList() ?? [], // default to an empty list if null
+          .toList() ??
+          [], // default to an empty list if null
       nominees: (json['nominees'] as List<dynamic>?)
           ?.map((item) => Nominee.fromJson(item as Map<String, dynamic>))
-          .toList() ?? [], // default to an empty list if null
+          .toList() ??
+          [], // default to an empty list if null
     );
   }
 }
@@ -51,7 +53,8 @@ class Detail {
   factory Detail.fromJson(Map<String, dynamic> json) {
     return Detail(
       fieldName: json['fieldName'] as String,
-      fieldValue: json['fieldValue'] != null ? json['fieldValue'].toString() : null,
+      fieldValue:
+      json['fieldValue'] != null ? json['fieldValue'].toString() : null,
       // Convert fieldValue to a string using toString(), or handle null case appropriately
     );
   }
@@ -62,7 +65,10 @@ class Nominee {
   String lastName;
   int sharedAssetId;
 
-  Nominee({required this.firstName, required this.lastName, required this.sharedAssetId});
+  Nominee(
+      {required this.firstName,
+        required this.lastName,
+        required this.sharedAssetId});
 
   factory Nominee.fromJson(Map<String, dynamic> json) {
     return Nominee(
