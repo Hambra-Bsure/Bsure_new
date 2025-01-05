@@ -116,17 +116,23 @@ class _AssetListState extends State<AssetList>
                   Checkbox(
                     value: sameDistributionCheckbox,
                     onChanged: (value) {
+                      context.read<WillBloc>().add(UpdateSameDistributionCheckbox(value ?? false));
+
                       final bool equalDistributionCheckbox = context
                           .read<WillBloc>()
                           .state
                           .assets[currentPage]
                           .equalDistributionCheckbox;
                       if (value == true) {
+                        context.read<WillBloc>().add(EqualDistributeAllAssets());
+
                         if (equalDistributionCheckbox) {
                           context
                               .read<WillBloc>()
                               .add(EqualDistributeAllAssets());
                         } else {
+                          context.read<WillBloc>().add(UndoEqualDistributeAllAssets());
+
                           final manualState = childKeys[currentPage]
                               .currentState!
                               .getAssetState();

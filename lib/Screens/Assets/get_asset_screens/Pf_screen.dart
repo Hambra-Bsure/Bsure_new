@@ -63,7 +63,7 @@ class _PfScreenState extends State<PfScreen> {
       return;
     }
 
-    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/Pf');
+    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Pf');
     final response = await http.get(url, headers: {
       "Authorization": token.toString(),
       "ngrok-skip-browser-warning": "69420",
@@ -254,6 +254,11 @@ class _PfScreenState extends State<PfScreen> {
   }
 
   Widget buildInfoRow(String label, String? value) {
+    if (value == null || value.isEmpty) {
+      return const SizedBox
+          .shrink(); // Return an empty widget if there's no value
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -319,7 +324,7 @@ class _PfScreenState extends State<PfScreen> {
 
     try {
       final response = await dio.delete(
-        'https://dev.bsure.live/v2/asset/${mutualFund.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${mutualFund.assetId}',
       );
 
       if (response.statusCode == 200) {

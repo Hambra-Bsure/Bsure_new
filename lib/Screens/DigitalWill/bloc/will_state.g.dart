@@ -14,12 +14,14 @@ _$WillStateImpl _$$WillStateImplFromJson(Map<String, dynamic> json) =>
           const <Asset>[],
       sameDistributionCheckbox:
           json['sameDistributionCheckbox'] as bool? ?? false,
+      distributeEqually: json['distributeEqually'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$WillStateImplToJson(_$WillStateImpl instance) =>
     <String, dynamic>{
       'assets': instance.assets,
       'sameDistributionCheckbox': instance.sameDistributionCheckbox,
+      'distributeEqually': instance.distributeEqually,
     };
 
 _$AssetImpl _$$AssetImplFromJson(Map<String, dynamic> json) => _$AssetImpl(

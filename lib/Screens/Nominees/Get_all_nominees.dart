@@ -57,7 +57,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
       return;
     }
 
-    final url = Uri.parse('https://dev.bsure.live/v2/nominee/all');
+    final url = Uri.parse('http://43.205.12.154:8080/v2/nominee/all');
     final response = await http.get(url, headers: {
       "Authorization": token.toString(),
       "ngrok-skip-browser-warning": "69420",
@@ -102,11 +102,14 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                     var showGuardianInfo = age != null && age < 18;
                     return Card(
                       color: Colors.white,
+                      elevation: 4,
+                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Edit Button Row
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -130,33 +133,34 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                                 ),
                               ],
                             ),
-                            Text('First Name: ${nominee.firstName}'),
-                            const SizedBox(height: 8.0),
-                            Text('Last Name: ${nominee.lastName ?? ""}'),
-                            const SizedBox(height: 8.0),
-                            Text(
-                                'Mobile Number: ${nominee.mobileNumber ?? ""}'),
-                            const SizedBox(height: 8.0),
-                            Text('Age: ${nominee.age ?? ""}'),
-                            const SizedBox(height: 8.0),
+                            // Conditional display for each field
+                            // Conditional display for each field
+                            if ((nominee.firstName?.isNotEmpty ?? false) || (nominee.lastName?.isNotEmpty ?? false))
+                              buildLabelValue(
+                                'Name',
+                                '${nominee.firstName ?? ''} ${nominee.lastName ?? ''}'.trim(),
+                              ),
+                            if (nominee.mobileNumber?.isNotEmpty ?? false)
+                              buildLabelValue('Mobile Number', nominee.mobileNumber),
+                            if (nominee.age != null)
+                              buildLabelValue('Age', nominee.age.toString()),
                             if (showGuardianInfo) ...[
-                              Text(
-                                'Guardian name: ${nominee.guardianName}',
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Guardian mobile no: ${nominee.guardianMobileNumber}',
-                              ),
+                              if (nominee.guardianName?.isNotEmpty ?? false)
+                                buildLabelValue('Guardian Name', nominee.guardianName),
+                              if (nominee.guardianMobileNumber?.isNotEmpty ?? false)
+                                buildLabelValue(
+                                  'Guardian Mobile Number',
+                                  nominee.guardianMobileNumber,
+                                ),
                             ],
-                            const SizedBox(height: 8.0),
-                            Text('Email: ${nominee.email ?? ""}'),
-                            const SizedBox(height: 8.0),
-                            Text('Relation: ${nominee.relation ?? ""}'),
-                            const SizedBox(height: 8.0),
-                            Text('Address: ${nominee.address ?? ""}'),
-                            // SizedBox(height: 8.0),
-                            // Text('Image: ${nominee.image ?? ""}'),
-                            const SizedBox(height: 8.0),
+                            if (nominee.email?.isNotEmpty ?? false)
+                              buildLabelValue('Email', nominee.email),
+                            if (nominee.relation?.isNotEmpty ?? false)
+                              buildLabelValue('Relation', nominee.relation),
+                            if (nominee.address?.isNotEmpty ?? false)
+                              buildLabelValue('Address', nominee.address),
+                            const SizedBox(height: 16),
+                            // Delete Button
                             Center(
                               child: ElevatedButton(
                                 onPressed: () {
@@ -171,9 +175,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                                           TextButton(
                                             child: const Text(
                                               "Cancel",
-                                              style: TextStyle(
-                                                color: Color(0xff429bb8),
-                                              ),
+                                              style: TextStyle(color: Color(0xff429bb8)),
                                             ),
                                             onPressed: () {
                                               Navigator.of(context).pop();
@@ -182,9 +184,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
                                           TextButton(
                                             child: const Text(
                                               "Confirm",
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                              ),
+                                              style: TextStyle(color: Colors.red),
                                             ),
                                             onPressed: () async {
                                               Navigator.of(context).pop();
@@ -251,6 +251,34 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
     );
   }
 
+  Widget buildLabelValue(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0), // Adjust spacing as needed
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space between label and value
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "$label :",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value ?? '',
+              textAlign: TextAlign.right, // Align value text to the right
+              style: const TextStyle(color: Colors.black54),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
   Future<void> deleteNominee(int index) async {
     final nominee = nominees[index];
     final prefs = await SharedPreferences.getInstance();
@@ -284,7 +312,7 @@ class _GetNomineeScreenState extends State<GetNomineeScreen> {
 
     try {
       final response = await dio.delete(
-        'https://dev.bsure.live/v2/nominee/${nominee.id}',
+        'http://43.205.12.154:8080/v2/nominee/${nominee.id}',
       );
 
       if (response.statusCode == 200) {

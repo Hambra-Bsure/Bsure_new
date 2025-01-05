@@ -97,7 +97,10 @@ class WillBloc extends Bloc<WillEvent, WillState> {
       Emitter<WillState> emit,
       ) {
     emit(
-      state.copyWith(sameDistributionCheckbox: event.value),
+      state.copyWith(
+        sameDistributionCheckbox: event.value,
+        distributeEqually: event.value, // Sync distribute equally with same distribution
+      ),
     );
   }
 

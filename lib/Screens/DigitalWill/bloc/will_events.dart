@@ -81,11 +81,13 @@ Events {
 class AssetState {
   final int assetId;
   final bool equalDistributionCheckbox;
+  final bool distributeEqualy;
   final Map<int, double> nomineeShares;
 
-  AssetState({
+  AssetState( {
     required this.equalDistributionCheckbox,
     required this.assetId,
     required this.nomineeShares,
+    required this.distributeEqualy
   });
 }

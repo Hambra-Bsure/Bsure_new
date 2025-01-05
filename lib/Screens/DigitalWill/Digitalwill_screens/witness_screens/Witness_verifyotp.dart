@@ -17,68 +17,78 @@ class VerifyOtpScreen extends StatefulWidget {
 
 class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   final TextEditingController _otpController = TextEditingController();
+  String? _errorMessage;
 
   void _verifyOtp() async {
     String otp = _otpController.text.trim();
-    if (otp.length == 5) {
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        final token = prefs.getString("token");
 
-        if (token == null || token.isEmpty) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Invalid Token'),
-              content: const Text('Please log in again.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LoginPage()),
-                    );
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-          return;
-        }
+    // Check if OTP length is exactly 5
+    if (otp.length != 5) {
+      setState(() {
+        _errorMessage = 'Please enter a valid 5-digit OTP.';
+      });
+      return;
+    }
 
-        final dio = Dio();
-        dio.options.headers["Authorization"] = token;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token");
 
-        final int? witnessId = int.tryParse(widget.witnessId!);
-        final int? otpValue = int.tryParse(otp);
-
-        if (witnessId == null || otpValue == null) {
-          throw Exception("Invalid witnessId or OTP");
-        }
-
-        final response = await dio.post(
-          "https://dev.bsure.live/v2/will/witness/verify",
-          data: {"witnessId": witnessId, "otp": otpValue},
+      if (token == null || token.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Token'),
+            content: const Text('Please log in again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
         );
-
-        if (response.statusCode == 200) {
-          DisplayUtils.showToast("OTP verified successfully");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DigitalWillGetWitness(),
-            ),
-          );
-        } else {
-          //_showSnackbar("Failed to verify OTP: ${response.data}");
-        }
-      } catch (e) {
-       // _showSnackbar("Exception occurred: $e");
+        return;
       }
-    } else {
-      //_showSnackbar('Please enter a valid OTP.');
+
+      final dio = Dio();
+      dio.options.headers["Authorization"] = token;
+
+      final int? witnessId = int.tryParse(widget.witnessId);
+      final int? otpValue = int.tryParse(otp);
+
+      if (witnessId == null || otpValue == null) {
+        throw Exception("Invalid witnessId or OTP");
+      }
+
+      final response = await dio.post(
+        "http://43.205.12.154:8080/v2/will/witness/verify",
+        data: {"witnessId": witnessId, "otp": otpValue},
+      );
+
+      if (response.statusCode == 200) {
+        DisplayUtils.showToast("OTP verified successfully");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DigitalWillGetWitness(),
+          ),
+        );
+      } else {
+        setState(() {
+          _errorMessage = "Incorrect OTP. Please try again.";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        DisplayUtils.showToast("Please enter correct otp");
+      });
     }
   }
 
@@ -97,13 +107,15 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           children: [
             TextFormField(
               controller: _otpController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Enter OTP',
-                labelStyle: TextStyle(color: Colors.black),
-                border: OutlineInputBorder(),
+                labelStyle: const TextStyle(color: Colors.black),
+                border: const OutlineInputBorder(),
+                errorText: _errorMessage, // Display error message here
               ),
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               keyboardType: TextInputType.number,
+              maxLength: 5, // Limit OTP length to 5
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -115,7 +127,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 ),
                 elevation: 0,
               ),
-              child: const Text("Verify OTP",style: TextStyle(color: Colors.white)),
+              child: const Text("Verify OTP", style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

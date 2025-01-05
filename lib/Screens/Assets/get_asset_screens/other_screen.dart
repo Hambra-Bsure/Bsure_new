@@ -61,7 +61,7 @@ class _OtherScreenState extends State<OtherScreen> {
       return;
     }
 
-    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/Other');
+    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Other');
     final response = await http.get(url, headers: {
       "Authorization": token ?? "",
       "ngrok-skip-browser-warning": "69420",
@@ -127,7 +127,7 @@ class _OtherScreenState extends State<OtherScreen> {
 
     try {
       final response = await dio.delete(
-        'https://dev.bsure.live/v2/asset/${otherAsset.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${otherAsset.assetId}',
       );
 
       if (response.statusCode == 200) {
@@ -286,6 +286,11 @@ class _OtherScreenState extends State<OtherScreen> {
   }
 
   Widget buildInfoRow(String label, String? value) {
+    if (value == null || value.isEmpty) {
+      return const SizedBox
+          .shrink(); // Return an empty widget if there's no value
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(

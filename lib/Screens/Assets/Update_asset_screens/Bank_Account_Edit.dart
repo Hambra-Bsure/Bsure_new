@@ -225,7 +225,7 @@ class _BankAccountEditState extends State<BankAccountEdit> {
       inputFormatters: isNumeric
           ? <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(10),
+              //LengthLimitingTextInputFormatter(10),
             ]
           : <TextInputFormatter>[],
     );
@@ -465,7 +465,7 @@ class _BankAccountEditState extends State<BankAccountEdit> {
 
     try {
       final response = await dio.put(
-        'https://dev.bsure.live/v2/asset/${account.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${account.assetId}',
         data: account.toJson(),
       );
 
@@ -498,7 +498,7 @@ class _BankAccountEditState extends State<BankAccountEdit> {
 
     try {
       await dio.post(
-        "https://dev.bsure.live/v2/asset/${widget.account.assetId}/upload",
+        "http://43.205.12.154:8080/v2/asset/${widget.account.assetId}/upload",
         data: formData,
       );
     } catch (e) {

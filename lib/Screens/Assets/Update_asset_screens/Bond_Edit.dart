@@ -384,7 +384,7 @@ class _BondEditState extends State<BondEdit> {
 
     try {
       final response = await dio.put(
-        'https://dev.bsure.live/v2/asset/${bond.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${bond.assetId}',
         data: bond
             .toJson(), // Convert bond object to JSON and send as request body
       );
@@ -419,7 +419,7 @@ class _BondEditState extends State<BondEdit> {
 
     try {
       await dio.post(
-        "https://dev.bsure.live/v2/asset/${widget.bond.assetId}/upload",
+        "http://43.205.12.154:8080/v2/asset/${widget.bond.assetId}/upload",
         data: formData,
       );
     } catch (e) {

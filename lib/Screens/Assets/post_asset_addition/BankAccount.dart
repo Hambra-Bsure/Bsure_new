@@ -156,6 +156,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                   mandatory: false,
                   isNumeric: true),
               buildTextField(
+                //textCapitalization: TextCapitalization.words,
                 controller: _ifscCodeController,
                 labelText: 'IFSC code',
                 mandatory: false,
@@ -164,12 +165,14 @@ class _BankAccountAddState extends State<BankAccountAdd> {
                 controller: _branchNameController,
                 labelText: 'Branch name',
                 mandatory: true,
+               // textCapitalization: TextCapitalization.words,
               ),
               buildAccountTypeDropdown(),
               buildTextField(
                 controller: _commentsController,
                 labelText: 'Comments',
                 mandatory: false,
+                //textCapitalization: TextCapitalization.words,
               ),
               const SizedBox(height: 20),
               Column(
@@ -241,7 +244,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
     required String labelText,
     bool mandatory = false,
     bool isNumeric = false,
-    bool capitalizeFirstLetter = false,
+   // TextCapitalization textCapitalization = TextCapitalization.words, // Default value
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,9 +284,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
             EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
-          textCapitalization: capitalizeFirstLetter
-              ? TextCapitalization.words
-              : TextCapitalization.none,
+          //textCapitalization: textCapitalization, // Use the parameter here
         ),
       ],
     );
@@ -400,6 +401,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
     // Validate the form inputs
     if (_selectedBank == null ||
         _branchNameController.text.trim().isEmpty ||
+        _branchNameController.text.trim().length < 4 || // New validation check
         _selectedAccountType == null) {
       // Display appropriate error messages based on which field is empty
       if (_selectedBank == null) {
@@ -410,6 +412,10 @@ class _BankAccountAddState extends State<BankAccountAdd> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Branch name is required')),
         );
+      } else if (_branchNameController.text.trim().length < 4) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Branch name must contain at least 4 characters')),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Account type is required')),
@@ -417,6 +423,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
       }
       return;
     }
+
 
     // Get token from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
@@ -546,7 +553,7 @@ class _BankAccountAddState extends State<BankAccountAdd> {
 
     try {
       var uri = Uri.parse(
-          'https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
+          'http://43.205.12.154:8080/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers

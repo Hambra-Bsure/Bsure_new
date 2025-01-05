@@ -60,7 +60,7 @@ class _WillPaymentsScreenState extends State<WillPaymentsScreen> {
       final token = prefs.get("token");
 
       final response = await http.post(
-        Uri.parse('https://dev.bsure.live/v2/subscription/create-order'),
+        Uri.parse('http://43.205.12.154:8080/v2/subscription/create-order'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token.toString(),
@@ -176,10 +176,12 @@ class PaymentSuccessScreen extends StatelessWidget {
   final String transactionId;
   final double amount;
 
-  const PaymentSuccessScreen({
+  const
+  PaymentSuccessScreen({
     required this.transactionId,
     required this.amount,
   });
+
 
   Future<void> _downloadPdf(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -208,13 +210,24 @@ class PaymentSuccessScreen extends StatelessWidget {
       return;
     }
 
+    // Define the spouseConsent variable
+    bool spouseConsent = true; // or false, depending on your logic
+
     try {
-      final response = await http.get(
-        Uri.parse('https://dev.bsure.live/v2/will/pdf'),
+      final payload = jsonEncode({"spouseConsent": spouseConsent});
+      print('Payload: $payload'); // Print the payload
+
+      final response = await http.post(
+        Uri.parse('http://43.205.12.154:8080/v2/will/pdf'),
         headers: {
           'Authorization': token ?? '',
+          'Content-Type': 'application/json', // Ensure the content type is set
         },
+        body: payload,
       );
+
+      print('Response status: ${response.statusCode}'); // Print response status
+      print('Response body: ${response.body}'); // Print response body
 
       if (response.statusCode == 200) {
         DisplayUtils.showToast('Successfully downloaded pdf');

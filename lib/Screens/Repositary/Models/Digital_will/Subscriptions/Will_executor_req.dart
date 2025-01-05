@@ -6,6 +6,7 @@ class WillExecutorReq {
   String? address;
   int? age;
   String? religion;
+  String? gender;
 
   WillExecutorReq(
       {this.firstName,
@@ -14,7 +15,8 @@ class WillExecutorReq {
       this.fatherName,
       this.address,
       this.age,
-      this.religion});
+      this.religion,
+      this.gender});
 
   WillExecutorReq.fromJson(Map<String, dynamic> json) {
     firstName = json['firstName'];
@@ -24,6 +26,7 @@ class WillExecutorReq {
     address = json['address'];
     age = json['age'];
     religion = json['religion'];
+    gender = json['gender'];
   }
 
   Map<String, dynamic> toJson() {
@@ -35,6 +38,7 @@ class WillExecutorReq {
     data['address'] = this.address;
     data['age'] = this.age;
     data['religion'] = this.religion;
+    data['gender'] = this.gender;
     return data;
   }
 }

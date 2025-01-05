@@ -370,7 +370,7 @@ class _GoldEditState extends State<GoldEdit> {
 
     try {
       final response = await dio.put(
-        'https://dev.bsure.live/v2/asset/${gold.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${gold.assetId}',
         data: gold
             .toJson(), // Convert gold object to JSON and send as request body
       );
@@ -405,7 +405,7 @@ class _GoldEditState extends State<GoldEdit> {
 
     try {
       await dio.post(
-        "https://dev.bsure.live/v2/asset/${widget.gold.assetId}/upload",
+        "http://43.205.12.154:8080/v2/asset/${widget.gold.assetId}/upload",
         data: formData,
       );
     } catch (e) {
@@ -413,6 +413,7 @@ class _GoldEditState extends State<GoldEdit> {
     }
   }
 }
+
 
 
 class NoLeadingSpaceFormatter extends TextInputFormatter {

@@ -270,7 +270,7 @@ class _NomineeForAllAssetsState extends State<NomineeForAllAssets> {
           ),
         );
       } else {
-        // Handle case where OTP verification fails
+
         setState(() {
           errorMessage = 'Incorrect OTP. Please try again.';
         });

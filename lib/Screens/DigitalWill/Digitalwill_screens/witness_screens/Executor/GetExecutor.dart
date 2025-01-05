@@ -54,7 +54,7 @@ class _GetExecutorState extends State<GetExecutor> {
     try {
       final dio = Dio();
       final response = await dio.get(
-        'https://dev.bsure.live/v2/will/executor',
+        'http://43.205.12.154:8080/v2/will/executor',
         options: Options(
           headers: {
             'Authorization': token,
@@ -189,7 +189,7 @@ class _GetExecutorState extends State<GetExecutor> {
     try {
       final dio = Dio();
       final response = await dio.delete(
-        'https://dev.bsure.live/v2/will/executor',
+        'http://43.205.12.154:8080/v2/will/executor',
         options: Options(
           headers: {
             'Authorization': token,

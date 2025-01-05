@@ -79,7 +79,8 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
 
     try {
       final response = await http.get(
-        Uri.parse(url),
+        Uri.parse
+          (url),
         headers: {
           'Authorization': token,
           'Content-Type': 'application/json',
@@ -413,7 +414,7 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
 
     try {
       final response = await dio.put(
-        'https://dev.bsure.live/v2/asset/${cryptoExchange.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${cryptoExchange.assetId}',
         data: cryptoExchange
             .toJson(), // Convert account object to JSON and send as request body
       );
@@ -466,7 +467,7 @@ class _CryptoExchangeEditState extends State<CryptoExchangeEdit> {
 
     try {
       await dio.post(
-        "https://dev.bsure.live/v2/asset/${widget.cryptoexchange.assetId}/upload",
+        "http://43.205.12.154:8080/v2/asset/${widget.cryptoexchange.assetId}/upload",
         data: formData,
       );
     } catch (e) {

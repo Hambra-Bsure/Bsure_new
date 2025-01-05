@@ -79,7 +79,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
       throw Exception('Token is not available.');
     }
 
-    const url = 'https://dev.bsure.live/v2/will/executor';
+    const url = 'http://43.205.12.154:8080/v2/will/executor';
 
     try {
       final response = await Dio().get(
@@ -142,7 +142,7 @@ class _DigitalWillGetWitnessState extends State<DigitalWillGetWitness> {
         final token = prefs.getString("token");
 
         final response = await Dio().delete(
-          'https://dev.bsure.live/v2/will/witness/$witnessId',
+          'http://43.205.12.154:8080/v2/will/witness/$witnessId',
           options: Options(
             headers: {'Authorization': '$token'},
           ),

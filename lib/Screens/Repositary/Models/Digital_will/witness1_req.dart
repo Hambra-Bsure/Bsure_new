@@ -1,43 +1,32 @@
-
 class Witness1Req {
-  late String firstName;
-  late String lastName;
-  late String mobile;
-  late String? address;
-  late String fatherName;
-  int? age;
-  String? emailId;
+  String? firstName;
+  String? lastName;
+  String? mobile;
+  String? fatherName;
+  bool? isAbove18;
 
-
-  Witness1Req({
-    required this.firstName,
-    required this.lastName,
-    required this.mobile,
-    required this.address,
-    required this.fatherName,
-    this.age,
-    this.emailId,
-  });
+  Witness1Req(
+      {this.firstName,
+        this.lastName,
+        this.mobile,
+        this.fatherName,
+        this.isAbove18});
 
   Witness1Req.fromJson(Map<String, dynamic> json) {
     firstName = json['firstName'];
     lastName = json['lastName'];
     mobile = json['mobile'];
-    address = json['address'];
     fatherName = json['fatherName'];
-    age = json['age'];
-    emailId = json['emailId'];
+    isAbove18 = json['isAbove18'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['firstName'] = firstName;
-    data['lastName'] = lastName;
-    data['mobile'] = mobile;
-    data['address'] = address;
-    data['fatherName'] = fatherName;
-    data['age'] = age;
-    data['emailId'] = emailId;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['firstName'] = this.firstName;
+    data['lastName'] = this.lastName;
+    data['mobile'] = this.mobile;
+    data['fatherName'] = this.fatherName;
+    data['isAbove18'] = this.isAbove18;
     return data;
   }
 }

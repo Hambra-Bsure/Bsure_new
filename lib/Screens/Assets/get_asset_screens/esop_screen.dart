@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../LoginScreen.dart';
 import '../../Repositary/Models/get_asset_models/esop.dart';
 import '../../Utils/DisplayUtils.dart';
@@ -62,7 +61,7 @@ class _EsopScreenState extends State<EsopScreen> {
       return;
     }
 
-    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/Esop');
+    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Esop');
     final response = await http.get(url, headers: {
       "Authorization": token ?? '',
       "ngrok-skip-browser-warning": "69420",
@@ -101,127 +100,137 @@ class _EsopScreenState extends State<EsopScreen> {
         title: const Text('Esop', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
-          ? const Center(child:  Text("No assets found", style: TextStyle(fontSize: 20.0)))
+          ? const Center(
+              child: Text("No assets found", style: TextStyle(fontSize: 20.0)))
           : esop.isEmpty
-          ? const Center(child: Text("No assets found",style: TextStyle(fontSize: 20.0)))
-          : ListView.builder(
-        itemCount: esop.length,
-        itemBuilder: (context, index) {
-          final esops = esop[index];
-          return Card(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit,
-                            color: Color(0xff429bb8)),
-                        onPressed: () async {
-                          final updatedesop = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EsopEdit(
-                                esop: esops,
-                                assetType: category,
+              ? const Center(
+                  child:
+                      Text("No assets found", style: TextStyle(fontSize: 20.0)))
+              : ListView.builder(
+                  itemCount: esop.length,
+                  itemBuilder: (context, index) {
+                    final esops = esop[index];
+                    return Card(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit,
+                                      color: Color(0xff429bb8)),
+                                  onPressed: () async {
+                                    final updatedesop = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EsopEdit(
+                                          esop: esops,
+                                          assetType: category,
+                                        ),
+                                      ),
+                                    );
+                                    if (updatedesop != null) {
+                                      setState(() {
+                                        esop[index] = updatedesop;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                            buildInfoRow('Company name', esops.companyName),
+                            const SizedBox(height: 8.0),
+                            buildInfoRow('Number of stocks',
+                                esops.numberOfStocks?.toString() ?? 'N/A'),
+                            const SizedBox(height: 8.0),
+                            buildInfoRow(
+                                'Option price', esops.optionPrice?.toString()),
+                            const SizedBox(height: 8.0),
+                            buildInfoRow('Expiry date', esops.expiryDate),
+                            const SizedBox(height: 8.0),
+                            buildInfoRow(
+                                'Total shares svailable for issue',
+                                esops.totalSharesAvailableForIssue
+                                        ?.toString() ??
+                                    'N/A'),
+                            const SizedBox(height: 8.0),
+                            buildInfoRow('Issue price per share',
+                                esops.issuePricePerShare?.toString()),
+                            const SizedBox(height: 8.0),
+                            buildInfoRow('Comments', esops.comments),
+                            const SizedBox(height: 8.0),
+                            buildInfoRow('Attachment', esops.attachment),
+                            const SizedBox(height: 8.0),
+                            ElevatedButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Delete asset?"),
+                                      content: const Text(
+                                          "Are you sure you want to delete this Asset?"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text(
+                                            "Cancel",
+                                            style: TextStyle(
+                                              color: Color(0xff429bb8),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text(
+                                            "Confirm",
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            Navigator.of(context).pop();
+                                            deleteAssetStatus(index);
+                                            List<Esop> newEsops = <Esop>[];
+                                            newEsops.addAll(esop);
+                                            newEsops.removeAt(index);
+                                            setState(() {
+                                              esop = newEsops;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                backgroundColor: const Color(0xff429bb8),
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.delete, color: Colors.white),
+                                  SizedBox(width: 5),
+                                  Text("Delete",
+                                      style: TextStyle(color: Colors.white)),
+                                ],
                               ),
                             ),
-                          );
-                          if (updatedesop != null) {
-                            setState(() {
-                              esop[index] = updatedesop;
-                            });
-                          }
-                        },
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                  buildInfoRow('Company name', esops.companyName),
-                  const SizedBox(height: 8.0),
-                  buildInfoRow('Number of stocks', esops.numberOfStocks?.toString() ?? 'N/A'),
-                  const SizedBox(height: 8.0),
-                  buildInfoRow('Option price', esops.optionPrice?.toString()),
-                  const SizedBox(height: 8.0),
-                  buildInfoRow('Expiry date', esops.expiryDate),
-                  const SizedBox(height: 8.0),
-                  buildInfoRow('Total shares svailable for issue', esops.totalSharesAvailableForIssue?.toString() ?? 'N/A'),
-                  const SizedBox(height: 8.0),
-                  buildInfoRow('Issue price per share', esops.issuePricePerShare?.toString()),
-                  const SizedBox(height: 8.0),
-                  buildInfoRow('Comments', esops.comments),
-                  const SizedBox(height: 8.0),
-                  buildInfoRow('Attachment', esops.attachment),
-                  const SizedBox(height: 8.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Delete asset?"),
-                            content: const Text(
-                                "Are you sure you want to delete this Asset?"),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                    color: Color(0xff429bb8),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: const Text(
-                                  "Confirm",
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                  ),
-                                ),
-                                onPressed: () async {
-                                  Navigator.of(context).pop();
-                                  deleteAssetStatus(index);
-                                  List<Esop> newEsops = <Esop>[];
-                                  newEsops .addAll(esop);
-                                  newEsops .removeAt(index);
-                                  setState(() {
-                                    esop = newEsops;
-                                  });
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      backgroundColor: const Color(0xff429bb8),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.delete, color: Colors.white),
-                        SizedBox(width: 5),
-                        Text("Delete",
-                            style: TextStyle(color: Colors.white)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+                    );
+                  },
+                ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
@@ -256,6 +265,11 @@ class _EsopScreenState extends State<EsopScreen> {
   }
 
   Widget buildInfoRow(String label, String? value) {
+    if (value == null || value.isEmpty) {
+      return const SizedBox
+          .shrink(); // Return an empty widget if there's no value
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -321,7 +335,7 @@ class _EsopScreenState extends State<EsopScreen> {
 
     try {
       final response = await dio.delete(
-        'https://dev.bsure.live/v2/asset/${esopToDelete.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${esopToDelete.assetId}',
       );
 
       if (response.statusCode == 200) {

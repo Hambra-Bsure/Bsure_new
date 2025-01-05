@@ -308,7 +308,7 @@ class _MutualFundAddState extends State<MutualFundAdd> {
 
     try {
       var uri = Uri.parse(
-          'https://dev.bsure.live/v2/asset/attachment'); // Update the URL to your API endpoint
+          'http://43.205.12.154:8080/v2/asset/attachment'); // Update the URL to your API endpoint
       var request = http.MultipartRequest('POST', uri);
 
       // Set headers
@@ -369,16 +369,22 @@ class _MutualFundAddState extends State<MutualFundAdd> {
   }
 
   Future<String?> saveFileLocally(FilePickerResult result) async {
-    final file = File(result.files.single.path!); // Get the file
-    // Define a directory where the file will be saved
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final String filePath = '${directory.path}/${result.files.single.name}';
+    try {
+      // Get the directory to save the file
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/${result.files.single.name}';
+      final file = File(filePath);
 
-    // Copy the file to the application directory
-    await file.copy(filePath);
+      // Save the file to the local directory
+      await file.writeAsBytes(result.files.single.bytes!);
 
-    return filePath; // Return the saved file path
+      return filePath; // Return the file path
+    } catch (e) {
+      print('Error saving file locally: $e');
+      return null; // Return null in case of an error
+    }
   }
+
 
   Widget buildTextField({
     required TextEditingController controller,
@@ -386,6 +392,8 @@ class _MutualFundAddState extends State<MutualFundAdd> {
     bool mandatory = false,
     bool isNumeric = false,
   }) {
+
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

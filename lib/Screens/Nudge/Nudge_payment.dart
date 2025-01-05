@@ -419,7 +419,7 @@ class _PlanSelectedDetailsState extends State<PlanSelectedDetails> {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token") ?? "";
 
-    const apiUrl = 'https://dev.bsure.live/node/api/payment/create-order';
+    const apiUrl = 'http://43.205.12.154:8080/node/api/payment/create-order';
 
     try {
       final response = await http.post(

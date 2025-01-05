@@ -57,7 +57,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         }
 
         final response = await dio.post(
-          "https://dev.bsure.live/v2/will/witness/verify",
+          "http://43.205.12.154:8080/v2/will/witness/verify",
           data: {"witnessId": witnessId, "otp": otpValue},
         );
 

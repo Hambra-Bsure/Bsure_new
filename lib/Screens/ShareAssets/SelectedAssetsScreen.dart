@@ -77,7 +77,7 @@ class _SelectedAssetsScreenState extends State<SelectedAssetsScreen> {
 
     try {
       final res = await http.get(
-        Uri.parse("https://dev.bsure.live/v2/asset/all"),
+        Uri.parse("http://43.205.12.154:8080/v2/asset/all"),
         headers: {
           "Authorization": token.toString(),
         },
@@ -386,7 +386,7 @@ class _NomineeCardWidgetState extends State<NomineeCardWidget> {
       }
 
       final res = await http.get(
-        Uri.parse("https://dev.bsure.live/v2/nominee/all"),
+        Uri.parse("http://43.205.12.154:8080/v2/nominee/all"),
         headers: {
           "Authorization": token.toString(),
         },
@@ -619,7 +619,7 @@ class _NomineeCardWidgetState extends State<NomineeCardWidget> {
       };
 
       final res = await http.post(
-        Uri.parse("https://dev.bsure.live/v2/share"),
+        Uri.parse("http://43.205.12.154:8080/v2/share"),
         headers: {
           "Authorization": token!,
           "Content-Type": "application/json",

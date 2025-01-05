@@ -19,6 +19,8 @@ class _WillScreenState extends State<WillScreen> {
   String errorMessage = '';
   bool paymentSuccess = false;
   String willPdfUrl = '';
+  bool isMarried = false;
+  bool isUnmarried = false;
 
   @override
   void initState() {
@@ -34,7 +36,7 @@ class _WillScreenState extends State<WillScreen> {
 
       if (token.isEmpty) return;
 
-      final url = Uri.parse('https://dev.bsure.live/v2/will/isPaidWillUser');
+      final url = Uri.parse('http://43.205.12.154:8080/v2/will/isPaidWillUser');
       final response = await http.get(
         url,
         headers: {
@@ -63,7 +65,7 @@ class _WillScreenState extends State<WillScreen> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString("token") ?? '';
 
-      if (token == null || token.isEmpty) {
+      if (token.isEmpty) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -85,7 +87,7 @@ class _WillScreenState extends State<WillScreen> {
         );
       }
 
-      final url = Uri.parse('https://dev.bsure.live/v2/will/check-exists');
+      final url = Uri.parse('http://43.205.12.154:8080/v2/will/check-exists');
       final response = await http.get(
         url,
         headers: {
@@ -135,14 +137,7 @@ class _WillScreenState extends State<WillScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AppWidget(),
-                  ),
-                );
-              },
+              onPressed: () => hasWill ? navigateToUpdateWill() : _showMaritalStatusDialog(),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(
                   horizontal: 40 * scaleFactor,
@@ -236,6 +231,76 @@ class _WillScreenState extends State<WillScreen> {
     );
   }
 
+  void _showMaritalStatusDialog() {
+    setState(() {
+      isMarried = false;
+      isUnmarried = false;
+    });
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Select Marital Status"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CheckboxListTile(
+                    title: const Text("Married"),
+                    value: isMarried,
+                    onChanged: (value) {
+                      setState(() {
+                        isMarried = value ?? false;
+                        isUnmarried = false;
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text("Unmarried"),
+                    value: isUnmarried,
+                    onChanged: (value) {
+                      setState(() {
+                        isUnmarried = value ?? false;
+                        isMarried = false;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (isMarried) {
+                      Navigator.pop(context);
+                      // Navigate to the next step
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AppWidget(),
+                        ),
+                      );
+                    } else if (isUnmarried) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Unmarried users cannot proceed.")),
+                      );
+                    }
+                  },
+                  child: const Text("Next"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> downloadPdf() async {
     if (!paymentSuccess) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -247,6 +312,14 @@ class _WillScreenState extends State<WillScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => PdfDownloadScreen(pdfUrl: willPdfUrl)),
+    );
+  }
+
+  void navigateToUpdateWill() {
+    // Navigate to the update will screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AppWidget()), // Replace with actual update screen
     );
   }
 }

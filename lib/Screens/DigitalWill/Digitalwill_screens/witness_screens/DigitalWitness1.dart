@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +28,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
   final TextEditingController _controller7 = TextEditingController(); // Father Name
 
   String? _witnessId;
+  bool _isAbove18 = false;
 
   void _saveDataLocally() async {
     final prefs = await SharedPreferences.getInstance();
@@ -46,14 +48,14 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
     } else if (_controller2.text.isEmpty) {
       _showSnackbar('Last name is required');
       return;
-    } else if (_controller3.text.isEmpty) {
-      _showSnackbar('age  is required');
-      return;
     } else if (_controller4.text.isEmpty) {
       _showSnackbar('Mobile number is required');
       return;
     } else if (_controller7.text.isEmpty) {
       _showSnackbar('Father name is required');
+      return;
+    } else if (!_isAbove18) {
+      _showSnackbar('You must confirm that you are above 18 years');
       return;
     }
 
@@ -89,16 +91,13 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
       firstName: _controller1.text,
       lastName: _controller2.text,
       mobile: _controller4.text,
-      age: int.tryParse(_controller3.text),
-      emailId: _controller5.text.isNotEmpty ? _controller5.text : null, // Only set if not empty
-      address: _controller6.text.isNotEmpty ? _controller6.text : null, // Only set if not empty
       fatherName: _controller7.text,
+      isAbove18: _isAbove18
     );
-
 
     Map<String, dynamic> body = witness1Req.toJson();
 
-    Uri apiUrl = Uri.parse('https://dev.bsure.live/v2/will/witness');
+    Uri apiUrl = Uri.parse('http://43.205.12.154:8080/v2/will/witness');
 
     try {
       final response = await http.post(
@@ -159,7 +158,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
 
     try {
       final response = await Dio().post(
-        'https://dev.bsure.live/v2/will/witness/otp',
+        'http://43.205.12.154:8080/v2/will/witness/otp',
         data: {"witnessId": int.parse(witnessId)},
         options: Options(
           headers: {'Authorization': token},
@@ -198,7 +197,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(8.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -217,12 +216,7 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
                   mandatory: true,
                 ),
                 const SizedBox(height: 20),
-                _buildTextField(
-                  controller: _controller3,
-                  labelText: 'Age',
-                  mandatory: true,
-                  isNumeric: true,
-                ),
+                _buildAgeCheckboxField(),
                 const SizedBox(height: 20),
                 _buildTextField(
                   controller: _controller4,
@@ -268,6 +262,45 @@ class _DigitalWitnessScreenState extends State<DigitalWitnessScreen> {
       ),
     );
   }
+
+  Widget _buildAgeCheckboxField() {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _isAbove18 = !_isAbove18;
+          });
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Confirm witness age is more than 18 years',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            Checkbox(
+              value: _isAbove18,
+              onChanged: (value) {
+                setState(() {
+                  _isAbove18 = value ?? false;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 
   Widget _buildTextField({
     required TextEditingController controller,

@@ -328,7 +328,7 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
 
     try {
       final response = await dio.put(
-        'https://dev.bsure.live/v2/asset/${postOfficeAccount.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${postOfficeAccount.assetId}',
         data: postOfficeAccount
             .toJson(), // Convert account object to JSON and send as request body
       );
@@ -382,7 +382,7 @@ class _PostOfficeAccountEditState extends State<PostOfficeAccountEdit> {
 
     try {
       await dio.post(
-        "https://dev.bsure.live/v2/asset/${widget.postOffice.assetId}/upload",
+        "http://43.205.12.154:8080/v2/asset/${widget.postOffice.assetId}/upload",
         data: formData,
       );
     } catch (e) {

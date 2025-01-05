@@ -22,6 +22,7 @@ WillState _$WillStateFromJson(Map<String, dynamic> json) {
 mixin _$WillState {
   List<Asset> get assets => throw _privateConstructorUsedError;
   bool get sameDistributionCheckbox => throw _privateConstructorUsedError;
+  bool get distributeEqually => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +35,10 @@ abstract class $WillStateCopyWith<$Res> {
   factory $WillStateCopyWith(WillState value, $Res Function(WillState) then) =
       _$WillStateCopyWithImpl<$Res, WillState>;
   @useResult
-  $Res call({List<Asset> assets, bool sameDistributionCheckbox});
+  $Res call(
+      {List<Asset> assets,
+      bool sameDistributionCheckbox,
+      bool distributeEqually});
 }
 
 /// @nodoc
@@ -52,6 +56,7 @@ class _$WillStateCopyWithImpl<$Res, $Val extends WillState>
   $Res call({
     Object? assets = null,
     Object? sameDistributionCheckbox = null,
+    Object? distributeEqually = null,
   }) {
     return _then(_value.copyWith(
       assets: null == assets
@@ -61,6 +66,10 @@ class _$WillStateCopyWithImpl<$Res, $Val extends WillState>
       sameDistributionCheckbox: null == sameDistributionCheckbox
           ? _value.sameDistributionCheckbox
           : sameDistributionCheckbox // ignore: cast_nullable_to_non_nullable
+              as bool,
+      distributeEqually: null == distributeEqually
+          ? _value.distributeEqually
+          : distributeEqually // ignore: cast_nullable_to_non_nullable
               as bool,
     ) as $Val);
   }
@@ -74,7 +83,10 @@ abstract class _$$WillStateImplCopyWith<$Res>
       __$$WillStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<Asset> assets, bool sameDistributionCheckbox});
+  $Res call(
+      {List<Asset> assets,
+      bool sameDistributionCheckbox,
+      bool distributeEqually});
 }
 
 /// @nodoc
@@ -90,6 +102,7 @@ class __$$WillStateImplCopyWithImpl<$Res>
   $Res call({
     Object? assets = null,
     Object? sameDistributionCheckbox = null,
+    Object? distributeEqually = null,
   }) {
     return _then(_$WillStateImpl(
       assets: null == assets
@@ -100,6 +113,10 @@ class __$$WillStateImplCopyWithImpl<$Res>
           ? _value.sameDistributionCheckbox
           : sameDistributionCheckbox // ignore: cast_nullable_to_non_nullable
               as bool,
+      distributeEqually: null == distributeEqually
+          ? _value.distributeEqually
+          : distributeEqually // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -109,7 +126,8 @@ class __$$WillStateImplCopyWithImpl<$Res>
 class _$WillStateImpl implements _WillState {
   const _$WillStateImpl(
       {final List<Asset> assets = const <Asset>[],
-      this.sameDistributionCheckbox = false})
+      this.sameDistributionCheckbox = false,
+      this.distributeEqually = false})
       : _assets = assets;
 
   factory _$WillStateImpl.fromJson(Map<String, dynamic> json) =>
@@ -127,10 +145,13 @@ class _$WillStateImpl implements _WillState {
   @override
   @JsonKey()
   final bool sameDistributionCheckbox;
+  @override
+  @JsonKey()
+  final bool distributeEqually;
 
   @override
   String toString() {
-    return 'WillState(assets: $assets, sameDistributionCheckbox: $sameDistributionCheckbox)';
+    return 'WillState(assets: $assets, sameDistributionCheckbox: $sameDistributionCheckbox, distributeEqually: $distributeEqually)';
   }
 
   @override
@@ -141,13 +162,18 @@ class _$WillStateImpl implements _WillState {
             const DeepCollectionEquality().equals(other._assets, _assets) &&
             (identical(
                     other.sameDistributionCheckbox, sameDistributionCheckbox) ||
-                other.sameDistributionCheckbox == sameDistributionCheckbox));
+                other.sameDistributionCheckbox == sameDistributionCheckbox) &&
+            (identical(other.distributeEqually, distributeEqually) ||
+                other.distributeEqually == distributeEqually));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_assets), sameDistributionCheckbox);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_assets),
+      sameDistributionCheckbox,
+      distributeEqually);
 
   @JsonKey(ignore: true)
   @override
@@ -166,7 +192,8 @@ class _$WillStateImpl implements _WillState {
 abstract class _WillState implements WillState {
   const factory _WillState(
       {final List<Asset> assets,
-      final bool sameDistributionCheckbox}) = _$WillStateImpl;
+      final bool sameDistributionCheckbox,
+      final bool distributeEqually}) = _$WillStateImpl;
 
   factory _WillState.fromJson(Map<String, dynamic> json) =
       _$WillStateImpl.fromJson;
@@ -175,6 +202,8 @@ abstract class _WillState implements WillState {
   List<Asset> get assets;
   @override
   bool get sameDistributionCheckbox;
+  @override
+  bool get distributeEqually;
   @override
   @JsonKey(ignore: true)
   _$$WillStateImplCopyWith<_$WillStateImpl> get copyWith =>

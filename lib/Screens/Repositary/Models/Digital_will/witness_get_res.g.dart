@@ -28,6 +28,7 @@ _$WitnessImpl _$$WitnessImplFromJson(Map<String, dynamic> json) =>
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       mobile: json['mobile'] as String,
+      fatherName: json['fatherName'] as String,
       address: json['address'] as String?,
       verified: json['verified'] as bool,
     );
@@ -38,6 +39,7 @@ Map<String, dynamic> _$$WitnessImplToJson(_$WitnessImpl instance) =>
       'firstName': instance.firstName,
       'lastName': instance.lastName,
       'mobile': instance.mobile,
+      'fatherName': instance.fatherName,
       'address': instance.address,
       'verified': instance.verified,
     };

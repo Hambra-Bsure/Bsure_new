@@ -1,10 +1,14 @@
+import 'package:Bsure_devapp/Screens/Repositary/Models/Share_assets/ShareAssetnewrequest.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/Share_assets/my_share_asset_res.dart';
 import 'package:Bsure_devapp/Screens/Repositary/Models/Share_assets/response.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../LoginScreen.dart';
 import '../Repositary/Models/Nominee_models/Get_Nominee_response.dart';
+import '../Repositary/Models/Share_assets/ShareAssetnewresponse.dart';
+import '../Repositary/Models/User_models/Get_user_res.dart';
 import '../Utils/DisplayUtils.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -18,13 +22,14 @@ class MyAssetsScreen extends StatefulWidget {
 
 class _MyAssetsScreenState extends State<MyAssetsScreen> {
   MyShareAssetsResponse? myShareAssetsResponse;
-  bool isLoading = true;
+  bool isLoading = false;
   List<Asset> _assets = [];
-  final List<int> _selectedAssetIds = [];
+  final List<int> _selectedNomineeIds = []; // List to hold selected nominee IDs
   Map<int, List<String>> selectedNomineesMap = {};
   final Map<int, List<int>> selectedNomineeIdsMap = {};
-  List<int> _storedSelectedAssetIds = []; // To store selected asset IDs
-  List<int> _storedSelectedNomineeIds = [];
+  bool isLoaded = false;
+
+  GetUserResponse? Userprofile;
 
   @override
   void initState() {
@@ -35,38 +40,7 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
   Future<void> _initialize() async {
     await _getAllCategoryAssets();
     await _getSharedAssets();
-    await _loadStoredIds(); // Now you can await this
-  }
-
-  Future<void> _loadStoredIds() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // Debugging: Check what is stored in SharedPreferences
-    print(
-        "All SharedPreferences keys and values: ${prefs.getKeys().map((key) => '$key: ${prefs.getStringList(key)}').toList()}");
-
-    // Retrieve the stored asset IDs
-    List<String>? storedAssetIds = prefs.getStringList('selectedAssetIds');
-    List<String>? storedNomineeIds = prefs.getStringList('selectedNomineeIds');
-
-    // Check if the retrieved values are valid lists
-    if (storedAssetIds != null && storedAssetIds.isNotEmpty) {
-      _storedSelectedAssetIds =
-          storedAssetIds.map((id) => int.parse(id)).toList();
-    } else {
-      print("No stored asset IDs found or it's not a list.");
-    }
-
-    if (storedNomineeIds != null && storedNomineeIds.isNotEmpty) {
-      _storedSelectedNomineeIds =
-          storedNomineeIds.map((id) => int.parse(id)).toList();
-    } else {
-      print("No stored nominee IDs found or it's not a list.");
-    }
-
-    // Print the loaded IDs for verification
-    print("Loaded Asset IDs: $_storedSelectedAssetIds");
-    print("Loaded Nominee IDs: $_storedSelectedNomineeIds");
+    await getData();
   }
 
   Future<void> _getSharedAssets() async {
@@ -81,31 +55,25 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
 
       final dio = Dio();
       dio.options.headers["Authorization"] = token;
-      const url = 'https://dev.bsure.live/v2/share/by-me';
+      const url = 'http://43.205.12.154:8080/v2/share/by-me';
 
       final response = await dio.get(url);
 
       if (response.statusCode == 200) {
         myShareAssetsResponse = MyShareAssetsResponse.fromJson(response.data);
-
-        if (myShareAssetsResponse != null &&
-            myShareAssetsResponse!.assets != null) {
+        if (myShareAssetsResponse?.assets != null) {
           for (var asset in myShareAssetsResponse!.assets!) {
-            selectedNomineesMap[asset.id] = asset.nominees != null
-                ? asset.nominees!
-                    .map(
+            selectedNomineesMap[asset.id] = asset.nominees
+                    ?.map(
                         (nominee) => '${nominee.firstName} ${nominee.lastName}')
-                    .toList()
-                : [];
-
-            // Store the nominee IDs for this asset
+                    .toList() ??
+                [];
             selectedNomineeIdsMap[asset.id] = asset.nominees
                     ?.map((nominee) => nominee.sharedAssetId ?? 0)
                     .toList() ??
                 [];
           }
         }
-
         setState(() {
           isLoading = false;
         });
@@ -131,7 +99,7 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
 
     try {
       final res = await http.get(
-        Uri.parse("https://dev.bsure.live/v2/asset/all"),
+        Uri.parse("http://43.205.12.154:8080/v2/asset/all"),
         headers: {"Authorization": token},
       );
 
@@ -150,6 +118,53 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
         const SnackBar(content: Text('Failed to fetch assets')),
       );
       setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> getData() async {
+    try {
+      final sharedPreferences = await SharedPreferences.getInstance();
+      final token = sharedPreferences.getString("token");
+
+      if (token == null || token.isEmpty) {
+        _showLoginAlert();
+        return;
+      }
+
+      final dio = Dio();
+      dio.options.headers['Authorization'] = token;
+
+      final response = await dio.get('http://43.205.12.154:8080/v2/users');
+
+      if (response.statusCode == 200) {
+        //DisplayUtils.showToast('Successfully fetched profile details');
+
+        final getUserResponse = GetUserResponse.fromJson(response.data);
+        final user = getUserResponse.user;
+
+        setState(() {
+          Userprofile = getUserResponse;
+          isLoaded = true;
+        });
+
+        if (user != null) {
+          final firstName = user.firstName ?? 'N/A';
+          final lastName = user.lastName ?? 'N/A';
+          await sharedPreferences.setString('firstName', firstName);
+          await sharedPreferences.setString('lastName', lastName);
+          print('First Name: $firstName, Last Name: $lastName');
+        }
+      } else {
+        DisplayUtils.showToast('Failed to fetch user profile');
+        setState(() {
+          isLoaded = true;
+        });
+      }
+    } catch (error) {
+      DisplayUtils.showToast("Error fetching data");
+      setState(() {
+        isLoaded = true;
+      });
     }
   }
 
@@ -209,46 +224,55 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                for (var assetDetail in asset.assetList)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 5,
-                        child: Text(
-                          '${_capitalizeWords(assetDetail.fieldName)}:',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                // Check if assetList is empty
+                if (asset.assetList.isNotEmpty) ...[
+                  for (var assetDetail in asset.assetList)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: Text(
+                            '${_capitalizeWords(assetDetail.fieldName)}:',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          _getDisplayValue(assetDetail.fieldValue),
-                          style: const TextStyle(fontSize: 16),
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            _getDisplayValue(assetDetail.fieldValue),
+                            style: const TextStyle(fontSize: 16),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                ] else ...[
+                  // Optionally show a message when assetList is empty
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'No details available',
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
                   ),
+                ],
                 const SizedBox(height: 10),
                 NomineeCardWidget(
                   assetId: asset.id ?? 0,
-                  selectedAssetIds: _storedSelectedNomineeIds,
-                  // This can be used for other purposes if needed
-                  initiallySelectedNomineeIds:
-                      selectedNomineeIdsMap[asset.id] ?? [],
-                  // Ensure this is the correct list
-                  onNomineeSelected: (assetId, isSelected) {
+                  initiallySelectedNomineeIds: selectedNomineeIdsMap[asset.id] ?? [],
+                  onNomineeSelected: (nomineeId, isSelected) {
                     setState(() {
                       if (isSelected) {
-                        _selectedAssetIds.add(assetId);
+                        _selectedNomineeIds.add(nomineeId);
                       } else {
-                        _selectedAssetIds.remove(assetId);
+                        _selectedNomineeIds.remove(nomineeId);
                       }
                     });
                   },
+                  selectedNomineeIdsMap: selectedNomineeIdsMap, // Pass the map here
                 ),
                 const Divider(),
               ],
@@ -280,6 +304,98 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
     }
   }
 
+  Future<void> submitNominees() async {
+    setState(() => isLoading = true);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token");
+      if (token == null) {
+        throw Exception("Authentication token is missing.");
+      }
+
+      List<ShareAssetsreq> shareAssets = [];
+
+      for (var asset in _assets) {
+        final selectedNomineeIds = selectedNomineeIdsMap[asset.id] ?? [];
+        if (selectedNomineeIds.isNotEmpty) {
+          shareAssets.add(ShareAssetsreq(
+              assetId: asset.id, nomineeIds: selectedNomineeIds));
+        }
+      }
+
+      // Debugging: Check if shareAssets is empty
+      print('Share Assets: $shareAssets');
+
+      // Check if shareAssets is empty before proceeding
+      if (shareAssets.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No nominees selected to share.')),
+        );
+        return; // Exit the function if no nominees are selected
+      }
+
+      final payload = ShareAssetsnewrequest(shareAssets: shareAssets).toJson();
+
+      final response = await http.post(
+        Uri.parse("http://43.205.12.154:8080/v2/share/new"),
+        headers: {
+          "Authorization": token,
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(payload),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        ShareAssetsnewresponse apiResponse =
+        ShareAssetsnewresponse.fromJson(responseBody);
+
+        if (apiResponse.success == true) {
+          _shareNomineeInfo(_selectedNomineeIds);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Shared Assets submitted successfully')),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => MyAssetsScreen()),
+          );
+        } else {
+          throw Exception(apiResponse.message ?? 'Failed to submit nominees');
+        }
+      } else {
+        final responseBody = jsonDecode(response.body);
+        throw Exception(responseBody['message'] ?? 'Failed to submit nominees');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _shareNomineeInfo(List<int> selectedNomineeIds) async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final firstName = sharedPreferences.getString('firstName');
+    final lastName = sharedPreferences.getString('lastName');
+
+    if (firstName != null && lastName != null) {
+      final customizedShareText =
+          '$firstName $lastName has shared some of his assets for your view in Bsure App. '
+          'Please log into Bsure App to view the details, visit: '
+          'https://play.google.com/store/apps/details?id=com.bsure&pcampaignid=web_share';
+
+      Share.share(customizedShareText);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('User  profile not loaded. Cannot share.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -292,23 +408,48 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _buildAssetsList(),
+          : Column(children: [
+              Expanded(child: _buildAssetsList()),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: _selectedNomineeIds.isNotEmpty
+                      ? () {
+                          submitNominees(); // Call without parameters
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff429bb8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text(
+                    'Submit',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ]),
     );
   }
 }
 
 class NomineeCardWidget extends StatefulWidget {
   final int assetId;
-  final List<int> selectedAssetIds;
   final List<int> initiallySelectedNomineeIds;
-  final Function(int, bool) onNomineeSelected;
+  final Function(int nomineeId, bool isSelected) onNomineeSelected;
+  final Map<int, List<int>> selectedNomineeIdsMap;
 
   const NomineeCardWidget({
     Key? key,
     required this.assetId,
-    required this.selectedAssetIds,
     required this.initiallySelectedNomineeIds,
     required this.onNomineeSelected,
+    required this.selectedNomineeIdsMap,
   }) : super(key: key);
 
   @override
@@ -336,7 +477,7 @@ class _NomineeCardWidgetState extends State<NomineeCardWidget> {
       }
 
       final res = await http.get(
-        Uri.parse("https://dev.bsure.live/v2/nominee/all"),
+        Uri.parse("http://43.205.12.154:8080/v2/nominee/all"),
         headers: {
           "Authorization": token,
         },
@@ -359,13 +500,8 @@ class _NomineeCardWidgetState extends State<NomineeCardWidget> {
   }
 
   void _initializeSelectedNominees() {
-    final previouslySelectedNomineeIds =
-        widget.initiallySelectedNomineeIds; // Ensure this is correct
-    print("Initially selected nominee IDs: $previouslySelectedNomineeIds");
-
-    // Initialize the selection state based on previously selected nominee IDs
+    final previouslySelectedNomineeIds = widget.initiallySelectedNomineeIds;
     setState(() {
-      // _isSelected.clear(); // Clear previous selections to avoid duplication
       _isSelected.addAll(List.generate(_nominees.length, (index) {
         return previouslySelectedNomineeIds.contains(_nominees[index].id);
       }));
@@ -373,7 +509,25 @@ class _NomineeCardWidgetState extends State<NomineeCardWidget> {
   }
 
   void _showLoginAlert() {
-    // Existing implementation for showing login alert
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Invalid Token'),
+        content: const Text('Please log in again.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showNoNomineesFound() {
@@ -391,7 +545,6 @@ class _NomineeCardWidgetState extends State<NomineeCardWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 350,
       color: Colors.white,
       child: Card(
         elevation: 2,
@@ -399,171 +552,85 @@ class _NomineeCardWidgetState extends State<NomineeCardWidget> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _nominees.length,
-                  itemBuilder: (context, i) {
-                    String fullName =
-                        '${_nominees[i].firstName} ${_nominees[i].lastName}';
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isSelected[i] = !_isSelected[i];
-                                widget.onNomineeSelected(
-                                  _nominees[i].id ?? 0,
-                                  _isSelected[i],
-                                );
-                              });
-                            },
-                            child: Text(
-                              fullName,
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.black),
-                            ),
-                          ),
-                        ),
-                        Checkbox(
-                          value: _isSelected[i],
-                          onChanged: (bool? newValue) {
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _nominees.length,
+                itemBuilder: (context, i) {
+                  String fullName =
+                      '${_nominees[i].firstName} ${_nominees[i].lastName}';
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
                             setState(() {
-                              _isSelected[i] = newValue ?? false;
+                              _isSelected[i] = !_isSelected[i];
                               widget.onNomineeSelected(
                                 _nominees[i].id ?? 0,
                                 _isSelected[i],
                               );
+                              if (_isSelected[i]) {
+                                if (!widget.selectedNomineeIdsMap[widget.assetId]!.contains(_nominees[i].id)) {
+                                  widget.selectedNomineeIdsMap[widget.assetId]!.add(_nominees[i].id!);
+                                }
+                              } else {
+                                widget.selectedNomineeIdsMap[widget.assetId]!.remove(_nominees[i].id);
+                              }
                             });
                           },
+                          child: Text(
+                            fullName,
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.black),
+                          ),
                         ),
-                      ],
-                    );
-                  },
-                ),
+                      ),
+                      Checkbox(
+                        value: _isSelected[i],
+                        onChanged: (bool? newValue) {
+                          setState(() {
+                            _isSelected[i] = newValue ?? false;
+                            widget.onNomineeSelected(
+                              _nominees[i].id ?? 0,
+                              _isSelected[i],
+                            );
+
+                            // Update the selectedNomineeIdsMap
+                            if (_isSelected[i]) {
+                              if (!widget.selectedNomineeIdsMap[widget.assetId]!.contains(_nominees[i].id)) {
+                                widget.selectedNomineeIdsMap[widget.assetId]!.add(_nominees[i].id!);
+                              }
+                            } else {
+                              widget.selectedNomineeIdsMap[widget.assetId]!.remove(_nominees[i].id);
+                            }
+                          });
+                        },
+                      ),
+                    ],
+                  );
+                },
               ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: _submitNominees, // Always enabled
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  backgroundColor: const Color(0xFF429bb8),
-                ),
-                child: const Text(
-                  'Submit',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
+              const SizedBox(height: 10),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  void _submitNominees() {
-    final selectedNomineeIds = _isSelected
-        .asMap()
-        .entries
-        .where((entry) => entry.value)
-        .map((entry) => _nominees[entry.key].id ?? 0)
-        .toList();
+class ShareAsset {
+  final int assetId;
+  final List<int> nomineeIds;
 
-    if (selectedNomineeIds.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one nominee')),
-      );
-      return;
-    }
+  ShareAsset({required this.assetId, required this.nomineeIds});
 
-    print("selectedAssetIds");
-    print([widget.assetId]); // Assuming you are only using one asset ID
-
-    // Print selected nominee IDs
-    print("selectedNomineeIds");
-    print(selectedNomineeIds);
-
-    // Store selected IDs in the parent widget
-
-    // Submit the selected nominees to the backend
-    submitNominees(
-      selectedAssetIds: [widget.assetId],
-      selectedNomineeIds: selectedNomineeIds,
-    );
-  }
-
-  Future<void> submitNominees({
-    required List<int> selectedAssetIds,
-    required List<int> selectedNomineeIds,
-  }) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString("token");
-
-      if (token == null || token.isEmpty) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Invalid Token'),
-            content: const Text('Please log in again.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-        return;
-      }
-
-      final payload = {
-        'assetIds': selectedAssetIds,
-        'nomineeIds': selectedNomineeIds,
+  Map<String, dynamic> toJson() => {
+        'assetId': assetId,
+        'nomineeIds': nomineeIds,
       };
-
-      final res = await http.post(
-        Uri.parse("https://dev.bsure.live/v2/share"),
-        headers: {"Authorization": token, "Content-Type": "application/json"},
-        body: jsonEncode(payload),
-      );
-
-      if (res.statusCode == 200) {
-        // Store the selected IDs in SharedPreferences
-        await prefs.setStringList('selectedAssetIds',
-            selectedAssetIds.map((id) => id.toString()).toList());
-        await prefs.setStringList('selectedNomineeIds',
-            selectedNomineeIds.map((id) => id.toString()).toList());
-        // Debug prints
-        print("Stored Asset IDs: ${selectedAssetIds}");
-        print("Stored Nominee IDs: ${selectedNomineeIds}");
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Nominees submitted successfully')),
-        );
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MyAssetsScreen()),
-        );
-      } else {
-        // Handle error
-      }
-    } catch (e) {
-      print('Error submitting nominees: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to submit nominees')),
-      );
-    }
-  }
 }

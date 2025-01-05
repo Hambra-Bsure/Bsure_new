@@ -19,7 +19,8 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _mobileController;
-  late TextEditingController _addressController;
+  late TextEditingController
+      _fatherNameController; // New controller for Father's Name
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -29,30 +30,18 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
         TextEditingController(text: widget.witness.firstName);
     _lastNameController = TextEditingController(text: widget.witness.lastName);
     _mobileController = TextEditingController(text: widget.witness.mobile);
-    _addressController = TextEditingController(text: widget.witness.address);
-  }
-
-  @override
-  void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _mobileController.dispose();
-    _addressController.dispose();
-    super.dispose();
+    _fatherNameController = TextEditingController(
+        text: widget.witness.fatherName); // Initialize the new controller
   }
 
   void _updateWitnessDetails() async {
-    if (_mobileController.text.isEmpty) {
-      DisplayUtils.showToast('Mobile number is required');
-      return; // Exit the method if the mobile number is empty
-    }
-
     Map<String, dynamic> updateData = {
       'witnessId': widget.witness.id,
       'firstName': _firstNameController.text.trim(),
       'lastName': _lastNameController.text.trim(),
       'mobile': _mobileController.text.trim(),
-      'address': _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : null,
+      'fatherName': _fatherNameController.text.trim(),
+      // Add Father's Name to the update data
     };
 
     try {
@@ -83,7 +72,7 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
       }
 
       Response response = await Dio().put(
-        'https://dev.bsure.live/v2/will/witness',
+        'http://43.205.12.154:8080/v2/will/witness',
         data: updateData,
         options: Options(
           headers: {'Authorization': token},
@@ -113,8 +102,8 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text(
-            'Edit witness', style: TextStyle(color: Colors.white)),
+        title:
+            const Text('Edit witness', style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -125,7 +114,7 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
             children: [
               buildTextField(
                 controller: _firstNameController,
-                labelText: 'First name',
+                labelText: 'First name ',
                 mandatory: false,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -146,6 +135,18 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
                 },
               ),
               buildTextField(
+                controller: _fatherNameController,
+                // New text field for Father's Name
+                labelText: 'Father\'s Name',
+                mandatory: false,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter father\'s name';
+                  }
+                  return null;
+                },
+              ),
+              buildTextField(
                 controller: _mobileController,
                 labelText: 'Mobile',
                 mandatory: true,
@@ -160,25 +161,14 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
                   return null;
                 },
               ),
-              buildTextField(
-                controller: _addressController,
-                labelText: 'Address',
-                mandatory: false,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter address';
-                  }
-                  return null;
-                },
-              ),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _updateWitnessDetails,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
                 ),
-                child: const Text(
-                    'Update', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Update', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -222,15 +212,14 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
           validator: validator,
           inputFormatters: isNumeric
               ? [
-            FilteringTextInputFormatter.digitsOnly,
-            NoLeadingSpaceFormatter(), // Formatter applied here
-          ]
+                  FilteringTextInputFormatter.digitsOnly,
+                  NoLeadingSpaceFormatter(),
+                ]
               : [NoLeadingSpaceFormatter()],
-          // Formatter applied here
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(
-                vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         ),
@@ -241,8 +230,8 @@ class _WitnessEditScreenState extends State<WitnessEditScreen> {
 
 class NoLeadingSpaceFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    // Prevent leading spaces but allow spaces after the first character
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.startsWith(' ') && newValue.text.trim().isEmpty) {
       return oldValue;
     }

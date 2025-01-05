@@ -40,6 +40,7 @@ class AssetItemState extends State<AssetItem> {
   late final List<NomineeController> nomineeControllers;
   bool equalShareCheckBox = false;
   bool isEditing = false;
+  bool isEqualDistribution = false;
 
   void printState() {
     for (var controller in nomineeControllers) {
@@ -56,7 +57,8 @@ class AssetItemState extends State<AssetItem> {
     return AssetState(
         assetId: asset.assetId,
         nomineeShares: nomineeShares,
-        equalDistributionCheckbox: equalShareCheckBox);
+        equalDistributionCheckbox: equalShareCheckBox, distributeEqualy: isEqualDistribution,
+        );
   }
 
   bool validateForm() {
@@ -349,13 +351,21 @@ class AssetItemState extends State<AssetItem> {
                       label: Row(
                         children: [
                           Checkbox(
-                            value: asset.equalDistributionCheckbox,
+                           // value: context.watch<WillBloc>().state.distributeEqually,
+                            value: isEqualDistribution,
                             onChanged: (value) {
                               setState(() {
-                                asset = asset.copyWith(
-                                    equalDistributionCheckbox: value ??
-                                        false); // Default to false if null
+                                isEqualDistribution =
+                                    value ?? false; // Update the state
+                                if (!isEqualDistribution) {
+                                  // When unchecked, allow editing
+                                  for (var controller in nomineeControllers) {
+                                    controller.controller
+                                        .clear(); // Clear the controller when unchecked
+                                  }
+                                }
                               });
+
                               if (value == true) {
                                 double totalShares =
                                     100.0; // Assuming total shares to distribute is 100
@@ -407,6 +417,9 @@ class AssetItemState extends State<AssetItem> {
                                           assetId: asset.assetId,
                                         ),
                                       );
+                                  for (var controller in nomineeControllers) {
+                                    controller.controller.clear(); // Clear the controller when unchecked
+                                  }
                                 }
                               }
                             },
@@ -447,35 +460,39 @@ class AssetItemState extends State<AssetItem> {
                                           color: Colors.black))),
                               Expanded(
                                 child: TextFormField(
-                                  enabled: widget.isEditable && !isEditing,
                                   controller: controller,
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
                                           decimal: true),
-                                  inputFormatters: [
-                                    DecimalTextInputFormatter(decimalRange: 2),
-                                    // Use the formatter
-                                  ],
                                   decoration: const InputDecoration(
                                     hintText: "Nominee Share",
                                     suffixText: '%',
                                     hintStyle: TextStyle(color: Colors.black),
+                                    // Color of the hint text
                                     enabledBorder: UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.black),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .black), // Color of the border when not focused
                                     ),
                                     focusedBorder: UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.black),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .black), // Color of the border when focused
                                     ),
                                     errorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.red),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Color of the border when there's an error
                                     ),
                                     focusedErrorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.red),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Color of the border when focused and there's an error
                                     ),
                                   ),
-                                  style: const TextStyle(color: Colors.black),
+                                  //style: const TextStyle(color: Colors.white),
+                                  // Color of the entered text
+                                  enabled: !isEqualDistribution,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Enter a value';
@@ -484,18 +501,6 @@ class AssetItemState extends State<AssetItem> {
                                       return 'Enter a number';
                                     }
                                     return null;
-                                  },
-                                  onChanged: (value) {
-                                    if (value.isNotEmpty) {
-                                      setState(() {
-                                        isEditing = true; // Mark as editing
-                                      });
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('You have edited this. This will disable the "Distribute Equally" checkbox.'),
-                                        ),
-                                      );
-                                    }
                                   },
                                   onSaved: (value) {
                                     // Parse the value as a double
@@ -506,23 +511,20 @@ class AssetItemState extends State<AssetItem> {
                                     double roundedValue = double.parse(
                                         parsedValue.toStringAsFixed(2));
 
-                                    // Update the asset nominees with the rounded value
                                     asset = asset.copyWith(
                                       nominees: [
-                                        ...asset.nominees.map((e) {
-                                          if (e.id != nominee.id) {
-                                            return e;
-                                          }
-                                          return nominee.copyWith(
-                                            share: roundedValue,
-                                          );
-                                        }),
+                                        ...asset.nominees.map(
+                                          (e) {
+                                            if (e.id != nominee.id) {
+                                              return e;
+                                            }
+                                            return nominee.copyWith(
+                                              share: roundedValue,
+                                            );
+                                          },
+                                        )
                                       ],
                                     );
-
-                                    // Update the controller text to reflect the rounded value
-                                    controller.text =
-                                        roundedValue.toStringAsFixed(2);
                                   },
                                 ),
                               ),

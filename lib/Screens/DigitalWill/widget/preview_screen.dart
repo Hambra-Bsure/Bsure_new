@@ -388,7 +388,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   Future<bool> checkWillExists(String token) async {
     try {
-      final url = Uri.parse('https://dev.bsure.live/v2/will/check-exists');
+      final url = Uri.parse('http://43.205.12.154:8080/v2/will/check-exists');
       final response = await http.get(
         url,
         headers: {

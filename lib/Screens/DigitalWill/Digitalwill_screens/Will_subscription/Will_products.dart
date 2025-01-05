@@ -51,7 +51,7 @@ class _WillProductsScreenState extends State<WillProductsScreen> {
     }
 
     final response = await http.get(
-      Uri.parse('https://dev.bsure.live/v2/subscription/products'),
+      Uri.parse('http://43.205.12.154:8080/v2/subscription/products'),
     );
 
     if (response.statusCode == 200) {

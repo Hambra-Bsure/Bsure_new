@@ -257,7 +257,7 @@ class _NPSEditState extends State<PfEdit> {
 
     try {
       final response = await dio.put(
-        'https://dev.bsure.live/v2/asset/${pf.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${pf.assetId}',
         data: pf
             .toJson(), // Convert account object to JSON and send as request body
       );
@@ -311,7 +311,7 @@ class _NPSEditState extends State<PfEdit> {
 
     try {
       await dio.post(
-        "https://dev.bsure.live/v2/asset/${widget.pf.assetId}/upload",
+        "http://43.205.12.154:8080/v2/asset/${widget.pf.assetId}/upload",
         data: formData,
       );
     } catch (e) {

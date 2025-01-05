@@ -40,27 +40,30 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
     if (token == null || token.isEmpty) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Invalid Token'),
-          content: const Text('Please log in again.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
-              child: const Text('OK'),
+        builder: (context) =>
+            AlertDialog(
+              title: const Text('Invalid Token'),
+              content: const Text('Please log in again.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
+                    );
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
             ),
-          ],
-        ),
       );
       return;
     }
 
-    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/StockBroker');
+    final url = Uri.parse(
+        'http://43.205.12.154:8080/v2/asset/category/StockBroker');
     final response = await http.get(url, headers: {
       "Authorization": token ?? '',
       "ngrok-skip-browser-warning": "69420",
@@ -117,7 +120,8 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff429bb8),
-        title: const Text('Stock broker', style: TextStyle(color: Colors.white)),
+        title: const Text(
+            'Stock broker', style: TextStyle(color: Colors.white)),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -148,16 +152,18 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                           final updatedBroker = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => StockBrokerEdit(
-                                broker: broker,
-                                assetType: widget.assetType,
-                              ),
+                              builder: (context) =>
+                                  StockBrokerEdit(
+                                    broker: broker,
+                                    assetType: widget.assetType,
+                                  ),
                             ),
                           );
                           if (updatedBroker != null) {
                             setState(() {
                               final index = stockbrokers.indexWhere(
-                                      (element) => element.assetId == updatedBroker.assetId);
+                                      (element) =>
+                                  element.assetId == updatedBroker.assetId);
                               if (index != -1) {
                                 stockbrokers[index] = updatedBroker;
                               }
@@ -169,7 +175,8 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                   ),
                   buildInfoRow('Broker name', broker.brokerName),
                   const SizedBox(height: 8.0),
-                  buildInfoRow('Demat account number', broker.dematAccountNumber),
+                  buildInfoRow(
+                      'Demat account number', broker.dematAccountNumber),
                   const SizedBox(height: 8.0),
                   buildInfoRow('Comments', broker.comments),
                   const SizedBox(height: 8.0),
@@ -182,7 +189,8 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text("Delete asset?"),
-                            content: const Text("Are you sure you want to delete this Asset?"),
+                            content: const Text(
+                                "Are you sure you want to delete this Asset?"),
                             actions: <Widget>[
                               TextButton(
                                 child: const Text(
@@ -205,7 +213,8 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                                 onPressed: () async {
                                   Navigator.of(context).pop();
                                   deleteAssetStatus(index);
-                                  List<StockBroker> newStockBrokers = <StockBroker>[];
+                                  List<StockBroker> newStockBrokers = <
+                                      StockBroker>[];
                                   newStockBrokers.addAll(stockbrokers);
                                   newStockBrokers.removeAt(index);
                                   setState(() {
@@ -244,9 +253,10 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => StockBrokerAdd(
-                assetType: category,
-              ),
+              builder: (context) =>
+                  StockBrokerAdd(
+                    assetType: category,
+                  ),
             ),
           );
         },
@@ -280,22 +290,24 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
     if (token == null || token.isEmpty) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Invalid Token'),
-          content: const Text('Please log in again.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
-              child: const Text('OK'),
+        builder: (context) =>
+            AlertDialog(
+              title: const Text('Invalid Token'),
+              content: const Text('Please log in again.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
+                    );
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
             ),
-          ],
-        ),
       );
       return;
     }
@@ -305,7 +317,7 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
 
     try {
       final response = await dio.delete(
-        'https://dev.bsure.live/v2/asset/${stockBroker.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${stockBroker.assetId}',
       );
 
       if (response.statusCode == 200) {
@@ -318,6 +330,12 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
   }
 
   Widget buildInfoRow(String label, String? value) {
+    // Check if the value is null or empty
+    if (value == null || value.isEmpty) {
+      return const SizedBox
+          .shrink(); // Return an empty widget if there's no value
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -331,15 +349,13 @@ class _StockBrokerScreenState extends State<StockBrokerScreen> {
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
-              //overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(width: 8.0),
           Expanded(
             flex: 7,
             child: Text(
-              value ?? '',
-             // overflow: TextOverflow.ellipsis,
+              value,
               style: const TextStyle(
                 color: Colors.black87,
               ),

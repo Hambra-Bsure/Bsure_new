@@ -50,7 +50,8 @@ part 'node_api_client.g.dart';
 //@RestApi(baseUrl: 'http://13.234.213.250:8080')
 //@RestApi(baseUrl: 'https://wgflssl8-8080.inc1.devtunnels.ms')
 //http://43.205.12.154:8080
-@RestApi(baseUrl: 'https://dev.bsure.live')
+//@RestApi(baseUrl: 'https://dev.bsure.live')
+@RestApi(baseUrl: 'http://43.205.12.154:8080')
 abstract class NodeClient {
   factory NodeClient(Dio dio) = _NodeClient;
 

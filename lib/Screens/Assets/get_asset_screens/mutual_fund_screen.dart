@@ -62,7 +62,7 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
       return;
     }
 
-    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/MutualFund');
+    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/MutualFund');
     final response = await http.get(url, headers: {
       "Authorization": token ?? '',
       "ngrok-skip-browser-warning": "69420",
@@ -165,7 +165,7 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
                   buildInfoRow('Comments:', fund.comments),
                   const SizedBox(height: 8.0),
                   buildInfoRow('Attachment:', fund.attachment),
-                  const SizedBox(height: 8.0),
+                  const SizedBox(height: 2.0),
                   ElevatedButton(
                     onPressed: () {
                       showDialog(
@@ -259,6 +259,11 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
   }
 
   Widget buildInfoRow(String label, String? value) {
+    // Check if the value is null or empty
+    if (value == null || value.isEmpty) {
+      return const SizedBox.shrink(); // Return an empty widget if there's no value
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -272,15 +277,13 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
-              //overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(width: 8.0),
           Expanded(
             flex: 7,
             child: Text(
-              value ?? '',
-            //  overflow: TextOverflow.ellipsis,
+              value,
               style: const TextStyle(
                 color: Colors.black87,
               ),
@@ -324,7 +327,7 @@ class _MutualFundScreenState extends State<MutualFundScreen> {
 
     try {
       final response = await dio.delete(
-        'https://dev.bsure.live/v2/asset/${mutualFund.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${mutualFund.assetId}',
       );
 
       if (response.statusCode == 200) {

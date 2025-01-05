@@ -406,7 +406,7 @@ class _StockBrokerEditState extends State<StockBrokerEdit> {
 
     try {
       final response = await dio.put(
-        'https://dev.bsure.live/v2/asset/${broker.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${broker.assetId}',
         data: broker.toJson(),
       );
 
@@ -458,7 +458,7 @@ class _StockBrokerEditState extends State<StockBrokerEdit> {
 
     try {
       await dio.post(
-        "https://dev.bsure.live/v2/asset/${widget.broker.assetId}/upload",
+        "http://43.205.12.154:8080/v2/asset/${widget.broker.assetId}/upload",
         data: formData,
       );
     } catch (e) {

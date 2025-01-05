@@ -188,6 +188,7 @@ mixin _$Witness {
   String get firstName => throw _privateConstructorUsedError;
   String get lastName => throw _privateConstructorUsedError;
   String get mobile => throw _privateConstructorUsedError;
+  String get fatherName => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
   bool get verified => throw _privateConstructorUsedError;
 
@@ -206,6 +207,7 @@ abstract class $WitnessCopyWith<$Res> {
       String firstName,
       String lastName,
       String mobile,
+      String fatherName,
       String? address,
       bool verified});
 }
@@ -227,6 +229,7 @@ class _$WitnessCopyWithImpl<$Res, $Val extends Witness>
     Object? firstName = null,
     Object? lastName = null,
     Object? mobile = null,
+    Object? fatherName = null,
     Object? address = freezed,
     Object? verified = null,
   }) {
@@ -246,6 +249,10 @@ class _$WitnessCopyWithImpl<$Res, $Val extends Witness>
       mobile: null == mobile
           ? _value.mobile
           : mobile // ignore: cast_nullable_to_non_nullable
+              as String,
+      fatherName: null == fatherName
+          ? _value.fatherName
+          : fatherName // ignore: cast_nullable_to_non_nullable
               as String,
       address: freezed == address
           ? _value.address
@@ -271,6 +278,7 @@ abstract class _$$WitnessImplCopyWith<$Res> implements $WitnessCopyWith<$Res> {
       String firstName,
       String lastName,
       String mobile,
+      String fatherName,
       String? address,
       bool verified});
 }
@@ -290,6 +298,7 @@ class __$$WitnessImplCopyWithImpl<$Res>
     Object? firstName = null,
     Object? lastName = null,
     Object? mobile = null,
+    Object? fatherName = null,
     Object? address = freezed,
     Object? verified = null,
   }) {
@@ -309,6 +318,10 @@ class __$$WitnessImplCopyWithImpl<$Res>
       mobile: null == mobile
           ? _value.mobile
           : mobile // ignore: cast_nullable_to_non_nullable
+              as String,
+      fatherName: null == fatherName
+          ? _value.fatherName
+          : fatherName // ignore: cast_nullable_to_non_nullable
               as String,
       address: freezed == address
           ? _value.address
@@ -330,6 +343,7 @@ class _$WitnessImpl implements _Witness {
       required this.firstName,
       required this.lastName,
       required this.mobile,
+      required this.fatherName,
       required this.address,
       required this.verified});
 
@@ -345,13 +359,15 @@ class _$WitnessImpl implements _Witness {
   @override
   final String mobile;
   @override
+  final String fatherName;
+  @override
   final String? address;
   @override
   final bool verified;
 
   @override
   String toString() {
-    return 'Witness(id: $id, firstName: $firstName, lastName: $lastName, mobile: $mobile, address: $address, verified: $verified)';
+    return 'Witness(id: $id, firstName: $firstName, lastName: $lastName, mobile: $mobile, fatherName: $fatherName, address: $address, verified: $verified)';
   }
 
   @override
@@ -365,6 +381,8 @@ class _$WitnessImpl implements _Witness {
             (identical(other.lastName, lastName) ||
                 other.lastName == lastName) &&
             (identical(other.mobile, mobile) || other.mobile == mobile) &&
+            (identical(other.fatherName, fatherName) ||
+                other.fatherName == fatherName) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.verified, verified) ||
                 other.verified == verified));
@@ -372,8 +390,8 @@ class _$WitnessImpl implements _Witness {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, firstName, lastName, mobile, address, verified);
+  int get hashCode => Object.hash(runtimeType, id, firstName, lastName, mobile,
+      fatherName, address, verified);
 
   @JsonKey(ignore: true)
   @override
@@ -395,6 +413,7 @@ abstract class _Witness implements Witness {
       required final String firstName,
       required final String lastName,
       required final String mobile,
+      required final String fatherName,
       required final String? address,
       required final bool verified}) = _$WitnessImpl;
 
@@ -408,6 +427,8 @@ abstract class _Witness implements Witness {
   String get lastName;
   @override
   String get mobile;
+  @override
+  String get fatherName;
   @override
   String? get address;
   @override

@@ -57,10 +57,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final dio = Dio();
       dio.options.headers['Authorization'] = token;
 
-      final response = await dio.get('https://dev.bsure.live/v2/users');
+      final response = await dio.get('http://43.205.12.154:8080/v2/users');
 
       if (response.statusCode == 200) {
-        DisplayUtils.showToast('Successfully fetch profile details');
+        DisplayUtils.showToast('Successfully fetched profile details');
         final getUserResponse = GetUserResponse.fromJson(response.data);
         setState(() {
           userProfile = getUserResponse;
@@ -68,6 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
       } else {
         DisplayUtils.showToast('Failed to fetch user profile');
+        print('Error response: ${response.data}'); // Add this line to debug
         setState(() {
           isLoaded = true;
         });

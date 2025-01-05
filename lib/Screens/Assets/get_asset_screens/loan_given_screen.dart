@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'package:Bsure_devapp/Screens/Assets/Update_asset_screens/LoanGIven_Edit.dart';
 import 'package:Bsure_devapp/Screens/Assets/post_asset_addition/LoanGiven.dart';
@@ -62,7 +63,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
     }
 
     final url =
-        Uri.parse('https://dev.bsure.live/v2/asset/category/LoanGiven');
+        Uri.parse('http://43.205.12.154:8080/v2/asset/category/LoanGiven');
     final response = await http.get(url, headers: {
       "Authorization": token ?? "",
       "ngrok-skip-browser-warning": "69420",
@@ -129,7 +130,7 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
 
     try {
       final response = await dio.delete(
-        'https://dev.bsure.live/v2/asset/${loanGiven.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${loanGiven.assetId}',
       );
 
       if (response.statusCode == 200) {
@@ -301,6 +302,11 @@ class _LoanGivenScreenState extends State<LoanGivenScreen> {
   }
 
   Widget buildInfoRow(String label, String? value) {
+    if (value == null || value.isEmpty) {
+      return const SizedBox
+          .shrink(); // Return an empty widget if there's no value
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(

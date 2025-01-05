@@ -8,6 +8,7 @@ class WillState with _$WillState {
   const factory WillState({
     @Default(<Asset>[]) List<Asset> assets,
     @Default(false) bool sameDistributionCheckbox,
+    @Default(false) bool distributeEqually,
   }) = _WillState;
 
   factory WillState.fromJson(Map<String, dynamic> json) =>

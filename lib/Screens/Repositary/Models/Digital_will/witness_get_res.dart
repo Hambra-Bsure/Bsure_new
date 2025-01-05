@@ -20,6 +20,7 @@ class Witness with _$Witness {
     required String firstName,
     required String lastName,
     required String mobile,
+    required String fatherName,
     required String? address,
     required bool verified,
   }) = _Witness;

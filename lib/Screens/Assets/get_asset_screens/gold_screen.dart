@@ -61,7 +61,7 @@ class _GoldScreenState extends State<GoldScreen> {
       return;
     }
 
-    final url = Uri.parse('https://dev.bsure.live/v2/asset/category/Gold');
+    final url = Uri.parse('http://43.205.12.154:8080/v2/asset/category/Gold');
     final response = await http.get(
       url,
       headers: {"Authorization": token, "ngrok-skip-browser-warning": "69420"},
@@ -128,7 +128,7 @@ class _GoldScreenState extends State<GoldScreen> {
 
     try {
       final response = await dio.delete(
-        'https://dev.bsure.live/v2/asset/${golds.assetId}',
+        'http://43.205.12.154:8080/v2/asset/${golds.assetId}',
       );
 
       if (response.statusCode == 200) {
@@ -304,6 +304,11 @@ class _GoldScreenState extends State<GoldScreen> {
   }
 
   Widget buildInfoRow(String label, String? value) {
+    if (value == null || value.isEmpty) {
+      return const SizedBox
+          .shrink(); // Return an empty widget if there's no value
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(

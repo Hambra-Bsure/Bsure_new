@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../../LoginScreen.dart';
 import '../../../Utils/DisplayUtils.dart';
 import '../Digitalwill_success_message.dart';
+import '../witness_screens/Executor/Witness_verifyscreen.dart';
 
 class VideoDisplayScreen extends StatefulWidget {
   final String videoPath;
@@ -170,7 +171,7 @@ class _VideoDisplayScreenState extends State<VideoDisplayScreen> {
     }
 
     try {
-      var uri = Uri.parse('https://dev.bsure.live/v2/will/video');
+      var uri = Uri.parse('http://43.205.12.154:8080/v2/will/video');
       var request = http.MultipartRequest('POST', uri);
       request.headers.addAll({
         'Authorization': token,
@@ -194,7 +195,10 @@ class _VideoDisplayScreenState extends State<VideoDisplayScreen> {
       if (response.statusCode == 200) {
         var responseData = await response.stream.toBytes();
         var responseString = utf8.decode(responseData);
-
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const  Witnessverifyscreen()),
+        );
         // Log the raw response for debugging
         print('Response: $responseString');
 
@@ -206,7 +210,7 @@ class _VideoDisplayScreenState extends State<VideoDisplayScreen> {
           DisplayUtils.showToast('Video uploaded successfully');
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => DigitalWillGetWitness(),
+              builder: (context) => Witnessverifyscreen(),
             ),
           );
         } else {

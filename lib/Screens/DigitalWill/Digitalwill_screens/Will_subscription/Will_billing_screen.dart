@@ -45,7 +45,7 @@ class _WillBillingScreenState extends State<WillBillingScreen> {
     print(widget.planId);
 
     final url = Uri.parse(
-        'https://dev.bsure.live/v2/subscription/discounted-price?planId=${widget.planId}&couponCode=$couponCode');
+        'http://43.205.12.154:8080/v2/subscription/discounted-price?planId=${widget.planId}&couponCode=$couponCode');
 
     try {
       final response = await http.get(url);

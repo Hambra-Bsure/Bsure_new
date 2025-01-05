@@ -25,6 +25,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _religionController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  String? _gender;
   String? _errorMessage;
 
   @override
@@ -59,7 +60,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
       return;
     }
 
-    const url = 'https://dev.bsure.live/v2/will/executor';
+    const url = 'http://43.205.12.154:8080/v2/will/executor';
 
     final willExecutor = WillExecutorReq(
       firstName: _firstNameController.text,
@@ -69,6 +70,7 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
       age: int.tryParse(_ageController.text),
       religion: _religionController.text,
       address: _addressController.text,
+      gender: _gender,
     );
 
     try {
@@ -110,68 +112,6 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
         backgroundColor: Colors.red,
       ),
     );
-  }
-
-  String? _validateFirstName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter first name';
-    }
-    return null;
-  }
-
-  String? _validateLastName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter last name';
-    }
-    return null;
-  }
-
-  String? _validateMobileNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter mobile number';
-    }
-    if (value.length != 10) {
-      return 'Mobile number must be 10 digits';
-    }
-    return null;
-  }
-
-  String? _validateAddress(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter address';
-    }
-    return null;
-  }
-
-  String? _validateFatherName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter father name';
-    }
-    if (value.length < 2) {
-      return 'Father name must be at least 2 characters';
-    }
-    return null;
-  }
-
-  String? _validateReligion(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter religion';
-    }
-    if (value.length < 2) {
-      return 'Religion must be at least 2 characters';
-    }
-    return null;
-  }
-
-  String? _validateAge(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter age';
-    }
-    final int? age = int.tryParse(value);
-    if (age == null) {
-      return 'Age must be a number';
-    }
-    return null;
   }
 
   Widget _buildTextField({
@@ -224,6 +164,58 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
     );
   }
 
+  Widget _buildGenderDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: const [
+            Text(
+              'Gender',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _gender,
+          items: const [
+            DropdownMenuItem(
+              value: 'MALE',
+              child: Text('MALE'),
+            ),
+            DropdownMenuItem(
+              value: 'FEMALE',
+              child: Text('FEMALE'),
+            ),
+          ],
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding:
+            EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+          onChanged: (value) {
+            setState(() {
+              _gender = value;
+            });
+          },
+          validator: (value) =>
+          value == null ? 'Please select a gender' : null,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -252,22 +244,30 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
                 controller: _firstNameController,
                 labelText: 'First name',
                 mandatory: true,
-                validator: _validateFirstName,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter first name'
+                    : null,
               ),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: _lastNameController,
                 labelText: 'Last name',
                 mandatory: true,
-                validator: _validateLastName,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter last name'
+                    : null,
               ),
+              const SizedBox(height: 15),
+              _buildGenderDropdown(),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: _ageController,
                 labelText: 'Age',
                 isNumeric: true,
                 mandatory: true,
-                validator: _validateAge,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter age'
+                    : null,
               ),
               const SizedBox(height: 15),
               _buildTextField(
@@ -275,55 +275,43 @@ class _WillExecutorScreenState extends State<WillExecutorScreen> {
                 labelText: 'Mobile no',
                 isNumeric: true,
                 mandatory: true,
-                validator: _validateMobileNumber,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter mobile number'
+                    : (value.length != 10
+                    ? 'Mobile number must be 10 digits'
+                    : null),
               ),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: _religionController,
                 labelText: 'Religion',
                 mandatory: true,
-                validator: _validateReligion,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter religion'
+                    : null,
               ),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: _fatherNameController,
                 labelText: 'Father name',
                 mandatory: true,
-                validator: _validateFatherName,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter father name'
+                    : null,
               ),
               const SizedBox(height: 15),
               _buildTextField(
                 controller: _addressController,
                 labelText: 'Address',
                 mandatory: true,
-                validator: _validateAddress,
+                validator: (value) => value == null || value.isEmpty ? 'Please enter address' : null,
               ),
               const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () {
-                  if (_firstNameController.text.isEmpty) {
-                    DisplayUtils.showToast('firstname  is required');
-                    return; // Exit the method if the mobile number is empty
-                  } else if (_lastNameController.text.isEmpty) {
-                    DisplayUtils.showToast('lastname  is required');
-                    return; // Exit the method if the mobile number is empty
-                  } else  if (_mobileController.text.isEmpty) {
-                    DisplayUtils.showToast('Mobilenumber is required');
-                    return; // Exit the method if the mobile number is empty
-                  } else if (_fatherNameController.text.isEmpty) {
-                    DisplayUtils.showToast('fathername  is required');
-                    return; // Exit the method if the mobile number is empty
-                  } else if (_ageController.text.isEmpty) {
-                    DisplayUtils.showToast('age  is required');
-                    return; // Exit the method if the mobile number is empty
-                  } else  if (_religionController.text.isEmpty) {
-                    DisplayUtils.showToast('Religion  is required');
-                    return; // Exit the method if the mobile number is empty
-                  } else if (_addressController.text.isEmpty) {
-                    DisplayUtils.showToast('address is required');
-                    return; // Exit the method if the mobile number is empty
+                  if (_formKey.currentState!.validate()) {
+                    _saveData();
                   }
-                  _saveData();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff429bb8),
@@ -347,9 +335,8 @@ class NoLeadingSpaceFormatter extends TextInputFormatter {
       TextEditingValue oldValue,
       TextEditingValue newValue,
       ) {
-    if (newValue.text.startsWith(' ')) {
-      return oldValue;
-    }
-    return newValue;
+    return newValue.text.startsWith(' ')
+        ? oldValue
+        : newValue;
   }
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -51,9 +50,9 @@ class _AddNomineeState extends State<AddNominee> {
   var photo;
   var name;
 
-  List<Contact> _contacts = [];
+  //List<Contact> _contacts = [];
   bool _isLoading = false;
-  final List<Contact> _selectedContacts = [];
+  //final List<Contact> _selectedContacts = [];
 
   Relation? _selectedRelation;
 
@@ -136,17 +135,6 @@ class _AddNomineeState extends State<AddNominee> {
                             mobileNumberController,
                             'Mobile number',
                             isNumeric: true,
-                            onTap: () {
-                              if (_selectedContacts.isNotEmpty) {
-                                _showSelectedContactsDialog();
-                              }
-                            },
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.contacts),
-                              onPressed: () {
-                                _getContacts();
-                              },
-                            ),
                           ),
                           Container(
                             height: 2,
@@ -157,26 +145,6 @@ class _AddNomineeState extends State<AddNominee> {
                     ),
                   ],
                 ),
-                _isLoading
-                    ? const CircularProgressIndicator()
-                    : ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: _contacts.length,
-                        itemBuilder: (context, index) {
-                          final contact = _contacts[index];
-                          return ListTile(
-                            title: Text(contact.displayName ?? ''),
-                            onTap: () => _selectContact(contact),
-                            trailing: Checkbox(
-                              value: _selectedContacts.contains(contact),
-                              onChanged: (bool? value) {
-                                _selectContact(contact);
-                              },
-                            ),
-                          );
-                        },
-                      ),
                 const SizedBox(height: 10),
                 _buildTextField(addressController, 'Address', mandatory: false),
                 const SizedBox(height: 10),
@@ -475,7 +443,7 @@ class _AddNomineeState extends State<AddNominee> {
     }
 
     // Prepare the request
-    final uri = Uri.parse('https://dev.bsure.live/v2/nominee/add');
+    final uri = Uri.parse('http://43.205.12.154:8080/v2/nominee/add');
     final request = http.MultipartRequest('POST', uri)
       ..headers['Authorization'] = token.toString();
 
@@ -574,68 +542,6 @@ class _AddNomineeState extends State<AddNominee> {
         ),
       );
     }
-  }
-
-  void _selectContact(Contact contact) {
-    setState(() {
-      if (_selectedContacts.contains(contact)) {
-        _selectedContacts.remove(contact);
-      } else {
-        _selectedContacts.add(contact);
-      }
-    });
-
-    if (_selectedContacts.isNotEmpty) {
-      final selectedContact = _selectedContacts.first;
-      mobileNumberController.text = selectedContact.phones?.first.value ?? '';
-    }
-  }
-
-  Future<void> _getContacts() async {
-    if (await Permission.contacts.request().isGranted) {
-      final contacts = await ContactsService.getContacts();
-      setState(() {
-        _contacts = contacts.toList();
-      });
-    } else {
-      // Handle permission denial
-    }
-  }
-
-  void _showSelectedContactsDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Selected contacts'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: _selectedContacts
-                .map((contact) => ListTile(
-                      title: Text(contact.displayName ?? ''),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          setState(() {
-                            _selectedContacts.remove(contact);
-                          });
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ))
-                .toList(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Future<void> uploadFile() async {
